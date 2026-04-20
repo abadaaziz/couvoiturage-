@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement — CovoitApp</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/trajets" class="navbar-logo">CovoitApp</a>
+    <div class="navbar-actions">
+        <a href="/logout" class="btn btn-secondaire btn-sm">Déconnexion</a>
+    </div>
+</nav>
+
+<main class="page-principale" style="display:flex;align-items:center;justify-content:center;padding:2rem;">
+    <div class="card animation-entree" style="max-width:480px;width:100%;">
+
+        <div style="text-align:center;margin-bottom:1.5rem;">
+            <p style="font-size:3rem;">💳</p>
+            <h1 style="font-size:1.5rem;margin-bottom:0.5rem;">Finaliser le paiement</h1>
+            <p class="texte-secondaire texte-sm">Paiement sécurisé — fonds bloqués jusqu'à confirmation</p>
+        </div>
+
+        <!-- Récapitulatif réservation -->
+        <div style="background:rgba(255,255,255,0.04);border-radius:var(--rayon-md);padding:1rem;margin-bottom:1.5rem;"
+             id="recap-reservation">
+            <p class="texte-secondaire texte-sm" style="text-align:center;">Chargement du récapitulatif...</p>
+        </div>
+
+        <!-- Alertes -->
+        <div id="alerte-paiement" class="alerte" style="display:none;"></div>
+
+        <!-- Formulaire -->
+        <form id="form-paiement">
+            <div class="form-groupe">
+                <label for="methodePaiement">Méthode de paiement</label>
+                <select id="methodePaiement" name="methodePaiement" class="form-controle" required>
+                    <option value="CARTE_BANCAIRE">💳 Carte bancaire</option>
+                    <option value="PAYPAL">🅿 PayPal</option>
+                    <option value="VIREMENT">🏦 Virement bancaire</option>
+                </select>
+            </div>
+
+            <!-- Simulation champs carte -->
+            <div id="champs-carte">
+                <div class="form-groupe">
+                    <label for="num-carte">Numéro de carte</label>
+                    <input type="text" id="num-carte" class="form-controle"
+                           placeholder="1234 5678 9012 3456" maxlength="19"
+                           pattern="[\d\s]{19}">
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div class="form-groupe">
+                        <label for="expiration">Expiration</label>
+                        <input type="text" id="expiration" class="form-controle"
+                               placeholder="MM/AA" maxlength="5">
+                    </div>
+                    <div class="form-groupe">
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" class="form-controle"
+                               placeholder="123" maxlength="3">
+                    </div>
+                </div>
+            </div>
+
+            <input type="hidden" id="reservationId" name="reservationId" value="">
+
+            <button type="submit" id="btn-payer" class="btn btn-primaire w-full btn-lg">
+                🔒 Payer maintenant
+            </button>
+        </form>
+
+        <p class="texte-centre texte-xs texte-secondaire" style="margin-top:1rem;">
+            🔒 Paiement chiffré SSL — Vos données bancaires ne sont jamais stockées
+        </p>
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Récupère le reservationId depuis l'URL ou les attributs de la page
+    const params = new URLSearchParams(window.location.search);
+    const reservationId = params.get('reservationId') || '';
+    document.getElementById('reservationId').value = reservationId;
+
+    if (reservationId) {
+        chargerRecapitulatif(reservationId);
+    }
+
+    // Formatage automatique du numéro de carte
+    document.getElementById('num-carte').addEventListener('input', function() {
+        let val = this.value.replace(/\D/g, '').substring(0, 16);
+        this.value = val.replace(/(.{4})/g, '$1 ').trim();
+    });
+
+    // Formatage de l'expiration
+    document.getElementById('expiration').addEventListener('input', function() {
+        let val = this.value.replace(/\D/g, '').substring(0, 4);
+        if (val.length >= 2) val = val.substring(0, 2) + '/' + val.substring(2);
+        this.value = val;
+    });
+
+    // Affichage conditionnel des champs
+    document.getElementById('methodePaiement').addEventListener('change', function() {
+        document.getElementById('champs-carte').style.display =
+            this.value === 'CARTE_BANCAIRE' ? 'block' : 'none';
+    });
+
+    // Soumission
+    document.getElementById('form-paiement').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await traiterPaiement();
+    });
+});
+
+async function chargerRecapitulatif(reservationId) {
+    // En production : appel GET /reservation/mes et filtrage par id
+    document.getElementById('recap-reservation').innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <p class="semi-gras texte-sm">Réservation #${reservationId}</p>
+                <p class="texte-xs texte-secondaire">1 place • En attente de confirmation</p>
+            </div>
+            <p class="trajet-prix" style="font-size:1.25rem;">—€</p>
+        </div>
+    `;
+}
+
+async function traiterPaiement() {
+    const btn     = document.getElementById('btn-payer');
+    const alerteEl = document.getElementById('alerte-paiement');
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner" style="width:18px;height:18px;border-width:2px;"></span> Traitement en cours...';
+    alerteEl.style.display = 'none';
+
+    try {
+        const formData = new FormData();
+        formData.append('reservationId',   document.getElementById('reservationId').value);
+        formData.append('methodePaiement', document.getElementById('methodePaiement').value);
+
+        const reponse = await fetch('/paiement', { method: 'POST', body: formData });
+        const data    = await reponse.json();
+
+        if (reponse.ok) {
+            alerteEl.className = 'alerte alerte-succes';
+            alerteEl.textContent = '✓ Paiement effectué ! Réf : ' + data.reference;
+            alerteEl.style.display = 'flex';
+            setTimeout(() => window.location.href = '/reservation/mes', 2500);
+        } else if (reponse.status === 401) {
+            window.location.href = '/login';
+        } else {
+            alerteEl.className = 'alerte alerte-erreur';
+            alerteEl.textContent = '❌ ' + (data.erreur || 'Paiement refusé.');
+            alerteEl.style.display = 'flex';
+            btn.disabled = false;
+            btn.innerHTML = '🔒 Payer maintenant';
+        }
+
+    } catch (err) {
+        alerteEl.className = 'alerte alerte-erreur';
+        alerteEl.textContent = '❌ Erreur réseau. Veuillez réessayer.';
+        alerteEl.style.display = 'flex';
+        btn.disabled = false;
+        btn.innerHTML = '🔒 Payer maintenant';
+    }
+}
+</script>
+</body>
+</html>

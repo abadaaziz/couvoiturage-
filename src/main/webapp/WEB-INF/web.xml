@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+         version="5.0">
+
+    <display-name>CovoiturageApp</display-name>
+    <description>Application de covoiturage — Java Servlets + JDBC pur</description>
+
+    <!-- ── Page d'accueil ─────────────────────────────────────────────────── -->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
+    <!-- ── Gestion des erreurs HTTP ──────────────────────────────────────── -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/views/erreur-404.html</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/views/erreur-500.html</location>
+    </error-page>
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/views/erreur-500.html</location>
+    </error-page>
+
+    <!-- ── Configuration de session ──────────────────────────────────────── -->
+    <session-config>
+        <session-timeout>30</session-timeout> <!-- minutes -->
+        <cookie-config>
+            <http-only>true</http-only>
+            <secure>false</secure> <!-- passer à true en HTTPS production -->
+        </cookie-config>
+    </session-config>
+
+    <!-- ── Encodage par défaut ────────────────────────────────────────────── -->
+    <request-character-encoding>UTF-8</request-character-encoding>
+    <response-character-encoding>UTF-8</response-character-encoding>
+
+</web-app>

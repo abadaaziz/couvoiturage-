@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration — CovoitApp</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/trajets" class="navbar-logo">CovoitApp</a>
+    <ul class="navbar-liens">
+        <li><a href="/trajets">Trajets</a></li>
+        <li><a href="/admin/users" class="actif">👥 Utilisateurs</a></li>
+    </ul>
+    <div class="navbar-actions">
+        <span class="badge badge-admin">ADMIN</span>
+        <a href="/logout" class="btn btn-secondaire btn-sm">Déconnexion</a>
+    </div>
+</nav>
+
+<main class="page-principale">
+    <div class="conteneur" style="padding-top:2rem;padding-bottom:4rem;">
+
+        <div class="titre-section flex justify-between items-center">
+            <div>
+                <h1>Gestion des utilisateurs</h1>
+                <p class="texte-secondaire mt-1" id="compteur-users">Chargement...</p>
+            </div>
+            <div style="display:flex;gap:0.75rem;">
+                <input type="text" id="filtre-recherche" class="form-controle"
+                       placeholder="🔍 Rechercher..." style="max-width:250px;">
+                <select id="filtre-role" class="form-controle" style="max-width:160px;">
+                    <option value="">Tous les rôles</option>
+                    <option value="PASSAGER">Passager</option>
+                    <option value="CHAUFFEUR">Chauffeur</option>
+                    <option value="ADMIN">Admin</option>
+                </select>
+                <select id="filtre-statut" class="form-controle" style="max-width:180px;">
+                    <option value="">Tous les statuts</option>
+                    <option value="ACTIF">Actif</option>
+                    <option value="SUSPENDU">Suspendu</option>
+                    <option value="BLOQUE">Bloqué</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Alertes -->
+        <div id="alerte-admin" class="alerte" style="display:none;"></div>
+
+        <!-- Tableau des utilisateurs -->
+        <div class="tableau-conteneur">
+            <table id="tableau-utilisateurs" aria-label="Liste des utilisateurs">
+                <thead>
+                    <tr>
+                        <th>#ID</th>
+                        <th>Utilisateur</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Statut</th>
+                        <th>Note</th>
+                        <th>Inscription</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="corps-tableau">
+                    <tr>
+                        <td colspan="8" style="text-align:center;padding:3rem;color:var(--texte-secondaire);">
+                            <div class="spinner" style="margin:0 auto;"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</main>
+
+<footer class="footer">
+    <p>© 2025 CovoitApp — Interface Administration</p>
+</footer>
+
+<script>
+let tousLesUtilisateurs = [];
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await chargerUtilisateurs();
+    configurerFiltres();
+});
+
+async function chargerUtilisateurs() {
+    try {
+        const reponse = await fetch('/admin/users', {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (reponse.status === 403) {
+            window.location.href = '/trajets';
+            return;
+        }
+        if (!reponse.ok) throw new Error('Erreur serveur ' + reponse.status);
+
+        tousLesUtilisateurs = await reponse.json();
+        afficherUtilisateurs(tousLesUtilisateurs);
+        document.getElementById('compteur-users').textContent =
+            tousLesUtilisateurs.length + ' utilisateur(s) enregistré(s)';
+
+    } catch (err) {
+        afficherAlerte('Erreur lors du chargement des utilisateurs : ' + err.message, 'erreur');
+    }
+}
+
+function afficherUtilisateurs(utilisateurs) {
+    const corps = document.getElementById('corps-tableau');
+    corps.innerHTML = '';
+
+    if (!utilisateurs.length) {
+        corps.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--texte-secondaire);">Aucun utilisateur trouvé.</td></tr>';
+        return;
+    }
+
+    utilisateurs.forEach(u => {
+        const tr = document.createElement('tr');
+        const dateInsc = u.dateInscription
+            ? new Date(u.dateInscription).toLocaleDateString('fr-FR')
+            : '—';
+
+        const badgeStatut = {
+            ACTIF:    '<span class="badge badge-ouvert">Actif</span>',
+            SUSPENDU: '<span class="badge badge-complet">Suspendu</span>',
+            BLOQUE:   '<span class="badge badge-annule">Bloqué</span>',
+            EN_ATTENTE_VALIDATION: '<span class="badge badge-attente">En attente</span>'
+        }[u.statutCompte] || u.statutCompte;
+
+        const badgeRole = u.role === 'ADMIN'
+            ? '<span class="badge badge-admin">Admin</span>'
+            : u.role === 'CHAUFFEUR'
+            ? '<span class="badge badge-confirme">Chauffeur</span>'
+            : '<span class="badge" style="background:rgba(100,116,139,0.15);color:#94a3b8;border:1px solid rgba(100,116,139,0.3);">Passager</span>';
+
+        const etoiles = '★'.repeat(Math.round(u.noteMoyenne)) + '☆'.repeat(5 - Math.round(u.noteMoyenne));
+        const initiales = (u.prenom?.[0] || '') + (u.nom?.[0] || '');
+
+        const btnSuspendre = u.statutCompte !== 'SUSPENDU' && u.role !== 'ADMIN'
+            ? `<button class="btn btn-sm" style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);"
+                       onclick="actionAdmin('suspendre', ${u.id}, '${echapper(u.prenom)} ${echapper(u.nom)}')">
+                   Suspendre
+               </button>` : '';
+
+        const btnBloquer = u.role !== 'ADMIN' && u.statutCompte !== 'BLOQUE'
+            ? `<button class="btn btn-danger btn-sm"
+                       onclick="actionAdmin('bloquer', ${u.id}, '${echapper(u.prenom)} ${echapper(u.nom)}')">
+                   Bloquer
+               </button>` : '';
+
+        tr.innerHTML = `
+            <td><span class="texte-secondaire texte-sm">#${u.id}</span></td>
+            <td>
+                <div style="display:flex;align-items:center;gap:0.75rem;">
+                    <div class="avatar" style="width:32px;height:32px;font-size:0.75rem;">${initiales.toUpperCase()}</div>
+                    <div>
+                        <p class="semi-gras texte-sm">${echapper(u.prenom)} ${echapper(u.nom)}</p>
+                        <p class="texte-xs texte-secondaire">${u.telephone || '—'}</p>
+                    </div>
+                </div>
+            </td>
+            <td><span class="texte-sm">${echapper(u.email)}</span></td>
+            <td>${badgeRole}</td>
+            <td>${badgeStatut}</td>
+            <td>
+                <span style="color:var(--couleur-avertissement);font-size:0.8rem;">${etoiles}</span>
+                <span class="texte-xs texte-secondaire"> (${u.nombreAvis})</span>
+            </td>
+            <td><span class="texte-sm texte-secondaire">${dateInsc}</span></td>
+            <td>
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                    ${btnSuspendre}
+                    ${btnBloquer}
+                </div>
+            </td>
+        `;
+        corps.appendChild(tr);
+    });
+}
+
+async function actionAdmin(action, utilisateurId, nomUtilisateur) {
+    const messages = {
+        suspendre: `Suspendre le compte de ${nomUtilisateur} ?`,
+        bloquer:   `⚠️ Bloquer DÉFINITIVEMENT le compte de ${nomUtilisateur} ? Cette action est irréversible.`
+    };
+
+    if (!confirm(messages[action])) return;
+
+    try {
+        const formData = new FormData();
+        formData.append('utilisateurId', utilisateurId);
+
+        const reponse = await fetch(`/admin/${action}`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await reponse.json();
+
+        if (reponse.ok) {
+            afficherAlerte(`✓ ${data.message}`, 'succes');
+            await chargerUtilisateurs();
+        } else {
+            afficherAlerte('❌ ' + (data.erreur || 'Erreur lors de l\'action.'), 'erreur');
+        }
+
+    } catch (err) {
+        afficherAlerte('❌ Erreur réseau : ' + err.message, 'erreur');
+    }
+}
+
+function configurerFiltres() {
+    const filtrer = () => {
+        const terme  = document.getElementById('filtre-recherche').value.toLowerCase();
+        const role   = document.getElementById('filtre-role').value;
+        const statut = document.getElementById('filtre-statut').value;
+
+        const filtres = tousLesUtilisateurs.filter(u => {
+            const nomComplet = (u.prenom + ' ' + u.nom + ' ' + u.email).toLowerCase();
+            return (!terme  || nomComplet.includes(terme))
+                && (!role   || u.role === role)
+                && (!statut || u.statutCompte === statut);
+        });
+
+        afficherUtilisateurs(filtres);
+        document.getElementById('compteur-users').textContent =
+            filtres.length + ' / ' + tousLesUtilisateurs.length + ' utilisateur(s)';
+    };
+
+    document.getElementById('filtre-recherche').addEventListener('input', filtrer);
+    document.getElementById('filtre-role').addEventListener('change', filtrer);
+    document.getElementById('filtre-statut').addEventListener('change', filtrer);
+}
+
+function afficherAlerte(message, type) {
+    const el = document.getElementById('alerte-admin');
+    el.className = `alerte alerte-${type}`;
+    el.textContent = message;
+    el.style.display = 'flex';
+    setTimeout(() => { el.style.display = 'none'; }, 5000);
+}
+
+function echapper(s) {
+    if (!s) return '';
+    return String(s).replace(/'/g, "\\'").replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+</script>
+</body>
+</html>

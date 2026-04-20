@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Créez votre compte CovoitApp gratuitement et voyagez malin.">
+    <title>Inscription — CovoitApp</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="page-auth">
+    <div class="carte-auth carte-auth-large animation-entree">
+
+        <div class="auth-logo">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="24" cy="24" r="24" fill="url(#grad2)"/>
+                <path d="M14 28l6-10 4 6 3-4 7 8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="14" cy="29" r="2.5" fill="white"/>
+                <circle cx="34" cy="29" r="2.5" fill="white"/>
+                <defs>
+                    <linearGradient id="grad2" x1="0" y1="0" x2="48" y2="48">
+                        <stop offset="0%" stop-color="#7c3aed"/>
+                        <stop offset="100%" stop-color="#2563eb"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+
+        <h1 class="auth-titre">Créer un compte</h1>
+        <p class="auth-sous-titre">Rejoignez des milliers de covoitureurs</p>
+
+        <% if (request.getAttribute("erreur") != null) { %>
+        <div class="alerte alerte-erreur" id="alerte-erreur" role="alert">
+            <span>⚠</span> <%= request.getAttribute("erreur") %>
+        </div>
+        <% } %>
+
+        <form id="form-inscription" method="POST" action="/inscription" novalidate>
+
+            <!-- Ligne nom / prénom -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-groupe">
+                    <label for="nom">Nom *</label>
+                    <input type="text" id="nom" name="nom" class="form-controle"
+                           placeholder="Dupont" autocomplete="family-name" required>
+                </div>
+                <div class="form-groupe">
+                    <label for="prenom">Prénom *</label>
+                    <input type="text" id="prenom" name="prenom" class="form-controle"
+                           placeholder="Jean" autocomplete="given-name" required>
+                </div>
+            </div>
+
+            <div class="form-groupe">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" class="form-controle"
+                       placeholder="jean.dupont@email.com" autocomplete="email" required>
+            </div>
+
+            <div class="form-groupe">
+                <label for="telephone">Téléphone</label>
+                <input type="tel" id="telephone" name="telephone" class="form-controle"
+                       placeholder="+33 6 00 00 00 00" autocomplete="tel">
+            </div>
+
+            <!-- Mot de passe -->
+            <div class="form-groupe">
+                <label for="motDePasse">Mot de passe * <span id="force-mdp" class="texte-xs"></span></label>
+                <div style="position:relative;">
+                    <input type="password" id="motDePasse" name="motDePasse" class="form-controle"
+                           placeholder="Min. 8 caractères" autocomplete="new-password"
+                           required style="padding-right:3rem;">
+                    <button type="button" id="btn-voir-mdp"
+                            style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--texte-tertiaire);font-size:1.1rem;"
+                            aria-label="Afficher le mot de passe">👁</button>
+                </div>
+                <!-- Barre de force du mot de passe -->
+                <div id="barre-force" style="height:3px;border-radius:2px;background:var(--bordure);margin-top:0.25rem;overflow:hidden;">
+                    <div id="indicateur-force" style="height:100%;width:0;transition:all 0.3s;border-radius:2px;"></div>
+                </div>
+            </div>
+
+            <div class="form-groupe">
+                <label for="confirmationMotDePasse">Confirmer le mot de passe *</label>
+                <input type="password" id="confirmationMotDePasse" name="confirmationMotDePasse"
+                       class="form-controle" placeholder="Répétez votre mot de passe"
+                       autocomplete="new-password" required>
+                <span id="msg-confirmation" class="texte-xs"></span>
+            </div>
+
+            <!-- Choix du rôle -->
+            <div class="form-groupe">
+                <label>Je souhaite *</label>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                    <label id="label-passager" for="role-passager"
+                           style="display:flex;align-items:center;gap:0.75rem;padding:0.875rem 1rem;
+                                  border:1px solid var(--bordure);border-radius:var(--rayon-md);
+                                  cursor:pointer;transition:var(--transition);background:var(--bg-input);">
+                        <input type="radio" id="role-passager" name="role" value="PASSAGER" checked
+                               style="accent-color:var(--couleur-primaire);">
+                        <span>
+                            <strong style="display:block;font-size:0.9rem;">🧳 Passager</strong>
+                            <small style="color:var(--texte-tertiaire);">Trouver un trajet</small>
+                        </span>
+                    </label>
+                    <label id="label-chauffeur" for="role-chauffeur"
+                           style="display:flex;align-items:center;gap:0.75rem;padding:0.875rem 1rem;
+                                  border:1px solid var(--bordure);border-radius:var(--rayon-md);
+                                  cursor:pointer;transition:var(--transition);background:var(--bg-input);">
+                        <input type="radio" id="role-chauffeur" name="role" value="CHAUFFEUR"
+                               style="accent-color:var(--couleur-primaire);">
+                        <span>
+                            <strong style="display:block;font-size:0.9rem;">🚗 Chauffeur</strong>
+                            <small style="color:var(--texte-tertiaire);">Proposer des trajets</small>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" id="btn-inscription" class="btn btn-primaire w-full btn-lg">
+                Créer mon compte
+            </button>
+
+        </form>
+
+        <hr class="divider">
+        <p class="texte-centre texte-sm texte-secondaire">
+            Déjà inscrit ? <a href="/login" id="lien-login"><strong>Se connecter</strong></a>
+        </p>
+
+    </div>
+</div>
+
+<script>
+    // ── Affichage mot de passe ────────────────────────────────────────────
+    document.getElementById('btn-voir-mdp').addEventListener('click', function() {
+        const champ = document.getElementById('motDePasse');
+        champ.type = champ.type === 'password' ? 'text' : 'password';
+        this.textContent = champ.type === 'text' ? '🙈' : '👁';
+    });
+
+    // ── Indicateur de force du mot de passe ──────────────────────────────
+    document.getElementById('motDePasse').addEventListener('input', function() {
+        const val = this.value;
+        const indicateur = document.getElementById('indicateur-force');
+        const label      = document.getElementById('force-mdp');
+        let force = 0;
+        if (val.length >= 8)               force++;
+        if (/[A-Z]/.test(val))             force++;
+        if (/[0-9]/.test(val))             force++;
+        if (/[^A-Za-z0-9]/.test(val))     force++;
+
+        const couleurs  = ['#ef4444','#f59e0b','#10b981','#7c3aed'];
+        const libelles  = ['','Faible','Moyen','Fort','Très fort'];
+        indicateur.style.width   = (force * 25) + '%';
+        indicateur.style.background = couleurs[force - 1] || 'transparent';
+        label.textContent = val.length > 0 ? libelles[force] : '';
+        label.style.color = couleurs[force - 1] || 'transparent';
+    });
+
+    // ── Vérification confirmation ─────────────────────────────────────────
+    document.getElementById('confirmationMotDePasse').addEventListener('input', function() {
+        const mdp  = document.getElementById('motDePasse').value;
+        const msg  = document.getElementById('msg-confirmation');
+        if (this.value && this.value !== mdp) {
+            msg.textContent = '❌ Les mots de passe ne correspondent pas';
+            msg.style.color = '#ef4444';
+        } else if (this.value && this.value === mdp) {
+            msg.textContent = '✓ Mots de passe identiques';
+            msg.style.color = '#10b981';
+        } else {
+            msg.textContent = '';
+        }
+    });
+
+    // ── Style visuel des radios ───────────────────────────────────────────
+    document.querySelectorAll('input[name="role"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.getElementById('label-passager').style.borderColor  = 'var(--bordure)';
+            document.getElementById('label-chauffeur').style.borderColor = 'var(--bordure)';
+            const parentLabel = this.closest('label');
+            if (parentLabel) parentLabel.style.borderColor = 'var(--couleur-primaire)';
+        });
+    });
+    // État initial
+    document.getElementById('label-passager').style.borderColor = 'var(--couleur-primaire)';
+
+    // ── Validation à la soumission ────────────────────────────────────────
+    document.getElementById('form-inscription').addEventListener('submit', function(e) {
+        const nom    = document.getElementById('nom').value.trim();
+        const prenom = document.getElementById('prenom').value.trim();
+        const email  = document.getElementById('email').value.trim();
+        const mdp    = document.getElementById('motDePasse').value;
+        const conf   = document.getElementById('confirmationMotDePasse').value;
+        const btn    = document.getElementById('btn-inscription');
+
+        if (!nom || !prenom || !email || !mdp) {
+            e.preventDefault();
+            afficherErreur('Veuillez remplir tous les champs obligatoires (*).');
+            return;
+        }
+        if (mdp.length < 8) {
+            e.preventDefault();
+            afficherErreur('Le mot de passe doit contenir au moins 8 caractères.');
+            return;
+        }
+        if (mdp !== conf) {
+            e.preventDefault();
+            afficherErreur('Les mots de passe ne correspondent pas.');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner" style="width:18px;height:18px;border-width:2px;"></span> Création...';
+    });
+
+    function afficherErreur(msg) {
+        let alerte = document.getElementById('alerte-erreur');
+        if (!alerte) {
+            alerte = document.createElement('div');
+            alerte.id = 'alerte-erreur';
+            alerte.className = 'alerte alerte-erreur';
+            document.getElementById('form-inscription').before(alerte);
+        }
+        alerte.innerHTML = '<span>⚠</span> ' + msg;
+        alerte.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+package com.covoiturage.dao;
+
+import com.covoiturage.model.Reservation;
+import com.covoiturage.model.Reservation.StatutReservation;
+import com.covoiturage.model.Trajet;
+import com.covoiturage.model.Utilisateur;
+import com.covoiturage.util.DatabaseConnection;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * DAO pour l'entité {@link Reservation}. JDBC pur.
+ */
+public class ReservationDAO {
+
+    private static final String SQL_INSERT =
+        "INSERT INTO reservations (trajet_id, passager_id, nombre_places, montant_total, " +
+        "statut, date_reservation, reference_transaction) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+    private static final String SQL_SELECT_BY_ID =
+        "SELECT r.*, " +
+        "t.ville_depart, t.ville_arrivee, t.date_heure_depart, t.prix_par_place, " +
+        "u.nom AS passager_nom, u.prenom AS passager_prenom, u.email AS passager_email " +
+        "FROM reservations r " +
+        "JOIN trajets t ON r.trajet_id = t.id " +
+        "JOIN utilisateurs u ON r.passager_id = u.id " +
+        "WHERE r.id = ?";
+
+    private static final String SQL_SELECT_BY_PASSAGER =
+        "SELECT r.*, " +
+        "t.ville_depart, t.ville_arrivee, t.date_heure_depart, t.prix_par_place, " +
+        "u.nom AS passager_nom, u.prenom AS passager_prenom, u.email AS passager_email " +
+        "FROM reservations r " +
+        "JOIN trajets t ON r.trajet_id = t.id " +
+        "JOIN utilisateurs u ON r.passager_id = u.id " +
+        "WHERE r.passager_id = ? ORDER BY r.date_reservation DESC";
+
+    private static final String SQL_SELECT_BY_TRAJET =
+        "SELECT r.*, " +
+        "t.ville_depart, t.ville_arrivee, t.date_heure_depart, t.prix_par_place, " +
+        "u.nom AS passager_nom, u.prenom AS passager_prenom, u.email AS passager_email " +
+        "FROM reservations r " +
+        "JOIN trajets t ON r.trajet_id = t.id " +
+        "JOIN utilisateurs u ON r.passager_id = u.id " +
+        "WHERE r.trajet_id = ? ORDER BY r.date_reservation ASC";
+
+    private static final String SQL_UPDATE_STATUT =
+        "UPDATE reservations SET statut=?, date_annulation=?, montant_rembourse=? WHERE id=?";
+
+    private static final String SQL_UPDATE_CONFIRMATION =
+        "UPDATE reservations SET statut='CONFIRMEE' WHERE id=?";
+
+    private static final String SQL_COUNT_ACTIVES_BY_TRAJET =
+        "SELECT COUNT(*) FROM reservations WHERE trajet_id=? AND statut IN ('EN_ATTENTE','CONFIRMEE')";
+
+    // ── Méthodes CRUD ─────────────────────────────────────────────────────────
+
+    public Reservation inserer(Reservation reservation) throws SQLException {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setInt(1, reservation.getTrajet().getId());
+            ps.setInt(2, reservation.getPassager().getId());
+            ps.setInt(3, reservation.getNombrePlaces());
+            ps.setDouble(4, reservation.getMontantTotal());
+            ps.setString(5, reservation.getStatut().name());
+            ps.setTimestamp(6, Timestamp.valueOf(reservation.getDateReservation()));
+            ps.setString(7, reservation.getReferenceTransaction());
+
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) reservation.setId(rs.getInt(1));
+            }
+        }
+        return reservation;
+    }
+
+    public Optional<Reservation> trouverParId(int id) throws SQLException {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_SELECT_BY_ID)) {
+
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return Optional.of(mapperResultSet(rs));
+            }
+        }
+        return Optional.empty();
+    }
+
+    public List<Reservation> trouverParPassager(int passagerId) throws SQLException {
+        List<Reservation> liste = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_SELECT_BY_PASSAGER)) {
+
+            ps.setInt(1, passagerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) liste.add(mapperResultSet(rs));
+            }
+        }
+        return liste;
+    }
+
+    public List<Reservation> trouverParTrajet(int trajetId) throws SQLException {
+        List<Reservation> liste = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_SELECT_BY_TRAJET)) {
+
+            ps.setInt(1, trajetId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) liste.add(mapperResultSet(rs));
+            }
+        }
+        return liste;
+    }
+
+    /**
+     * Met à jour le statut d'une réservation suite à une annulation.
+     */
+    public void mettreAJourStatutAnnulation(Reservation reservation) throws SQLException {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_STATUT)) {
+
+            ps.setString(1, reservation.getStatut().name());
+            ps.setTimestamp(2, reservation.getDateAnnulation() != null
+                ? Timestamp.valueOf(reservation.getDateAnnulation()) : null);
+            ps.setDouble(3, reservation.getMontantRembourse());
+            ps.setInt(4, reservation.getId());
+            ps.executeUpdate();
+        }
+    }
+
+    /**
+     * Confirme une réservation (passage à CONFIRMEE).
+     */
+    public void confirmer(int reservationId) throws SQLException {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_CONFIRMATION)) {
+
+            ps.setInt(1, reservationId);
+            ps.executeUpdate();
+        }
+    }
+
+    /**
+     * Compte le nombre de réservations actives sur un trajet.
+     */
+    public int compterReservationsActives(int trajetId) throws SQLException {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_COUNT_ACTIVES_BY_TRAJET)) {
+
+            ps.setInt(1, trajetId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
+        }
+    }
+
+    // ── Mapping ───────────────────────────────────────────────────────────────
+
+    private Reservation mapperResultSet(ResultSet rs) throws SQLException {
+        Reservation r = new Reservation();
+        r.setId(rs.getInt("id"));
+
+        // Trajet (hydratation partielle)
+        Trajet trajet = new Trajet();
+        trajet.setId(rs.getInt("trajet_id"));
+        trajet.setVilleDepart(rs.getString("ville_depart"));
+        trajet.setVilleArrivee(rs.getString("ville_arrivee"));
+        trajet.setDateHeureDepart(rs.getTimestamp("date_heure_depart").toLocalDateTime());
+        trajet.setPrixParPlace(rs.getDouble("prix_par_place"));
+        r.setTrajet(trajet);
+
+        // Passager (hydratation partielle)
+        Utilisateur passager = new Utilisateur();
+        passager.setId(rs.getInt("passager_id"));
+        passager.setNom(rs.getString("passager_nom"));
+        passager.setPrenom(rs.getString("passager_prenom"));
+        passager.setEmail(rs.getString("passager_email"));
+        r.setPassager(passager);
+
+        r.setNombrePlaces(rs.getInt("nombre_places"));
+        r.setMontantTotal(rs.getDouble("montant_total"));
+        r.setStatut(StatutReservation.valueOf(rs.getString("statut")));
+        r.setReferenceTransaction(rs.getString("reference_transaction"));
+
+        Timestamp tsRes = rs.getTimestamp("date_reservation");
+        if (tsRes != null) r.setDateReservation(tsRes.toLocalDateTime());
+
+        Timestamp tsAnn = rs.getTimestamp("date_annulation");
+        if (tsAnn != null) r.setDateAnnulation(tsAnn.toLocalDateTime());
+
+        r.setMontantRembourse(rs.getDouble("montant_rembourse"));
+        return r;
+    }
+}

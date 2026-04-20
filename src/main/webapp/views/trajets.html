@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Trouvez et réservez votre covoiturage sur CovoitApp.">
+    <title>Trajets disponibles — CovoitApp</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- ── Navigation ─────────────────────────────────────────────── -->
+<nav class="navbar" role="navigation" aria-label="Navigation principale">
+    <a href="/trajets" class="navbar-logo" id="nav-logo">
+        <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+            <circle cx="24" cy="24" r="24" fill="url(#gn)"/>
+            <path d="M14 28l6-10 4 6 3-4 7 8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="14" cy="29" r="2.5" fill="white"/>
+            <circle cx="34" cy="29" r="2.5" fill="white"/>
+            <defs>
+                <linearGradient id="gn" x1="0" y1="0" x2="48" y2="48">
+                    <stop offset="0%" stop-color="#7c3aed"/>
+                    <stop offset="100%" stop-color="#2563eb"/>
+                </linearGradient>
+            </defs>
+        </svg>
+        CovoitApp
+    </a>
+
+    <ul class="navbar-liens">
+        <li><a href="/trajets" id="nav-trajets" class="actif">Trajets</a></li>
+        <li><a href="/reservation/mes" id="nav-mes-reservations">Mes réservations</a></li>
+    </ul>
+
+    <div class="navbar-actions" id="navbar-actions">
+        <!-- Injecté dynamiquement selon la session -->
+        <a href="/login" id="nav-login" class="btn btn-secondaire btn-sm">Se connecter</a>
+        <a href="/inscription" id="nav-inscription" class="btn btn-primaire btn-sm">S'inscrire</a>
+    </div>
+</nav>
+
+<!-- ── Contenu principal ───────────────────────────────────────── -->
+<main class="page-principale">
+    <div class="conteneur" style="padding-top:2rem;padding-bottom:4rem;">
+
+        <!-- En-tête de section -->
+        <div class="titre-section animation-entree">
+            <h1>Trouver un trajet 🗺️</h1>
+            <p class="texte-secondaire mt-1">Voyagez malin, voyagez ensemble</p>
+        </div>
+
+        <!-- ── Barre de recherche ──────────────────────────────── -->
+        <div class="recherche-conteneur animation-entree delai-1">
+            <form id="form-recherche" style="display:contents;">
+                <div class="recherche-grille">
+                    <div class="form-groupe" style="margin-bottom:0;">
+                        <label for="rech-depart">Départ</label>
+                        <input type="text" id="rech-depart" name="depart"
+                               class="form-controle" placeholder="Ex : Paris">
+                    </div>
+                    <div class="form-groupe" style="margin-bottom:0;">
+                        <label for="rech-arrivee">Arrivée</label>
+                        <input type="text" id="rech-arrivee" name="arrivee"
+                               class="form-controle" placeholder="Ex : Lyon">
+                    </div>
+                    <div class="form-groupe" style="margin-bottom:0;">
+                        <label for="rech-date">Date</label>
+                        <input type="date" id="rech-date" name="date" class="form-controle">
+                    </div>
+                    <div class="form-groupe" style="margin-bottom:0;">
+                        <label for="rech-places">Places</label>
+                        <select id="rech-places" name="places" class="form-controle">
+                            <option value="1">1 place</option>
+                            <option value="2">2 places</option>
+                            <option value="3">3 places</option>
+                            <option value="4">4 places</option>
+                        </select>
+                    </div>
+                    <div style="display:flex;gap:0.5rem;align-items:flex-end;">
+                        <button type="submit" id="btn-rechercher" class="btn btn-primaire">
+                            🔍 Chercher
+                        </button>
+                        <button type="button" id="btn-reset" class="btn btn-secondaire">✕</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- ── Bouton proposer trajet (affiché si chauffeur) ──── -->
+        <div id="zone-chauffeur" style="display:none;margin-bottom:1.5rem;">
+            <button id="btn-proposer" class="btn btn-succes">
+                + Proposer un trajet
+            </button>
+        </div>
+
+        <!-- ── Résultats ───────────────────────────────────────── -->
+        <div id="zone-resultats">
+            <div class="chargement" id="chargement">
+                <div class="spinner"></div>
+                <span>Chargement des trajets...</span>
+            </div>
+            <div class="trajets-grille" id="liste-trajets"></div>
+            <p id="aucun-trajet" style="display:none;text-align:center;padding:3rem;color:var(--texte-secondaire);">
+                😔 Aucun trajet trouvé pour ces critères. Essayez d'autres dates ou villes.
+            </p>
+        </div>
+
+    </div>
+</main>
+
+<!-- ── Modal : Nouveau trajet ──────────────────────────────────── -->
+<div id="modal-trajet" style="display:none;position:fixed;inset:0;z-index:2000;
+     background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);
+     display:none;align-items:center;justify-content:center;padding:1rem;">
+    <div class="card" style="max-width:500px;width:100%;max-height:90vh;overflow-y:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+            <h2 style="font-size:1.25rem;">🚗 Proposer un trajet</h2>
+            <button id="btn-fermer-modal" style="background:none;border:none;color:var(--texte-secondaire);font-size:1.5rem;cursor:pointer;">×</button>
+        </div>
+
+        <div id="modal-erreur" class="alerte alerte-erreur" style="display:none;"></div>
+        <div id="modal-succes" class="alerte alerte-succes" style="display:none;"></div>
+
+        <form id="form-nouveau-trajet">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-groupe">
+                    <label for="nv-depart">Ville de départ *</label>
+                    <input type="text" id="nv-depart" class="form-controle" placeholder="Paris" required>
+                </div>
+                <div class="form-groupe">
+                    <label for="nv-arrivee">Ville d'arrivée *</label>
+                    <input type="text" id="nv-arrivee" class="form-controle" placeholder="Lyon" required>
+                </div>
+            </div>
+            <div class="form-groupe">
+                <label for="nv-date">Date et heure de départ *</label>
+                <input type="datetime-local" id="nv-date" class="form-controle" required>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-groupe">
+                    <label for="nv-places">Nombre de places *</label>
+                    <select id="nv-places" class="form-controle" required>
+                        <option value="1">1</option>
+                        <option value="2" selected>2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                    </select>
+                </div>
+                <div class="form-groupe">
+                    <label for="nv-prix">Prix / place (€) *</label>
+                    <input type="number" id="nv-prix" class="form-controle"
+                           placeholder="15" min="0" max="500" step="0.5" required>
+                </div>
+            </div>
+            <div class="form-groupe">
+                <label for="nv-vehicule">Description du véhicule</label>
+                <input type="text" id="nv-vehicule" class="form-controle"
+                       placeholder="Ex : Peugeot 308 grise — AB-123-CD">
+            </div>
+            <button type="submit" id="btn-soumettre-trajet" class="btn btn-primaire w-full">
+                Publier le trajet
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- ── Pied de page ────────────────────────────────────────────── -->
+<footer class="footer">
+    <p>© 2025 CovoitApp — Voyagez ensemble, voyagez malin 🌍</p>
+</footer>
+
+<script src="/js/trajets.js"></script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Connectez-vous à CovoitApp pour trouver ou proposer un covoiturage.">
+    <title>Connexion — CovoitApp</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="page-auth">
+    <div class="carte-auth animation-entree">
+
+        <!-- Logo -->
+        <div class="auth-logo">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="24" cy="24" r="24" fill="url(#grad1)"/>
+                <path d="M14 28l6-10 4 6 3-4 7 8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="14" cy="29" r="2.5" fill="white"/>
+                <circle cx="34" cy="29" r="2.5" fill="white"/>
+                <defs>
+                    <linearGradient id="grad1" x1="0" y1="0" x2="48" y2="48">
+                        <stop offset="0%" stop-color="#7c3aed"/>
+                        <stop offset="100%" stop-color="#2563eb"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+
+        <h1 class="auth-titre">Bon retour 👋</h1>
+        <p class="auth-sous-titre">Connectez-vous pour continuer votre voyage</p>
+
+        <!-- Message d'erreur (injecté par le servlet) -->
+        <% if (request.getAttribute("erreur") != null) { %>
+        <div class="alerte alerte-erreur" id="alerte-erreur" role="alert">
+            <span>⚠</span>
+            <%= request.getAttribute("erreur") %>
+        </div>
+        <% } %>
+
+        <!-- Message de succès (ex: après déconnexion) -->
+        <% if (request.getAttribute("succes") != null) { %>
+        <div class="alerte alerte-succes" id="alerte-succes" role="alert">
+            <span>✓</span>
+            <%= request.getAttribute("succes") %>
+        </div>
+        <% } %>
+
+        <!-- Formulaire de connexion -->
+        <form id="form-login" method="POST" action="/login" novalidate>
+
+            <div class="form-groupe">
+                <label for="email">Adresse email</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-controle"
+                    placeholder="exemple@email.com"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+
+            <div class="form-groupe">
+                <label for="motDePasse">Mot de passe</label>
+                <div style="position:relative;">
+                    <input
+                        type="password"
+                        id="motDePasse"
+                        name="motDePasse"
+                        class="form-controle"
+                        placeholder="••••••••"
+                        autocomplete="current-password"
+                        required
+                        style="padding-right:3rem;"
+                    >
+                    <button
+                        type="button"
+                        id="btn-voir-mdp"
+                        style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--texte-tertiaire);font-size:1.1rem;"
+                        aria-label="Afficher le mot de passe"
+                    >👁</button>
+                </div>
+            </div>
+
+            <button type="submit" id="btn-connexion" class="btn btn-primaire w-full btn-lg mt-2">
+                Se connecter
+            </button>
+        </form>
+
+        <hr class="divider">
+
+        <p class="texte-centre texte-sm texte-secondaire">
+            Pas encore de compte ?
+            <a href="/inscription" id="lien-inscription"><strong>S'inscrire gratuitement</strong></a>
+        </p>
+
+    </div>
+</div>
+
+<script>
+    // Basculer visibilité du mot de passe
+    document.getElementById('btn-voir-mdp').addEventListener('click', function() {
+        const champ = document.getElementById('motDePasse');
+        const visible = champ.type === 'text';
+        champ.type = visible ? 'password' : 'text';
+        this.textContent = visible ? '👁' : '🙈';
+    });
+
+    // Validation côté client avant soumission
+    document.getElementById('form-login').addEventListener('submit', function(e) {
+        const email = document.getElementById('email').value.trim();
+        const mdp   = document.getElementById('motDePasse').value;
+        const btn   = document.getElementById('btn-connexion');
+
+        if (!email || !mdp) {
+            e.preventDefault();
+            afficherErreur('Veuillez renseigner votre email et votre mot de passe.');
+            return;
+        }
+
+        // Animation de chargement
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner" style="width:18px;height:18px;border-width:2px;"></span> Connexion...';
+    });
+
+    function afficherErreur(message) {
+        let alerte = document.getElementById('alerte-erreur');
+        if (!alerte) {
+            alerte = document.createElement('div');
+            alerte.className = 'alerte alerte-erreur';
+            alerte.id = 'alerte-erreur';
+            document.getElementById('form-login').before(alerte);
+        }
+        alerte.innerHTML = '<span>⚠</span> ' + message;
+        alerte.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+</script>
+
+</body>
+</html>

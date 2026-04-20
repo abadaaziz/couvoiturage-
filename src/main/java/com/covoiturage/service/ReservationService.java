@@ -1,0 +1,307 @@
+package com.covoiturage.service;
+
+import com.covoiturage.dao.ReservationDAO;
+import com.covoiturage.exception.PaiementEcheException;
+import com.covoiturage.exception.ReservationInvalideException;
+import com.covoiturage.exception.TrajetCompletException;
+import com.covoiturage.exception.UtilisateurSuspenduException;
+import com.covoiturage.model.Reservation;
+import com.covoiturage.model.Reservation.StatutReservation;
+import com.covoiturage.model.Trajet;
+import com.covoiturage.model.Trajet.StatutTrajet;
+import com.covoiturage.model.Utilisateur;
+import com.covoiturage.model.Paiement.MethodePaiement;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Service de gestion des réservations.
+ * <p>
+ * Responsabilité unique (SRP) : tout ce qui concerne la réservation de places.
+ * Délègue le paiement à {@link PaiementService} et les notifications à {@link NotificationService}.
+ * </p>
+ */
+public class ReservationService {
+
+    private final ReservationDAO      reservationDAO;
+    private final TrajetService       trajetService;
+    private final PaiementService     paiementService;
+    private final NotificationService notificationService;
+
+    public ReservationService() {
+        this.reservationDAO      = new ReservationDAO();
+        this.trajetService       = new TrajetService();
+        this.paiementService     = new PaiementService();
+        this.notificationService = new NotificationService();
+    }
+
+    /** Constructeur pour injection de dépendances */
+    public ReservationService(ReservationDAO reservationDAO, TrajetService trajetService,
+                               PaiementService paiementService, NotificationService notificationService) {
+        this.reservationDAO      = reservationDAO;
+        this.trajetService       = trajetService;
+        this.paiementService     = paiementService;
+        this.notificationService = notificationService;
+    }
+
+    // ── Méthodes publiques ────────────────────────────────────────────────────
+
+    /**
+     * Crée une réservation pour un passager sur un trajet donné.
+     * <ol>
+     *   <li>Vérifie la disponibilité du trajet</li>
+     *   <li>Autorise le paiement immédiatement (fonds bloqués)</li>
+     *   <li>Réserve la(les) place(s) sur le trajet</li>
+     *   <li>Notifie le passager et le chauffeur</li>
+     * </ol>
+     *
+     * @param passager      Utilisateur réservant la place
+     * @param trajetId      Identifiant du trajet
+     * @param nombrePlaces  Nombre de places souhaitées (minimum 1)
+     * @param methode       Méthode de paiement choisie
+     * @return Réservation créée avec statut EN_ATTENTE
+     * @throws TrajetCompletException       si le trajet est complet
+     * @throws ReservationInvalideException si les données sont invalides
+     * @throws PaiementEcheException        si l'autorisation du paiement échoue
+     * @throws UtilisateurSuspenduException si le compte passager est suspendu
+     */
+    public Reservation creerReservation(Utilisateur passager, int trajetId,
+                                         int nombrePlaces, MethodePaiement methode)
+            throws TrajetCompletException, ReservationInvalideException,
+                   PaiementEcheException, UtilisateurSuspenduException {
+
+        // ── Vérification du compte passager ──────────────────────────────────
+        if (!passager.estActif()) {
+            throw new UtilisateurSuspenduException(passager.getEmail());
+        }
+
+        // ── Validation du trajet ──────────────────────────────────────────────
+        Optional<Trajet> optTrajet = trajetService.trouverParId(trajetId);
+        if (optTrajet.isEmpty()) {
+            throw new ReservationInvalideException("Trajet #" + trajetId + " introuvable.");
+        }
+        Trajet trajet = optTrajet.get();
+
+        if (trajet.getStatut() == StatutTrajet.COMPLET) {
+            throw new TrajetCompletException(trajetId);
+        }
+        if (trajet.getStatut() != StatutTrajet.OUVERT) {
+            throw new ReservationInvalideException(
+                "Le trajet #" + trajetId + " n'accepte plus de réservations (statut : " +
+                trajet.getStatut() + ").");
+        }
+        if (trajet.getPlacesDisponibles() < nombrePlaces) {
+            throw new ReservationInvalideException(
+                "Seulement " + trajet.getPlacesDisponibles() +
+                " place(s) disponible(s), vous en demandez " + nombrePlaces + ".");
+        }
+        if (trajet.getChauffeur().getId() == passager.getId()) {
+            throw new ReservationInvalideException(
+                "Un chauffeur ne peut pas réserver une place sur son propre trajet.");
+        }
+
+        try {
+            // ── Calcul du montant ─────────────────────────────────────────────
+            double montant = trajet.getPrixParPlace() * nombrePlaces;
+
+            // ── Création de l'entité réservation ──────────────────────────────
+            Reservation reservation = new Reservation(trajet, passager, nombrePlaces);
+
+            // ── Autorisation du paiement (fonds bloqués) ─────────────────────
+            // La capture interviendra à la confirmation par le chauffeur
+            String referenceTransaction = paiementService.autoriser(reservation, montant, methode);
+            reservation.setReferenceTransaction(referenceTransaction);
+
+            // ── Persistance de la réservation ─────────────────────────────────
+            reservationDAO.inserer(reservation);
+
+            // ── Mise à jour des places disponibles sur le trajet ──────────────
+            for (int i = 0; i < nombrePlaces; i++) {
+                trajetService.ajouterPassager(trajetId);
+            }
+
+            // ── Notifications ─────────────────────────────────────────────────
+            notificationService.notifierEmail(
+                passager.getEmail(),
+                "Confirmation de votre demande de réservation",
+                "Votre demande de réservation #" + reservation.getId() +
+                " pour le trajet " + trajet.getVilleDepart() + " → " + trajet.getVilleArrivee() +
+                " est en cours de traitement. En attente de confirmation du chauffeur."
+            );
+            notificationService.notifierSMS(
+                passager.getTelephone(),
+                "CovoitApp : Réservation #" + reservation.getId() + " en attente de confirmation."
+            );
+            notificationService.notifierEmail(
+                trajet.getChauffeur().getEmail(),
+                "Nouvelle demande de réservation",
+                passager.getPrenom() + " " + passager.getNom() +
+                " souhaite réserver " + nombrePlaces + " place(s) sur votre trajet #" + trajetId + "."
+            );
+
+            return reservation;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la création de la réservation : " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Confirme une réservation (action du chauffeur).
+     * Déclenche la capture du paiement.
+     *
+     * @param reservationId Identifiant de la réservation
+     * @param chauffeurId   Identifiant du chauffeur confirmant
+     * @throws ReservationInvalideException si la réservation n'existe pas ou est invalide
+     * @throws PaiementEcheException        si la capture du paiement échoue
+     */
+    public void confirmerReservation(int reservationId, int chauffeurId)
+            throws ReservationInvalideException, PaiementEcheException {
+        try {
+            Optional<Reservation> opt = reservationDAO.trouverParId(reservationId);
+            if (opt.isEmpty()) {
+                throw new ReservationInvalideException("Réservation #" + reservationId + " introuvable.");
+            }
+            Reservation reservation = opt.get();
+
+            // Vérification que c'est bien le chauffeur du trajet
+            if (reservation.getTrajet().getChauffeur().getId() != chauffeurId) {
+                throw new ReservationInvalideException(
+                    "Seul le chauffeur du trajet peut confirmer cette réservation.");
+            }
+            if (reservation.getStatut() != StatutReservation.EN_ATTENTE) {
+                throw new ReservationInvalideException(
+                    "Seule une réservation EN_ATTENTE peut être confirmée. Statut actuel : " +
+                    reservation.getStatut());
+            }
+
+            // ── Capture du paiement (débit réel) ─────────────────────────────
+            paiementService.capturer(reservation.getReferenceTransaction());
+
+            // ── Mise à jour statut réservation ────────────────────────────────
+            reservation.confirmer();
+            reservationDAO.confirmer(reservationId);
+
+            // ── Notification passager ─────────────────────────────────────────
+            notificationService.notifierEmail(
+                reservation.getPassager().getEmail(),
+                "Réservation confirmée !",
+                "Votre réservation #" + reservationId + " pour le trajet " +
+                reservation.getTrajet().getVilleDepart() + " → " +
+                reservation.getTrajet().getVilleArrivee() + " est confirmée. Bon voyage !"
+            );
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la confirmation de la réservation : " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Annule une réservation (action du passager).
+     * Calcule et initie le remboursement selon les règles métier.
+     *
+     * @param reservationId Identifiant de la réservation
+     * @param passagerId    Identifiant du passager annulant
+     */
+    public double annulerReservation(int reservationId, int passagerId)
+            throws ReservationInvalideException, PaiementEcheException {
+        try {
+            Optional<Reservation> opt = reservationDAO.trouverParId(reservationId);
+            if (opt.isEmpty()) {
+                throw new ReservationInvalideException("Réservation #" + reservationId + " introuvable.");
+            }
+            Reservation reservation = opt.get();
+
+            // Vérification que c'est bien le passager concerné
+            if (reservation.getPassager().getId() != passagerId) {
+                throw new ReservationInvalideException(
+                    "Vous n'êtes pas autorisé à annuler cette réservation.");
+            }
+            if (reservation.getStatut() == StatutReservation.ANNULEE ||
+                reservation.getStatut() == StatutReservation.REMBOURSEE) {
+                throw new ReservationInvalideException(
+                    "Cette réservation est déjà annulée ou remboursée.");
+            }
+
+            // ── Calcul du remboursement ────────────────────────────────────────
+            double montantARemb = reservation.calculerMontantRemboursement();
+
+            // ── Annulation de la réservation ──────────────────────────────────
+            reservation.annuler();
+            reservationDAO.mettreAJourStatutAnnulation(reservation);
+
+            // ── Libération des places sur le trajet ───────────────────────────
+            for (int i = 0; i < reservation.getNombrePlaces(); i++) {
+                trajetService.retirerPassager(reservation.getTrajet().getId());
+            }
+
+            // ── Remboursement ─────────────────────────────────────────────────
+            rembourserReservation(reservationId, montantARemb, reservation.getReferenceTransaction());
+
+            // ── Notification ──────────────────────────────────────────────────
+            boolean remboursementTotal = montantARemb >= reservation.getMontantTotal();
+            notificationService.notifierEmail(
+                reservation.getPassager().getEmail(),
+                "Réservation annulée",
+                "Votre réservation #" + reservationId + " a été annulée. " +
+                "Remboursement de " + String.format("%.2f", montantARemb) + "€ " +
+                (remboursementTotal ? "(total)" : "(partiel — moins de 24h avant départ)") +
+                " en cours de traitement."
+            );
+
+            return montantARemb;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de l'annulation de la réservation : " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Effectue le remboursement associé à une réservation annulée.
+     *
+     * @param reservationId      Identifiant de la réservation
+     * @param montantARembourser Montant à rembourser
+     * @param referenceTransaction Référence de la transaction originale
+     */
+    public void rembourserReservation(int reservationId, double montantARembourser,
+                                       String referenceTransaction) throws PaiementEcheException {
+        try {
+            paiementService.rembourser(referenceTransaction, montantARembourser);
+
+            // Mise à jour du statut de la réservation
+            Optional<Reservation> opt = reservationDAO.trouverParId(reservationId);
+            if (opt.isPresent()) {
+                Reservation r = opt.get();
+                r.marquerCommeRemboursee();
+                r.setMontantRembourse(montantARembourser);
+                reservationDAO.mettreAJourStatutAnnulation(r);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors du remboursement : " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Retourne les réservations d'un passager.
+     */
+    public List<Reservation> listerReservationsPassager(int passagerId) {
+        try {
+            return reservationDAO.trouverParPassager(passagerId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la récupération des réservations : " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Retourne les réservations d'un trajet.
+     */
+    public List<Reservation> listerReservationsTrajet(int trajetId) {
+        try {
+            return reservationDAO.trouverParTrajet(trajetId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la récupération des réservations : " + e.getMessage(), e);
+        }
+    }
+}
