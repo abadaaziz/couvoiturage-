@@ -1,5 +1,6 @@
 package com.covoiturage.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,9 @@ import java.util.Objects;
  * Entité représentant un utilisateur de la plateforme de covoiturage.
  * Peut être un passager, un chauffeur, ou les deux.
  */
-public class Utilisateur {
+public class Utilisateur implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     // ── Énumérations internes ─────────────────────────────────────────────────
 

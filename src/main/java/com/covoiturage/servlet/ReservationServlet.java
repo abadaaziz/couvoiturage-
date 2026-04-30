@@ -1,5 +1,9 @@
 package com.covoiturage.servlet;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+
 import com.covoiturage.exception.PaiementEcheException;
 import com.covoiturage.exception.ReservationInvalideException;
 import com.covoiturage.exception.TrajetCompletException;
@@ -7,6 +11,7 @@ import com.covoiturage.exception.UtilisateurSuspenduException;
 import com.covoiturage.model.Paiement.MethodePaiement;
 import com.covoiturage.model.Reservation;
 import com.covoiturage.model.Utilisateur;
+import com.covoiturage.model.Utilisateur.Role;
 import com.covoiturage.service.ReservationService;
 
 import jakarta.servlet.ServletException;
@@ -16,20 +21,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
-
 /**
  * Servlet gérant les réservations de places.
  *
  * <ul>
  *   <li>POST /reservation/creer   → créer une réservation</li>
  *   <li>POST /reservation/annuler → annuler une réservation</li>
- *   <li>GET  /reservation/mes     → lister les réservations de l'utilisateur connecté</li>
+ *   <li>GET  /reservation/mes       → lister les réservations du passager connecté</li>
+ *   <li>GET  /reservation/chauffeur → lister les réservations liées aux trajets du chauffeur connecté</li>
+ *   <li>POST /reservation/confirmer → confirmer une réservation (chauffeur)</li>
  * </ul>
  */
-@WebServlet(urlPatterns = {"/reservation/creer", "/reservation/annuler", "/reservation/mes"})
+@WebServlet(urlPatterns = {
+    "/reservation/creer", "/reservation/annuler", "/reservation/mes",
+    "/reservation/chauffeur", "/reservation/confirmer"
+})
 public class ReservationServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -48,10 +54,30 @@ public class ReservationServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        String accept = request.getHeader("Accept");
+        boolean requeteJson = (accept != null && accept.contains("application/json")) ||
+                              "json".equalsIgnoreCase(request.getParameter("format"));
+
+        String chemin = request.getServletPath();
+
+        if ("/reservation/chauffeur".equals(chemin)) {
+            traiterListeChauffeur(request, response, requeteJson);
+            return;
+        }
+
         Utilisateur passager = getUtilisateurConnecte(request);
         if (passager == null) {
-            envoyerErreurJson(response, HttpServletResponse.SC_UNAUTHORIZED,
-                "Vous devez être connecté.");
+            if (requeteJson) {
+                envoyerErreurJson(response, HttpServletResponse.SC_UNAUTHORIZED,
+                    "Vous devez etre connecte.");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/login");
+            }
+            return;
+        }
+
+        if (!requeteJson) {
+            request.getRequestDispatcher("/views/reservations.html").forward(request, response);
             return;
         }
 
@@ -74,6 +100,7 @@ public class ReservationServlet extends HttpServlet {
         switch (chemin) {
             case "/reservation/creer"   -> traiterCreation(request, response);
             case "/reservation/annuler" -> traiterAnnulation(request, response);
+            case "/reservation/confirmer" -> traiterConfirmation(request, response);
             default -> envoyerErreurJson(response, HttpServletResponse.SC_NOT_FOUND,
                 "Route non reconnue.");
         }
@@ -180,6 +207,64 @@ public class ReservationServlet extends HttpServlet {
         }
     }
 
+    private void traiterConfirmation(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        Utilisateur chauffeur = getChauffeurConnecte(request);
+        if (chauffeur == null) {
+            envoyerErreurJson(response, HttpServletResponse.SC_FORBIDDEN,
+                "Action reservee aux chauffeurs.");
+            return;
+        }
+
+        String reservationIdStr = request.getParameter("reservationId");
+        if (estNullOuVide(reservationIdStr)) {
+            envoyerErreurJson(response, HttpServletResponse.SC_BAD_REQUEST,
+                "L'identifiant de la reservation est obligatoire.");
+            return;
+        }
+
+        try {
+            int reservationId = Integer.parseInt(reservationIdStr);
+            reservationService.confirmerReservation(reservationId, chauffeur.getId());
+
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().print("{\"succes\":true,\"message\":\"Reservation confirmee.\"}");
+
+        } catch (NumberFormatException e) {
+            envoyerErreurJson(response, HttpServletResponse.SC_BAD_REQUEST,
+                "Identifiant de reservation invalide.");
+        } catch (ReservationInvalideException e) {
+            envoyerErreurJson(response, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+        } catch (PaiementEcheException e) {
+            envoyerErreurJson(response, HttpServletResponse.SC_PAYMENT_REQUIRED,
+                "Capture du paiement echouee : " + e.getMessage());
+        }
+    }
+
+    private void traiterListeChauffeur(HttpServletRequest request, HttpServletResponse response,
+                                       boolean requeteJson) throws IOException, ServletException {
+        Utilisateur chauffeur = getChauffeurConnecte(request);
+        if (chauffeur == null) {
+            if (requeteJson) {
+                envoyerErreurJson(response, HttpServletResponse.SC_FORBIDDEN,
+                    "Action reservee aux chauffeurs.");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/login");
+            }
+            return;
+        }
+
+        if (!requeteJson) {
+            response.sendRedirect(request.getContextPath() + "/trajets/mes");
+            return;
+        }
+
+        List<Reservation> reservations = reservationService.listerReservationsChauffeur(chauffeur.getId());
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().print(reservationListToJson(reservations));
+    }
+
     // ── Sérialisation JSON manuelle ───────────────────────────────────────────
 
     private String reservationListToJson(List<Reservation> reservations) {
@@ -193,12 +278,24 @@ public class ReservationServlet extends HttpServlet {
     }
 
     private String reservationToJson(Reservation r) {
+        String passagerNom = "";
+        String passagerPrenom = "";
+        String passagerEmail = "";
+        if (r.getPassager() != null) {
+            passagerNom = r.getPassager().getNom();
+            passagerPrenom = r.getPassager().getPrenom();
+            passagerEmail = r.getPassager().getEmail();
+        }
+
         return "{" +
                "\"id\":" + r.getId() + "," +
                "\"trajetId\":" + r.getTrajet().getId() + "," +
                "\"villeDepart\":\"" + echapper(r.getTrajet().getVilleDepart()) + "\"," +
                "\"villeArrivee\":\"" + echapper(r.getTrajet().getVilleArrivee()) + "\"," +
                "\"dateHeureDepart\":\"" + r.getTrajet().getDateHeureDepart() + "\"," +
+               "\"passagerNom\":\"" + echapper(passagerNom) + "\"," +
+               "\"passagerPrenom\":\"" + echapper(passagerPrenom) + "\"," +
+               "\"passagerEmail\":\"" + echapper(passagerEmail) + "\"," +
                "\"nombrePlaces\":" + r.getNombrePlaces() + "," +
                "\"montantTotal\":" + r.getMontantTotal() + "," +
                "\"statut\":\"" + r.getStatut() + "\"," +
@@ -223,6 +320,13 @@ public class ReservationServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         if (session == null) return null;
         return (Utilisateur) session.getAttribute(LoginServlet.SESSION_UTILISATEUR);
+    }
+
+    private Utilisateur getChauffeurConnecte(HttpServletRequest request) {
+        Utilisateur u = getUtilisateurConnecte(request);
+        if (u == null) return null;
+        if (u.getRole() != Role.CHAUFFEUR && u.getRole() != Role.ADMIN) return null;
+        return u;
     }
 
     private boolean estNullOuVide(String v) {

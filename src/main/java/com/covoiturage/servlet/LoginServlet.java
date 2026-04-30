@@ -1,5 +1,9 @@
 package com.covoiturage.servlet;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 import com.covoiturage.exception.AuthenticationException;
 import com.covoiturage.exception.UtilisateurSuspenduException;
 import com.covoiturage.model.Utilisateur;
@@ -11,8 +15,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
-import java.io.IOException;
 
 /**
  * Servlet gérant la connexion et la déconnexion des utilisateurs.
@@ -88,16 +90,16 @@ public class LoginServlet extends HttpServlet {
 
     // ── Méthodes privées ──────────────────────────────────────────────────────
 
-    private void traiterConnexion(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+        private void traiterConnexion(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
 
         String email      = request.getParameter("email");
         String motDePasse = request.getParameter("motDePasse");
 
         // ── Validation basique des paramètres ─────────────────────────────────
         if (estNullOuVide(email) || estNullOuVide(motDePasse)) {
-            request.setAttribute("erreur", "Veuillez renseigner votre email et votre mot de passe.");
-            request.getRequestDispatcher("/views/login.html").forward(request, response);
+            redirigerAvecMessage(request, response, "erreur",
+                "Veuillez renseigner votre email et votre mot de passe.");
             return;
         }
 
@@ -118,12 +120,14 @@ public class LoginServlet extends HttpServlet {
             }
 
         } catch (AuthenticationException e) {
-            request.setAttribute("erreur", e.getMessage());
-            request.getRequestDispatcher("/views/login.html").forward(request, response);
+            redirigerAvecMessage(request, response, "erreur", e.getMessage());
 
         } catch (UtilisateurSuspenduException e) {
-            request.setAttribute("erreur", "Votre compte est suspendu. " + e.getMessage());
-            request.getRequestDispatcher("/views/login.html").forward(request, response);
+            redirigerAvecMessage(request, response, "erreur",
+                "Votre compte est suspendu. " + e.getMessage());
+        } catch (RuntimeException e) {
+            redirigerAvecMessage(request, response, "erreur",
+                "Service temporairement indisponible. Relancez l'application puis reessayez.");
         }
     }
 
@@ -141,7 +145,13 @@ public class LoginServlet extends HttpServlet {
         }
 
         // Redirection vers la page de connexion
-        response.sendRedirect(request.getContextPath() + "/login");
+        redirigerAvecMessage(request, response, "succes", "Vous avez ete deconnecte.");
+    }
+
+    private void redirigerAvecMessage(HttpServletRequest request, HttpServletResponse response,
+                                      String type, String message) throws IOException {
+        String msgEncode = URLEncoder.encode(message, StandardCharsets.UTF_8);
+        response.sendRedirect(request.getContextPath() + "/login?" + type + "=" + msgEncode);
     }
 
     private boolean estNullOuVide(String valeur) {

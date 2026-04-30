@@ -1,5 +1,9 @@
 package com.covoiturage.servlet;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+
 import com.covoiturage.model.Utilisateur;
 import com.covoiturage.model.Utilisateur.Role;
 import com.covoiturage.service.AuthService;
@@ -10,10 +14,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
 
 /**
  * Servlet d'administration (réservée aux utilisateurs avec le rôle ADMIN).
@@ -43,11 +43,24 @@ public class AdminServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        String accept = request.getHeader("Accept");
+        boolean requeteJson = (accept != null && accept.contains("application/json")) ||
+                              "json".equalsIgnoreCase(request.getParameter("format"));
+
         // Vérification des droits admin
         Utilisateur admin = getAdmin(request);
         if (admin == null) {
-            envoyerErreurJson(response, HttpServletResponse.SC_FORBIDDEN,
-                "Accès réservé aux administrateurs.");
+            if (requeteJson) {
+                envoyerErreurJson(response, HttpServletResponse.SC_FORBIDDEN,
+                    "Acces reserve aux administrateurs.");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/login");
+            }
+            return;
+        }
+
+        if (!requeteJson) {
+            request.getRequestDispatcher("/views/admin.html").forward(request, response);
             return;
         }
 

@@ -59,22 +59,46 @@ public final class PasswordUtils {
      */
     public static boolean verifier(String motDePasse, String hashStocke) {
         try {
+            if (hashStocke == null || hashStocke.isBlank()) {
+                return false;
+            }
+
+            // Format actuel: BASE64(sel):BASE64(hash)
             String[] parties   = hashStocke.split(":");
-            if (parties.length != 2) return false;
+            if (parties.length == 2) {
+                byte[] sel         = Base64.getDecoder().decode(parties[0]);
+                byte[] hashAttendu = Base64.getDecoder().decode(parties[1]);
 
-            byte[] sel         = Base64.getDecoder().decode(parties[0]);
-            byte[] hashAttendu = Base64.getDecoder().decode(parties[1]);
+                MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
+                digest.update(sel);
+                byte[] hashCalcule = digest.digest(
+                    motDePasse.getBytes(java.nio.charset.StandardCharsets.UTF_8));
 
-            MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
-            digest.update(sel);
-            byte[] hashCalcule = digest.digest(
+                // Comparaison constante en temps pour éviter les attaques timing
+                return MessageDigest.isEqual(hashCalcule, hashAttendu);
+            }
+
+            // Format legacy: SHA-256 hex du mot de passe sans sel
+            MessageDigest legacyDigest = MessageDigest.getInstance(ALGORITHM);
+            byte[] legacyHash = legacyDigest.digest(
                 motDePasse.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            String legacyHex = bytesVersHex(legacyHash);
 
-            // Comparaison constante en temps pour éviter les attaques timing
-            return MessageDigest.isEqual(hashCalcule, hashAttendu);
+            return MessageDigest.isEqual(
+                legacyHex.toLowerCase().getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                hashStocke.trim().toLowerCase().getBytes(java.nio.charset.StandardCharsets.UTF_8)
+            );
 
         } catch (Exception e) {
             return false;
         }
+    }
+
+    private static String bytesVersHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder(bytes.length * 2);
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 }

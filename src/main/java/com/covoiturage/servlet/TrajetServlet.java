@@ -1,9 +1,16 @@
 package com.covoiturage.servlet;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+
 import com.covoiturage.exception.ReservationInvalideException;
 import com.covoiturage.exception.UtilisateurSuspenduException;
 import com.covoiturage.model.Trajet;
 import com.covoiturage.model.Utilisateur;
+import com.covoiturage.model.Utilisateur.Role;
 import com.covoiturage.service.TrajetService;
 
 import jakarta.servlet.ServletException;
@@ -13,22 +20,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.List;
-
 /**
  * Servlet gérant les opérations sur les trajets.
  *
  * <ul>
  *   <li>GET  /trajets           → liste des trajets disponibles (JSON)</li>
+ *   <li>GET  /trajets/mes       → page/liste JSON des trajets du chauffeur connecté</li>
  *   <li>POST /trajets/nouveau   → proposition d'un nouveau trajet</li>
  *   <li>POST /trajets/annuler   → annulation d'un trajet par le chauffeur</li>
  * </ul>
  */
-@WebServlet(urlPatterns = {"/trajets", "/trajets/nouveau", "/trajets/annuler"})
+@WebServlet(urlPatterns = {"/trajets", "/trajets/mes", "/trajets/nouveau", "/trajets/annuler"})
 public class TrajetServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -51,6 +53,24 @@ public class TrajetServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        String chemin = request.getServletPath();
+
+        String accept = request.getHeader("Accept");
+        boolean requeteJson = (accept != null && accept.contains("application/json")) ||
+                              "json".equalsIgnoreCase(request.getParameter("format"));
+
+        if ("/trajets/mes".equals(chemin)) {
+            traiterMesTrajets(request, response, requeteJson);
+            return;
+        }
+
+        // Navigation navigateur: /trajets doit afficher la page HTML.
+        // Les appels AJAX de trajets.js demandent explicitement du JSON.
+        if (!requeteJson) {
+            request.getRequestDispatcher("/views/trajets.html").forward(request, response);
+            return;
+        }
+
         String depart  = request.getParameter("depart");
         String arrivee = request.getParameter("arrivee");
         String date    = request.getParameter("date");
@@ -71,6 +91,9 @@ public class TrajetServlet extends HttpServlet {
             // Réponse JSON
             response.setContentType("application/json;charset=UTF-8");
             response.setCharacterEncoding("UTF-8");
+            response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+            response.setHeader("Pragma", "no-cache");
+            response.setDateHeader("Expires", 0);
             PrintWriter out = response.getWriter();
             out.print(trajetListToJson(trajets));
             out.flush();
@@ -79,6 +102,33 @@ public class TrajetServlet extends HttpServlet {
             envoyerErreurJson(response, HttpServletResponse.SC_BAD_REQUEST,
                 "Paramètre 'places' invalide : doit être un entier.");
         }
+    }
+
+    private void traiterMesTrajets(HttpServletRequest request, HttpServletResponse response,
+                                   boolean requeteJson) throws IOException, ServletException {
+        Utilisateur chauffeur = getChauffeurConnecte(request);
+        if (chauffeur == null) {
+            if (requeteJson) {
+                envoyerErreurJson(response, HttpServletResponse.SC_FORBIDDEN,
+                    "Action reservee aux chauffeurs.");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/login");
+            }
+            return;
+        }
+
+        if (!requeteJson) {
+            request.getRequestDispatcher("/views/mes-trajets.html").forward(request, response);
+            return;
+        }
+
+        List<Trajet> trajets = trajetService.listerTrajetsParChauffeur(chauffeur.getId());
+        response.setContentType("application/json;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+        response.getWriter().print(trajetListToJson(trajets));
     }
 
     // ── POST /trajets/nouveau ─────────────────────────────────────────────────
@@ -239,6 +289,13 @@ public class TrajetServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         if (session == null) return null;
         return (Utilisateur) session.getAttribute(LoginServlet.SESSION_UTILISATEUR);
+    }
+
+    private Utilisateur getChauffeurConnecte(HttpServletRequest request) {
+        Utilisateur u = getUtilisateurConnecte(request);
+        if (u == null) return null;
+        if (u.getRole() != Role.CHAUFFEUR && u.getRole() != Role.ADMIN) return null;
+        return u;
     }
 
     private boolean estNullOuVide(String v) {

@@ -1,20 +1,20 @@
 package com.covoiturage.service;
 
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+
 import com.covoiturage.dao.ReservationDAO;
 import com.covoiturage.exception.PaiementEcheException;
 import com.covoiturage.exception.ReservationInvalideException;
 import com.covoiturage.exception.TrajetCompletException;
 import com.covoiturage.exception.UtilisateurSuspenduException;
+import com.covoiturage.model.Paiement.MethodePaiement;
 import com.covoiturage.model.Reservation;
 import com.covoiturage.model.Reservation.StatutReservation;
 import com.covoiturage.model.Trajet;
 import com.covoiturage.model.Trajet.StatutTrajet;
 import com.covoiturage.model.Utilisateur;
-import com.covoiturage.model.Paiement.MethodePaiement;
-
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Service de gestion des réservations.
@@ -109,13 +109,15 @@ public class ReservationService {
             // ── Création de l'entité réservation ──────────────────────────────
             Reservation reservation = new Reservation(trajet, passager, nombrePlaces);
 
+            // La réservation doit exister en base avant d'insérer un paiement
+            // (contrainte FK paiements.reservation_id -> reservations.id).
+            reservationDAO.inserer(reservation);
+
             // ── Autorisation du paiement (fonds bloqués) ─────────────────────
             // La capture interviendra à la confirmation par le chauffeur
             String referenceTransaction = paiementService.autoriser(reservation, montant, methode);
             reservation.setReferenceTransaction(referenceTransaction);
-
-            // ── Persistance de la réservation ─────────────────────────────────
-            reservationDAO.inserer(reservation);
+            reservationDAO.mettreAJourReferenceTransaction(reservation.getId(), referenceTransaction);
 
             // ── Mise à jour des places disponibles sur le trajet ──────────────
             for (int i = 0; i < nombrePlaces; i++) {
@@ -302,6 +304,17 @@ public class ReservationService {
             return reservationDAO.trouverParTrajet(trajetId);
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la récupération des réservations : " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Retourne les réservations de tous les trajets d'un chauffeur.
+     */
+    public List<Reservation> listerReservationsChauffeur(int chauffeurId) {
+        try {
+            return reservationDAO.trouverParChauffeur(chauffeurId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la récupération des réservations chauffeur : " + e.getMessage(), e);
         }
     }
 }

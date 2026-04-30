@@ -1,5 +1,9 @@
 package com.covoiturage.servlet;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 import com.covoiturage.model.Utilisateur;
 import com.covoiturage.model.Utilisateur.Role;
 import com.covoiturage.service.AuthService;
@@ -10,8 +14,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
-import java.io.IOException;
 
 /**
  * Servlet gérant l'inscription de nouveaux utilisateurs.
@@ -72,16 +74,14 @@ public class InscriptionServlet extends HttpServlet {
         // ── Validation côté serveur ───────────────────────────────────────────
         if (estNullOuVide(nom) || estNullOuVide(prenom) || estNullOuVide(email) ||
             estNullOuVide(motDePasse) || estNullOuVide(roleStr)) {
-
-            request.setAttribute("erreur", "Tous les champs obligatoires doivent être renseignés.");
-            request.getRequestDispatcher("/views/inscription.html").forward(request, response);
+            redirigerAvecErreur(request, response,
+                "Tous les champs obligatoires doivent etre renseignes.");
             return;
         }
 
         // Vérification de la confirmation du mot de passe
         if (!motDePasse.equals(confirmation)) {
-            request.setAttribute("erreur", "Les mots de passe ne correspondent pas.");
-            request.getRequestDispatcher("/views/inscription.html").forward(request, response);
+            redirigerAvecErreur(request, response, "Les mots de passe ne correspondent pas.");
             return;
         }
 
@@ -91,13 +91,11 @@ public class InscriptionServlet extends HttpServlet {
             role = Role.valueOf(roleStr.toUpperCase());
             if (role == Role.ADMIN) {
                 // Impossible de s'inscrire directement en tant qu'ADMIN
-                request.setAttribute("erreur", "Rôle non autorisé à l'inscription.");
-                request.getRequestDispatcher("/views/inscription.html").forward(request, response);
+                redirigerAvecErreur(request, response, "Role non autorise a l'inscription.");
                 return;
             }
         } catch (IllegalArgumentException e) {
-            request.setAttribute("erreur", "Rôle invalide sélectionné.");
-            request.getRequestDispatcher("/views/inscription.html").forward(request, response);
+            redirigerAvecErreur(request, response, "Role invalide selectionne.");
             return;
         }
 
@@ -119,9 +117,14 @@ public class InscriptionServlet extends HttpServlet {
 
         } catch (IllegalArgumentException e) {
             // Erreur de validation métier (email déjà pris, mdp trop court, etc.)
-            request.setAttribute("erreur", e.getMessage());
-            request.getRequestDispatcher("/views/inscription.html").forward(request, response);
+            redirigerAvecErreur(request, response, e.getMessage());
         }
+    }
+
+    private void redirigerAvecErreur(HttpServletRequest request, HttpServletResponse response,
+                                     String message) throws IOException {
+        String msgEncode = URLEncoder.encode(message, StandardCharsets.UTF_8);
+        response.sendRedirect(request.getContextPath() + "/inscription?erreur=" + msgEncode);
     }
 
     private boolean estNullOuVide(String valeur) {

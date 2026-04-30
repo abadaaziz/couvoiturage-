@@ -1,15 +1,20 @@
 package com.covoiturage.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import com.covoiturage.model.Reservation;
 import com.covoiturage.model.Reservation.StatutReservation;
 import com.covoiturage.model.Trajet;
 import com.covoiturage.model.Utilisateur;
 import com.covoiturage.util.DatabaseConnection;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * DAO pour l'entité {@link Reservation}. JDBC pur.
@@ -22,7 +27,7 @@ public class ReservationDAO {
 
     private static final String SQL_SELECT_BY_ID =
         "SELECT r.*, " +
-        "t.ville_depart, t.ville_arrivee, t.date_heure_depart, t.prix_par_place, " +
+        "t.ville_depart, t.ville_arrivee, t.date_heure_depart, t.prix_par_place, t.chauffeur_id, " +
         "u.nom AS passager_nom, u.prenom AS passager_prenom, u.email AS passager_email " +
         "FROM reservations r " +
         "JOIN trajets t ON r.trajet_id = t.id " +
@@ -31,7 +36,7 @@ public class ReservationDAO {
 
     private static final String SQL_SELECT_BY_PASSAGER =
         "SELECT r.*, " +
-        "t.ville_depart, t.ville_arrivee, t.date_heure_depart, t.prix_par_place, " +
+        "t.ville_depart, t.ville_arrivee, t.date_heure_depart, t.prix_par_place, t.chauffeur_id, " +
         "u.nom AS passager_nom, u.prenom AS passager_prenom, u.email AS passager_email " +
         "FROM reservations r " +
         "JOIN trajets t ON r.trajet_id = t.id " +
@@ -40,18 +45,30 @@ public class ReservationDAO {
 
     private static final String SQL_SELECT_BY_TRAJET =
         "SELECT r.*, " +
-        "t.ville_depart, t.ville_arrivee, t.date_heure_depart, t.prix_par_place, " +
+        "t.ville_depart, t.ville_arrivee, t.date_heure_depart, t.prix_par_place, t.chauffeur_id, " +
         "u.nom AS passager_nom, u.prenom AS passager_prenom, u.email AS passager_email " +
         "FROM reservations r " +
         "JOIN trajets t ON r.trajet_id = t.id " +
         "JOIN utilisateurs u ON r.passager_id = u.id " +
         "WHERE r.trajet_id = ? ORDER BY r.date_reservation ASC";
 
+    private static final String SQL_SELECT_BY_CHAUFFEUR =
+        "SELECT r.*, " +
+        "t.ville_depart, t.ville_arrivee, t.date_heure_depart, t.prix_par_place, t.chauffeur_id, " +
+        "u.nom AS passager_nom, u.prenom AS passager_prenom, u.email AS passager_email " +
+        "FROM reservations r " +
+        "JOIN trajets t ON r.trajet_id = t.id " +
+        "JOIN utilisateurs u ON r.passager_id = u.id " +
+        "WHERE t.chauffeur_id = ? ORDER BY r.date_reservation DESC";
+
     private static final String SQL_UPDATE_STATUT =
         "UPDATE reservations SET statut=?, date_annulation=?, montant_rembourse=? WHERE id=?";
 
     private static final String SQL_UPDATE_CONFIRMATION =
         "UPDATE reservations SET statut='CONFIRMEE' WHERE id=?";
+
+    private static final String SQL_UPDATE_REFERENCE_TRANSACTION =
+        "UPDATE reservations SET reference_transaction=? WHERE id=?";
 
     private static final String SQL_COUNT_ACTIVES_BY_TRAJET =
         "SELECT COUNT(*) FROM reservations WHERE trajet_id=? AND statut IN ('EN_ATTENTE','CONFIRMEE')";
@@ -116,6 +133,19 @@ public class ReservationDAO {
         return liste;
     }
 
+    public List<Reservation> trouverParChauffeur(int chauffeurId) throws SQLException {
+        List<Reservation> liste = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_SELECT_BY_CHAUFFEUR)) {
+
+            ps.setInt(1, chauffeurId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) liste.add(mapperResultSet(rs));
+            }
+        }
+        return liste;
+    }
+
     /**
      * Met à jour le statut d'une réservation suite à une annulation.
      */
@@ -140,6 +170,20 @@ public class ReservationDAO {
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_CONFIRMATION)) {
 
             ps.setInt(1, reservationId);
+            ps.executeUpdate();
+        }
+    }
+
+    /**
+     * Met à jour la référence de transaction liée à une réservation.
+     */
+    public void mettreAJourReferenceTransaction(int reservationId, String referenceTransaction)
+            throws SQLException {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_REFERENCE_TRANSACTION)) {
+
+            ps.setString(1, referenceTransaction);
+            ps.setInt(2, reservationId);
             ps.executeUpdate();
         }
     }
@@ -171,6 +215,9 @@ public class ReservationDAO {
         trajet.setVilleArrivee(rs.getString("ville_arrivee"));
         trajet.setDateHeureDepart(rs.getTimestamp("date_heure_depart").toLocalDateTime());
         trajet.setPrixParPlace(rs.getDouble("prix_par_place"));
+        Utilisateur chauffeur = new Utilisateur();
+        chauffeur.setId(rs.getInt("chauffeur_id"));
+        trajet.setChauffeur(chauffeur);
         r.setTrajet(trajet);
 
         // Passager (hydratation partielle)

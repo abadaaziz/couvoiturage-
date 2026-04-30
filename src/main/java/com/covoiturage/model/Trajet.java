@@ -1,5 +1,6 @@
 package com.covoiturage.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,9 @@ import java.util.Objects;
  * le statut passe automatiquement à {@link StatutTrajet#COMPLET}.
  * </p>
  */
-public class Trajet {
+public class Trajet implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     // ── Énumération du statut ─────────────────────────────────────────────────
 

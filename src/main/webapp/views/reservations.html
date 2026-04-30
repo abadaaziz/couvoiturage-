@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes reservations - CovoitApp</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/trajets" class="navbar-logo">CovoitApp</a>
+    <ul class="navbar-liens">
+        <li><a href="/trajets">Trajets</a></li>
+        <li><a href="/reservation/mes" class="actif">Mes reservations</a></li>
+    </ul>
+    <div class="navbar-actions">
+        <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
+    </div>
+</nav>
+
+<main class="page-principale">
+    <div class="conteneur" style="padding-top:2rem;padding-bottom:4rem;">
+        <div class="titre-section">
+            <h1>Mes reservations</h1>
+            <p class="texte-secondaire mt-1">Suivez et annulez vos reservations</p>
+        </div>
+
+        <div id="alerte" class="alerte" style="display:none;"></div>
+
+        <div id="chargement" class="chargement" style="display:flex;">
+            <div class="spinner"></div>
+            <span>Chargement de vos reservations...</span>
+        </div>
+
+        <div id="liste" class="trajets-grille"></div>
+
+        <p id="vide" style="display:none;text-align:center;padding:3rem;color:var(--texte-secondaire);">
+            Vous n'avez pas encore de reservation.
+        </p>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>© 2025 CovoitApp</p>
+</footer>
+
+<script>
+async function chargerReservations() {
+    const chargement = document.getElementById('chargement');
+    const liste = document.getElementById('liste');
+    const vide = document.getElementById('vide');
+    chargement.style.display = 'flex';
+    liste.innerHTML = '';
+    vide.style.display = 'none';
+
+    try {
+        const reponse = await fetch('/reservation/mes', {
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (reponse.status === 401) {
+            window.location.href = '/login';
+            return;
+        }
+        if (!reponse.ok) {
+            throw new Error('Erreur serveur: ' + reponse.status);
+        }
+
+        const reservations = await reponse.json();
+        if (!reservations.length) {
+            vide.style.display = 'block';
+            return;
+        }
+
+        reservations.forEach((r) => {
+            const el = document.createElement('div');
+            el.className = 'carte-trajet';
+            const statut = r.statut || '';
+            const annulable = statut !== 'ANNULEE' && statut !== 'REMBOURSEE';
+
+            el.innerHTML = `
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;">
+                    <div>
+                        <p class="semi-gras">${echapper(r.villeDepart)} -> ${echapper(r.villeArrivee)}</p>
+                        <p class="texte-sm texte-secondaire">Reservation #${r.id} • ${new Date(r.dateHeureDepart).toLocaleString('fr-FR')}</p>
+                    </div>
+                    <span class="badge">${echapper(statut)}</span>
+                </div>
+                <div style="margin-top:0.75rem;display:flex;justify-content:space-between;align-items:center;">
+                    <p class="texte-sm">${r.nombrePlaces} place(s) • ${Number(r.montantTotal).toFixed(2)} EUR</p>
+                    ${annulable ? `<button class="btn btn-danger btn-sm" data-id="${r.id}">Annuler</button>` : ''}
+                </div>
+            `;
+
+            const boutonAnnuler = el.querySelector('button[data-id]');
+            if (boutonAnnuler) {
+                boutonAnnuler.addEventListener('click', () => annulerReservation(r.id));
+            }
+            liste.appendChild(el);
+        });
+
+    } catch (e) {
+        afficherAlerte('Impossible de charger les reservations.', 'erreur');
+    } finally {
+        chargement.style.display = 'none';
+    }
+}
+
+async function annulerReservation(id) {
+    if (!confirm('Annuler cette reservation ?')) return;
+
+    const formData = new FormData();
+    formData.append('reservationId', String(id));
+
+    try {
+        const reponse = await fetch('/reservation/annuler', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await reponse.json();
+
+        if (reponse.ok) {
+            afficherAlerte('Reservation annulee.', 'succes');
+            await chargerReservations();
+        } else {
+            afficherAlerte(data.erreur || 'Erreur lors de l annulation.', 'erreur');
+        }
+    } catch (e) {
+        afficherAlerte('Erreur reseau.', 'erreur');
+    }
+}
+
+function afficherAlerte(message, type) {
+    const el = document.getElementById('alerte');
+    el.className = 'alerte alerte-' + type;
+    el.textContent = message;
+    el.style.display = 'flex';
+    setTimeout(() => {
+        el.style.display = 'none';
+    }, 3500);
+}
+
+function echapper(v) {
+    if (v == null) return '';
+    return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+document.addEventListener('DOMContentLoaded', chargerReservations);
+</script>
+
+</body>
+</html>

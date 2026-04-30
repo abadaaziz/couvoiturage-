@@ -21,7 +21,7 @@ public final class DatabaseConnection {
      * MODE=MySQL assure la compatibilité maximale avec le SQL MySQL utilisé dans les DAO.
      * CASE_INSENSITIVE_IDENTIFIERS=TRUE évite les problèmes de casse.
      */
-    private static final String JDBC_URL    = "jdbc:h2:file:./covoiturage_db;MODE=MySQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE;NON_KEYWORDS=VALUE;DB_CLOSE_DELAY=-1";
+    private static final String JDBC_URL    = "jdbc:h2:file:./covoiturage_db;MODE=MySQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE;NON_KEYWORDS=VALUE;LOCK_TIMEOUT=10000";
     private static final String JDBC_USER   = "sa";
     private static final String JDBC_PASSWORD = "";
     private static final String JDBC_DRIVER = "org.h2.Driver";

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CovoitApp — La plateforme de covoiturage intelligente. Voyagez malin, voyagez ensemble.">
+    <title>CovoitApp — Covoiturage intelligent</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ── Navigation ─────────────────────────────────────────────── -->
+<nav class="navbar">
+    <a href="/" class="navbar-logo">
+        <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+            <circle cx="24" cy="24" r="24" fill="url(#gIdx)"/>
+            <path d="M14 28l6-10 4 6 3-4 7 8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="14" cy="29" r="2.5" fill="white"/>
+            <circle cx="34" cy="29" r="2.5" fill="white"/>
+            <defs>
+                <linearGradient id="gIdx" x1="0" y1="0" x2="48" y2="48">
+                    <stop offset="0%" stop-color="#7c3aed"/>
+                    <stop offset="100%" stop-color="#2563eb"/>
+                </linearGradient>
+            </defs>
+        </svg>
+        CovoitApp
+    </a>
+    <ul class="navbar-liens">
+        <li><a href="/trajets">Trajets</a></li>
+    </ul>
+    <div class="navbar-actions">
+        <a href="/login"       class="btn btn-secondaire btn-sm" id="accueil-login">Se connecter</a>
+        <a href="/inscription" class="btn btn-primaire btn-sm"   id="accueil-inscription">Commencer</a>
+    </div>
+</nav>
+
+<!-- ── Hero ───────────────────────────────────────────────────── -->
+<section class="hero" aria-labelledby="titre-hero">
+    <!-- Orbes décoratives -->
+    <div style="position:absolute;width:500px;height:500px;border-radius:50%;
+                background:radial-gradient(circle,rgba(124,58,237,0.15),transparent 70%);
+                top:-150px;right:-100px;pointer-events:none;"></div>
+    <div style="position:absolute;width:350px;height:350px;border-radius:50%;
+                background:radial-gradient(circle,rgba(6,182,212,0.1),transparent 70%);
+                bottom:-100px;left:-50px;pointer-events:none;"></div>
+
+    <div class="hero-contenu">
+        <div class="hero-badge animation-entree">
+            🚀 &nbsp; Plateforme #1 du covoiturage en France
+        </div>
+
+        <h1 id="titre-hero" class="hero-titre animation-entree delai-1">
+            Voyagez ensemble,<br>économisez vraiment
+        </h1>
+
+        <p class="hero-description animation-entree delai-2">
+            CovoitApp connecte passagers et chauffeurs pour des trajets partagés,
+            sécurisés et économiques. Réservation instantanée, paiement sécurisé,
+            notation des conducteurs.
+        </p>
+
+        <div class="hero-actions animation-entree delai-3">
+            <a href="/trajets" id="btn-hero-trajets" class="btn btn-primaire btn-lg">
+                🔍 Trouver un trajet
+            </a>
+            <a href="/inscription" id="btn-hero-inscription" class="btn btn-secondaire btn-lg">
+                Proposer un trajet →
+            </a>
+        </div>
+
+        <!-- Stats rapides -->
+        <div class="animation-entree delai-4"
+             style="display:flex;gap:2rem;justify-content:center;margin-top:3rem;flex-wrap:wrap;">
+            <div style="text-align:center;">
+                <p style="font-size:2rem;font-weight:800;background:var(--gradient-hero);
+                           -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+                           background-clip:text;">50k+</p>
+                <p class="texte-sm texte-secondaire">Trajets proposés</p>
+            </div>
+            <div style="width:1px;background:var(--bordure);"></div>
+            <div style="text-align:center;">
+                <p style="font-size:2rem;font-weight:800;background:var(--gradient-hero);
+                           -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+                           background-clip:text;">120k+</p>
+                <p class="texte-sm texte-secondaire">Voyageurs</p>
+            </div>
+            <div style="width:1px;background:var(--bordure);"></div>
+            <div style="text-align:center;">
+                <p style="font-size:2rem;font-weight:800;background:var(--gradient-hero);
+                           -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+                           background-clip:text;">4.8★</p>
+                <p class="texte-sm texte-secondaire">Note moyenne</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Fonctionnalités ─────────────────────────────────────────── -->
+<section style="padding:5rem 2rem;" aria-labelledby="titre-fonctionnalites">
+    <div class="conteneur">
+        <div class="texte-centre titre-section">
+            <h2 id="titre-fonctionnalites">Pourquoi CovoitApp ?</h2>
+            <p class="texte-secondaire mt-1">Tout ce dont vous avez besoin pour voyager sereinement</p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;">
+
+            <div class="card">
+                <div style="font-size:2.5rem;margin-bottom:1rem;">🔒</div>
+                <h3>Paiement sécurisé</h3>
+                <p class="texte-secondaire mt-1" style="font-size:0.9rem;line-height:1.7;">
+                    Vos fonds sont bloqués à la réservation et libérés uniquement
+                    après confirmation du chauffeur. Remboursement garanti si annulation.
+                </p>
+            </div>
+
+            <div class="card">
+                <div style="font-size:2.5rem;margin-bottom:1rem;">⭐</div>
+                <h3>Conducteurs notés</h3>
+                <p class="texte-secondaire mt-1" style="font-size:0.9rem;line-height:1.7;">
+                    Chaque chauffeur est noté par ses passagers. Choisissez en
+                    confiance grâce aux avis vérifiés de la communauté.
+                </p>
+            </div>
+
+            <div class="card">
+                <div style="font-size:2.5rem;margin-bottom:1rem;">📱</div>
+                <h3>Notifications en temps réel</h3>
+                <p class="texte-secondaire mt-1" style="font-size:0.9rem;line-height:1.7;">
+                    Recevez des alertes SMS et email à chaque étape :
+                    réservation, confirmation, rappel de départ.
+                </p>
+            </div>
+
+            <div class="card">
+                <div style="font-size:2.5rem;margin-bottom:1rem;">♻️</div>
+                <h3>Remboursement flexible</h3>
+                <p class="texte-secondaire mt-1" style="font-size:0.9rem;line-height:1.7;">
+                    Annulation &gt; 24h → remboursement total.
+                    Annulation tardive → remboursement partiel à 50%.
+                    Transparent et équitable.
+                </p>
+            </div>
+
+            <div class="card">
+                <div style="font-size:2.5rem;margin-bottom:1rem;">🚗</div>
+                <h3>Places en temps réel</h3>
+                <p class="texte-secondaire mt-1" style="font-size:0.9rem;line-height:1.7;">
+                    Le statut du trajet est mis à jour instantanément.
+                    Dès la dernière place réservée, le trajet passe automatiquement
+                    en "Complet".
+                </p>
+            </div>
+
+            <div class="card">
+                <div style="font-size:2.5rem;margin-bottom:1rem;">🛡️</div>
+                <h3>Comptes vérifiés</h3>
+                <p class="texte-secondaire mt-1" style="font-size:0.9rem;line-height:1.7;">
+                    Email vérifié, téléphone validé. Les comptes non conformes
+                    sont suspendus par notre équipe de modération.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ── Call to action ──────────────────────────────────────────── -->
+<section style="padding:4rem 2rem;background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(37,99,235,0.08));">
+    <div class="conteneur texte-centre">
+        <h2>Prêt à partir ?</h2>
+        <p class="texte-secondaire mt-1" style="margin-bottom:2rem;font-size:1.05rem;">
+            Rejoignez CovoitApp gratuitement et trouvez votre prochain covoiturage.
+        </p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+            <a href="/inscription" id="cta-inscription" class="btn btn-primaire btn-lg">
+                Créer mon compte gratuit
+            </a>
+            <a href="/trajets" id="cta-trajets" class="btn btn-secondaire btn-lg">
+                Voir les trajets →
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ── Pied de page ────────────────────────────────────────────── -->
+<footer class="footer">
+    <p>© 2025 CovoitApp — Application de covoiturage Java Servlets + JDBC 🌍</p>
+</footer>
+
+</body>
+</html>

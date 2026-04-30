@@ -1,12 +1,12 @@
 package com.covoiturage.util;
 
-import jakarta.servlet.ServletContextEvent;
-import jakarta.servlet.ServletContextListener;
-import jakarta.servlet.annotation.WebListener;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
 
 /**
  * Initialise automatiquement le schéma de la base H2 au démarrage de l'application.
@@ -95,12 +95,12 @@ public class DatabaseInitializer implements ServletContextListener {
 
             // ── Compte admin par défaut ─────────────────────────────────────
             // Email: admin@covoitapp.com  |  Mot de passe: admin123
-            // Hash SHA-256 de "admin123"
+            // Hash SHA-256 (legacy) de "admin123"
             stmt.execute("""
                 MERGE INTO utilisateurs (nom, prenom, email, mot_de_passe_hash, telephone, role, statut_compte)
                 KEY (email)
                 VALUES ('Admin', 'CovoitApp', 'admin@covoitapp.com',
-                        'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
+                        '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
                         '0600000000', 'ADMIN', 'ACTIF')
             """);
 
@@ -116,19 +116,32 @@ public class DatabaseInitializer implements ServletContextListener {
     }
 
     /**
-     * Insère des données de démonstration uniquement si la table trajets est vide.
+     * Insère des données de démonstration si la table trajets est vide OU si tous les trajets
+     * existants sont dans le passé (cas d'une base ancienne réutilisée).
      */
     private void insertDemoDataIfEmpty(Statement stmt) throws SQLException {
-        var rs = stmt.executeQuery("SELECT COUNT(*) FROM trajets");
+        // Compter les trajets futurs ouverts
+        var rs = stmt.executeQuery(
+            "SELECT COUNT(*) FROM trajets WHERE statut='OUVERT' AND date_heure_depart > CURRENT_TIMESTAMP");
         rs.next();
-        if (rs.getInt(1) > 0) return; // données déjà présentes
+        int trajetsFuturs = rs.getInt(1);
+
+        if (trajetsFuturs > 0) return; // données fraîches déjà présentes
+
+        // Supprimer les anciens trajets de démo passés (et leurs réservations) pour repartir propre
+        stmt.execute("DELETE FROM paiements WHERE reservation_id IN " +
+            "(SELECT id FROM reservations WHERE trajet_id IN " +
+            "(SELECT id FROM trajets WHERE date_heure_depart <= CURRENT_TIMESTAMP))");
+        stmt.execute("DELETE FROM reservations WHERE trajet_id IN " +
+            "(SELECT id FROM trajets WHERE date_heure_depart <= CURRENT_TIMESTAMP)");
+        stmt.execute("DELETE FROM trajets WHERE date_heure_depart <= CURRENT_TIMESTAMP");
 
         // Compte chauffeur de démo
         stmt.execute("""
             MERGE INTO utilisateurs (nom, prenom, email, mot_de_passe_hash, telephone, role, statut_compte, note_moyenne, nombre_avis)
             KEY (email)
             VALUES ('Dupont', 'Jean', 'jean.dupont@demo.com',
-                    'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
+                    '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
                     '0612345678', 'CHAUFFEUR', 'ACTIF', 4.5, 12)
         """);
 
@@ -136,7 +149,7 @@ public class DatabaseInitializer implements ServletContextListener {
             MERGE INTO utilisateurs (nom, prenom, email, mot_de_passe_hash, telephone, role, statut_compte, note_moyenne, nombre_avis)
             KEY (email)
             VALUES ('Martin', 'Sophie', 'sophie.martin@demo.com',
-                    'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
+                    '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
                     '0698765432', 'CHAUFFEUR', 'ACTIF', 4.8, 25)
         """);
 

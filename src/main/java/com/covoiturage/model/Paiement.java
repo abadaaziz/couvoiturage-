@@ -1,5 +1,6 @@
 package com.covoiturage.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -14,7 +15,9 @@ import java.util.Objects;
  * </ul>
  * </p>
  */
-public class Paiement {
+public class Paiement implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     // ── Énumérations ──────────────────────────────────────────────────────────
 
