@@ -13,8 +13,11 @@
     <ul class="navbar-liens">
         <li><a href="/trajets">Trajets</a></li>
         <li><a href="/reservation/mes" class="actif">Mes reservations</a></li>
+        <li><a href="/notifications" class="nav-notifications">Notifications
+            <span id="notif-indicator" class="nav-indicator" style="display:none;"></span>
+        </a></li>
     </ul>
-    <div class="navbar-actions">
+    <div class="navbar-actions" id="navbar-actions">
         <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
     </div>
 </nav>
@@ -55,7 +58,7 @@ async function chargerReservations() {
     vide.style.display = 'none';
 
     try {
-        const reponse = await fetch('/reservation/mes', {
+        const reponse = await fetch('/reservation/mes?format=json', {
             credentials: 'include',
             headers: { 'Accept': 'application/json' }
         });
@@ -66,6 +69,11 @@ async function chargerReservations() {
         }
         if (!reponse.ok) {
             throw new Error('Erreur serveur: ' + reponse.status);
+        }
+
+        const contentType = reponse.headers.get('Content-Type') || '';
+        if (!contentType.includes('application/json')) {
+            throw new Error('Reponse inattendue (pas du JSON).');
         }
 
         const reservations = await reponse.json();
@@ -79,6 +87,8 @@ async function chargerReservations() {
             el.className = 'carte-trajet';
             const statut = r.statut || '';
             const annulable = statut !== 'ANNULEE' && statut !== 'REMBOURSEE';
+            const dateDepart = new Date(String(r.dateHeureDepart).replace(' ', 'T'));
+            const supprimable = !Number.isNaN(dateDepart.getTime()) && dateDepart < new Date();
 
             el.innerHTML = `
                 <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;">
@@ -90,7 +100,10 @@ async function chargerReservations() {
                 </div>
                 <div style="margin-top:0.75rem;display:flex;justify-content:space-between;align-items:center;">
                     <p class="texte-sm">${r.nombrePlaces} place(s) • ${Number(r.montantTotal).toFixed(2)} EUR</p>
-                    ${annulable ? `<button class="btn btn-danger btn-sm" data-id="${r.id}">Annuler</button>` : ''}
+                    <div style="display:flex;gap:0.5rem;align-items:center;">
+                        ${annulable ? `<button class="btn btn-danger btn-sm" data-id="${r.id}">Annuler</button>` : ''}
+                        ${supprimable ? `<button class="btn btn-danger btn-sm" data-supprimer="${r.id}">Supprimer</button>` : ''}
+                    </div>
                 </div>
             `;
 
@@ -98,8 +111,17 @@ async function chargerReservations() {
             if (boutonAnnuler) {
                 boutonAnnuler.addEventListener('click', () => annulerReservation(r.id));
             }
+
+            const btnSupprimer = el.querySelector('button[data-supprimer]');
+            if (btnSupprimer) {
+                btnSupprimer.addEventListener('click', async (e) => {
+                    await supprimerReservation(r.id);
+                });
+            }
+
             liste.appendChild(el);
         });
+
 
     } catch (e) {
         afficherAlerte('Erreur: ' + e.message, 'erreur');
@@ -112,13 +134,14 @@ async function chargerReservations() {
 async function annulerReservation(id) {
     if (!confirm('Annuler cette reservation ?')) return;
 
-    const formData = new FormData();
-    formData.append('reservationId', String(id));
-
     try {
         const reponse = await fetch('/reservation/annuler', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                'Accept': 'application/json'
+            },
+            body: new URLSearchParams({ reservationId: String(id) }).toString()
         });
         const data = await reponse.json();
 
@@ -127,6 +150,31 @@ async function annulerReservation(id) {
             await chargerReservations();
         } else {
             afficherAlerte(data.erreur || 'Erreur lors de l annulation.', 'erreur');
+        }
+    } catch (e) {
+        afficherAlerte('Erreur reseau.', 'erreur');
+    }
+}
+
+async function supprimerReservation(id) {
+    if (!confirm('Supprimer cette reservation ?')) return;
+
+    try {
+        const reponse = await fetch('/reservation/supprimer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                'Accept': 'application/json'
+            },
+            body: new URLSearchParams({ reservationId: String(id) }).toString()
+        });
+        const data = await reponse.json();
+
+        if (reponse.ok) {
+            afficherAlerte('Reservation supprimee.', 'succes');
+            await chargerReservations();
+        } else {
+            afficherAlerte(data.erreur || 'Erreur lors de la suppression.', 'erreur');
         }
     } catch (e) {
         afficherAlerte('Erreur reseau.', 'erreur');
@@ -148,7 +196,66 @@ function echapper(v) {
     return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-document.addEventListener('DOMContentLoaded', chargerReservations);
+async function chargerSessionNavbar() {
+    try {
+        const reponse = await fetch('/session/me', {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!reponse.ok) return;
+        const data = await reponse.json();
+        if (!data.connecte) return;
+
+        const zoneActions = document.getElementById('navbar-actions');
+        if (zoneActions) {
+            zoneActions.innerHTML = `
+                <span class="badge" style="background:rgba(34,197,94,0.16);color:#86efac;border:1px solid rgba(34,197,94,0.35);">${echapper(data.role)}</span>
+                <span class="texte-sm texte-secondaire">${echapper(data.prenom)}</span>
+                <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
+            `;
+        }
+    } catch (e) {
+        // Ignore navbar update errors
+    }
+}
+
+async function chargerNotifIndicator() {
+    const indicator = document.getElementById('notif-indicator');
+    if (!indicator) return;
+
+    try {
+        const reponse = await fetch('/notifications/mes?format=json', {
+            credentials: 'include',
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!reponse.ok) {
+            indicator.style.display = 'none';
+            return;
+        }
+
+        const notifications = await reponse.json();
+        const unread = notifications.filter((n) => !n.dateLecture).length;
+        if (!unread) {
+            indicator.style.display = 'none';
+            indicator.textContent = '';
+            return;
+        }
+
+        indicator.style.display = 'inline-flex';
+        indicator.textContent = unread > 99 ? '99+' : String(unread);
+    } catch (e) {
+        indicator.style.display = 'none';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    chargerReservations();
+    chargerNotifIndicator();
+    chargerSessionNavbar();
+});
+
 </script>
 
 </body>

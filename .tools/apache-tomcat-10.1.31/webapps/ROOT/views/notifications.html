@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - CovoitApp</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/trajets" class="navbar-logo">CovoitApp</a>
+    <ul class="navbar-liens">
+        <li><a href="/trajets">Trajets</a></li>
+        <li><a href="/reservation/mes">Mes reservations</a></li>
+        <li><a href="/notifications" class="actif nav-notifications">Notifications
+            <span id="notif-indicator" class="nav-indicator" style="display:none;"></span>
+        </a></li>
+    </ul>
+    <div class="navbar-actions">
+        <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
+    </div>
+</nav>
+
+<main class="page-principale">
+    <div class="conteneur" style="padding-top:2rem;padding-bottom:4rem;">
+        <div class="titre-section">
+            <h1>Notifications</h1>
+            <p class="texte-secondaire mt-1">Toutes vos activites recentes</p>
+        </div>
+
+        <div id="alerte" class="alerte" style="display:none;"></div>
+
+        <div style="display:flex;justify-content:flex-end;margin-bottom:1rem;">
+            <button id="btn-tout-lu" class="btn btn-secondaire btn-sm">Tout marquer lu</button>
+        </div>
+
+        <div id="chargement" class="chargement" style="display:flex;">
+            <div class="spinner"></div>
+            <span>Chargement des notifications...</span>
+        </div>
+
+        <div id="liste" class="trajets-grille notification-list"></div>
+
+        <p id="vide" style="display:none;text-align:center;padding:3rem;color:var(--texte-secondaire);">
+            Aucune notification pour le moment.
+        </p>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>© 2025 CovoitApp</p>
+</footer>
+
+<script>
+function afficherAlerte(message, type) {
+    const el = document.getElementById('alerte');
+    el.className = 'alerte alerte-' + type;
+    el.textContent = message;
+    el.style.display = 'flex';
+    setTimeout(() => { el.style.display = 'none'; }, 3500);
+}
+
+function echapper(v) {
+    if (v == null) return '';
+    return String(v)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function formaterDate(valeur) {
+    if (!valeur) return '';
+    const d = new Date(String(valeur).replace(' ', 'T'));
+    if (Number.isNaN(d.getTime())) return echapper(valeur);
+    return d.toLocaleString('fr-FR', {
+        weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+    });
+}
+
+function badgeType(type) {
+    switch (String(type || '').toUpperCase()) {
+        case 'RESERVATION': return 'badge-attente';
+        case 'TRAJET': return 'badge-ouvert';
+        case 'PAIEMENT': return 'badge-confirme';
+        default: return 'badge-admin';
+    }
+}
+
+function updateNotifIndicator(count) {
+    const indicator = document.getElementById('notif-indicator');
+    if (!indicator) return;
+
+    if (!count) {
+        indicator.style.display = 'none';
+        indicator.textContent = '';
+        return;
+    }
+
+    indicator.style.display = 'inline-flex';
+    indicator.textContent = count > 99 ? '99+' : String(count);
+}
+
+async function chargerNotifications() {
+    const chargement = document.getElementById('chargement');
+    const liste = document.getElementById('liste');
+    const vide = document.getElementById('vide');
+
+    chargement.style.display = 'flex';
+    liste.innerHTML = '';
+    vide.style.display = 'none';
+
+    try {
+        const reponse = await fetch('/notifications/mes?format=json', {
+            credentials: 'include',
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (reponse.status === 401) {
+            window.location.href = '/login';
+            return;
+        }
+        if (!reponse.ok) {
+            throw new Error('Erreur serveur: ' + reponse.status);
+        }
+
+        const notifications = await reponse.json();
+        if (!notifications.length) {
+            vide.style.display = 'block';
+            return;
+        }
+
+        let unreadCount = 0;
+        notifications.forEach((n) => {
+            const el = document.createElement('div');
+            const lu = Boolean(n.dateLecture);
+            if (!lu) unreadCount += 1;
+            el.className = `carte-trajet notification-item ${lu ? 'notification-read' : 'notification-unread'}`;
+            const statut = lu ? 'LU' : 'NOUVEAU';
+            const badgeClass = lu ? 'badge-termine' : 'badge-attente';
+
+            el.innerHTML = `
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;">
+                    <div>
+                        <p class="notification-title">${echapper(n.titre)}</p>
+                        <p class="texte-sm texte-secondaire">${echapper(n.message)}</p>
+                    </div>
+                    <span class="badge ${badgeClass}">${echapper(statut)}</span>
+                </div>
+                <div style="margin-top:0.75rem;display:flex;justify-content:space-between;align-items:center;">
+                    <div style="display:flex;gap:0.5rem;align-items:center;">
+                        <span class="badge ${badgeType(n.type)}">${echapper(n.type || 'INFO')}</span>
+                        <span class="texte-xs texte-secondaire">${formaterDate(n.dateCreation)}</span>
+                    </div>
+                    <div style="display:flex;gap:0.5rem;align-items:center;">
+                        ${lu ? '' : `<button class="btn btn-secondaire btn-sm" data-lu="${n.id}">Marquer lu</button>`}
+                        <button class="btn btn-danger btn-sm" data-supprimer="${n.id}">Supprimer</button>
+                    </div>
+                </div>
+            `;
+
+            const btnLu = el.querySelector('button[data-lu]');
+            if (btnLu) {
+                btnLu.addEventListener('click', async (e) => {
+                    await marquerLu(n.id);
+                    await chargerNotifications();
+                });
+            }
+
+            const btnSupprimer = el.querySelector('button[data-supprimer]');
+            if (btnSupprimer) {
+                btnSupprimer.addEventListener('click', async (e) => {
+                    await supprimerNotification(n.id);
+                });
+            }
+
+            liste.appendChild(el);
+        });
+
+        updateNotifIndicator(unreadCount);
+
+    } catch (e) {
+        afficherAlerte('Erreur: ' + e.message, 'erreur');
+    } finally {
+        chargement.style.display = 'none';
+    }
+}
+
+async function supprimerNotification(id) {
+    if (!confirm('Supprimer cette notification ?')) return;
+
+    const payload = new URLSearchParams();
+    payload.set('id', String(id));
+
+    try {
+        const reponse = await fetch('/notifications/supprimer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                'Accept': 'application/json'
+            },
+            body: payload.toString()
+        });
+
+        const data = await reponse.json();
+        if (!reponse.ok) {
+            throw new Error(data.erreur || 'Erreur lors de la suppression.');
+        }
+
+        await chargerNotifications();
+    } catch (e) {
+        afficherAlerte('Erreur: ' + e.message, 'erreur');
+    }
+}
+
+async function marquerLu(id) {
+    const payload = new URLSearchParams();
+    payload.set('id', String(id));
+
+    try {
+        const reponse = await fetch('/notifications/lu', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                'Accept': 'application/json'
+            },
+            body: payload.toString()
+        });
+
+        if (!reponse.ok) {
+            const data = await reponse.json();
+            throw new Error(data.erreur || 'Erreur lors de la mise a jour.');
+        }
+    } catch (e) {
+        afficherAlerte('Erreur: ' + e.message, 'erreur');
+    }
+}
+
+async function marquerToutLu() {
+    try {
+        const reponse = await fetch('/notifications/lu-tout', {
+            method: 'POST',
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!reponse.ok) {
+            const data = await reponse.json();
+            throw new Error(data.erreur || 'Erreur lors de la mise a jour.');
+        }
+
+        await chargerNotifications();
+    } catch (e) {
+        afficherAlerte('Erreur: ' + e.message, 'erreur');
+    }
+}
+
+const btnToutLu = document.getElementById('btn-tout-lu');
+btnToutLu.addEventListener('click', marquerToutLu);
+
+document.addEventListener('DOMContentLoaded', chargerNotifications);
+</script>
+
+</body>
+</html>

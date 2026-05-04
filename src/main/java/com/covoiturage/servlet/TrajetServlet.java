@@ -80,10 +80,17 @@ public class TrajetServlet extends HttpServlet {
         try {
             List<Trajet> trajets;
 
-            if (depart != null && arrivee != null && date != null) {
-                // Recherche avec filtres
-                int places = placesP != null ? Integer.parseInt(placesP) : 1;
-                trajets = trajetService.rechercherTrajets(depart, arrivee, date, places);
+            boolean hasTextFilters = (depart != null && !depart.isBlank()) ||
+                                     (arrivee != null && !arrivee.isBlank()) ||
+                                     (date != null && !date.isBlank());
+            boolean hasPlacesFilter = (placesP != null && !placesP.isBlank() && !"1".equals(placesP));
+
+            if (hasTextFilters || hasPlacesFilter) {
+                Integer places = null;
+                if (placesP != null && !placesP.isBlank()) {
+                    places = Integer.parseInt(placesP);
+                }
+                trajets = trajetService.rechercherTrajetsFlexible(depart, arrivee, date, places);
             } else {
                 // Liste complète des trajets disponibles
                 trajets = trajetService.listerTrajetsDisponibles();

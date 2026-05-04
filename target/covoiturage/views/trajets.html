@@ -30,6 +30,9 @@
     <ul class="navbar-liens">
         <li><a href="/trajets" id="nav-trajets" class="actif">Trajets</a></li>
         <li><a href="/reservation/mes" id="nav-mes-reservations">Mes réservations</a></li>
+        <li><a href="/notifications" id="nav-notifications" class="nav-notifications">Notifications
+            <span id="notif-indicator" class="nav-indicator" style="display:none;"></span>
+        </a></li>
     </ul>
 
     <div class="navbar-actions" id="navbar-actions">
@@ -210,5 +213,38 @@
 </footer>
 
 <script src="/js/trajets.js?v=20260420-4"></script>
+<script>
+async function chargerNotifIndicator() {
+    const indicator = document.getElementById('notif-indicator');
+    if (!indicator) return;
+
+    try {
+        const reponse = await fetch('/notifications/mes?format=json', {
+            credentials: 'include',
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!reponse.ok) {
+            indicator.style.display = 'none';
+            return;
+        }
+
+        const notifications = await reponse.json();
+        const unread = notifications.filter((n) => !n.dateLecture).length;
+        if (!unread) {
+            indicator.style.display = 'none';
+            indicator.textContent = '';
+            return;
+        }
+
+        indicator.style.display = 'inline-flex';
+        indicator.textContent = unread > 99 ? '99+' : String(unread);
+    } catch (e) {
+        indicator.style.display = 'none';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', chargerNotifIndicator);
+</script>
 </body>
 </html>

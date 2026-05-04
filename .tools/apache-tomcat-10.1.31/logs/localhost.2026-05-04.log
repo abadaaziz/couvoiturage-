@@ -6,3 +6,53 @@
 04-May-2026 17:09:37.182 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: attributeAdded('StockTicker', 'async.Stockticker@1d207fad')
 04-May-2026 17:16:14.567 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log SessionListener: contextDestroyed()
 04-May-2026 17:16:14.567 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log ContextListener: contextDestroyed()
+04-May-2026 17:21:17.844 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: contextInitialized()
+04-May-2026 17:21:17.844 INFOS [main] org.apache.catalina.core.ApplicationContext.log SessionListener: contextInitialized()
+04-May-2026 17:21:17.847 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: attributeAdded('StockTicker', 'async.Stockticker@34b9fc7d')
+04-May-2026 17:34:09.238 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: contextInitialized()
+04-May-2026 17:34:09.238 INFOS [main] org.apache.catalina.core.ApplicationContext.log SessionListener: contextInitialized()
+04-May-2026 17:34:09.240 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: attributeAdded('StockTicker', 'async.Stockticker@1d4664d7')
+04-May-2026 17:34:28.993 INFOS [http-nio-8080-exec-8] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 2 reservations for user 4
+04-May-2026 17:38:35.317 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log SessionListener: contextDestroyed()
+04-May-2026 17:38:35.317 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log ContextListener: contextDestroyed()
+04-May-2026 17:38:44.788 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: contextInitialized()
+04-May-2026 17:38:44.789 INFOS [main] org.apache.catalina.core.ApplicationContext.log SessionListener: contextInitialized()
+04-May-2026 17:38:44.790 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: attributeAdded('StockTicker', 'async.Stockticker@71a3a190')
+04-May-2026 17:38:57.537 INFOS [http-nio-8080-exec-9] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 2 reservations for user 4
+04-May-2026 17:39:07.054 INFOS [http-nio-8080-exec-3] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 2 reservations for user 4
+04-May-2026 17:42:38.072 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log SessionListener: contextDestroyed()
+04-May-2026 17:42:38.072 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log ContextListener: contextDestroyed()
+04-May-2026 17:42:48.089 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: contextInitialized()
+04-May-2026 17:42:48.089 INFOS [main] org.apache.catalina.core.ApplicationContext.log SessionListener: contextInitialized()
+04-May-2026 17:42:48.091 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: attributeAdded('StockTicker', 'async.Stockticker@56ccd751')
+04-May-2026 17:43:10.181 INFOS [http-nio-8080-exec-2] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 2 reservations for user 4
+04-May-2026 17:43:55.294 INFOS [http-nio-8080-exec-2] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 2 reservations for user 4
+04-May-2026 17:44:02.743 INFOS [http-nio-8080-exec-3] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 2 reservations for user 4
+04-May-2026 17:49:21.694 INFOS [http-nio-8080-exec-6] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 3 reservations for user 4
+04-May-2026 17:51:00.232 INFOS [http-nio-8080-exec-8] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 3 reservations for user 4
+04-May-2026 18:00:03.972 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log SessionListener: contextDestroyed()
+04-May-2026 18:00:03.972 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log ContextListener: contextDestroyed()
+04-May-2026 18:00:21.958 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: contextInitialized()
+04-May-2026 18:00:21.958 INFOS [main] org.apache.catalina.core.ApplicationContext.log SessionListener: contextInitialized()
+04-May-2026 18:00:21.960 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: attributeAdded('StockTicker', 'async.Stockticker@4aac85fa')
+04-May-2026 18:00:48.495 INFOS [http-nio-8080-exec-5] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 3 reservations for user 4
+04-May-2026 18:01:17.487 INFOS [http-nio-8080-exec-5] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 4 reservations for user 4
+04-May-2026 18:01:26.557 INFOS [http-nio-8080-exec-1] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 4 reservations for user 4
+04-May-2026 18:01:37.269 INFOS [http-nio-8080-exec-8] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 4 reservations for user 4
+04-May-2026 18:01:44.131 INFOS [http-nio-8080-exec-7] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 4 reservations for user 4
+04-May-2026 18:02:10.247 INFOS [http-nio-8080-exec-2] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 0 reservations for user 6
+04-May-2026 18:03:54.182 INFOS [http-nio-8080-exec-6] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 5 reservations for user 4
+04-May-2026 18:04:56.996 INFOS [http-nio-8080-exec-3] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 0 reservations for user 6
+04-May-2026 18:04:58.532 INFOS [http-nio-8080-exec-2] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 0 reservations for user 6
+04-May-2026 18:09:28.824 INFOS [http-nio-8080-exec-2] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 5 reservations for user 4
+04-May-2026 18:15:29.385 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log SessionListener: contextDestroyed()
+04-May-2026 18:15:29.385 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log ContextListener: contextDestroyed()
+04-May-2026 18:15:41.207 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: contextInitialized()
+04-May-2026 18:15:41.207 INFOS [main] org.apache.catalina.core.ApplicationContext.log SessionListener: contextInitialized()
+04-May-2026 18:15:41.210 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: attributeAdded('StockTicker', 'async.Stockticker@18a645fd')
+04-May-2026 18:16:02.189 INFOS [http-nio-8080-exec-1] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 5 reservations for user 4
+04-May-2026 18:17:07.139 INFOS [http-nio-8080-exec-9] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 5 reservations for user 4
+04-May-2026 18:19:55.835 INFOS [http-nio-8080-exec-10] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 0 reservations for user 6
+04-May-2026 18:19:58.997 INFOS [http-nio-8080-exec-2] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 0 reservations for user 6
+04-May-2026 18:32:57.809 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log SessionListener: contextDestroyed()
+04-May-2026 18:32:57.809 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log ContextListener: contextDestroyed()

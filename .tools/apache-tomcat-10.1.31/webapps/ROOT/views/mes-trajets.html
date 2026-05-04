@@ -13,6 +13,9 @@
     <ul class="navbar-liens">
         <li><a href="/trajets">Trajets</a></li>
         <li><a href="/trajets/mes" class="actif">Mes trajets</a></li>
+        <li><a href="/notifications" class="nav-notifications">Notifications
+            <span id="notif-indicator" class="nav-indicator" style="display:none;"></span>
+        </a></li>
     </ul>
     <div class="navbar-actions">
         <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
@@ -76,6 +79,36 @@ function formaterDate(v) {
         hour: '2-digit',
         minute: '2-digit'
     });
+}
+
+async function chargerNotifIndicator() {
+    const indicator = document.getElementById('notif-indicator');
+    if (!indicator) return;
+
+    try {
+        const reponse = await fetch('/notifications/mes?format=json', {
+            credentials: 'include',
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!reponse.ok) {
+            indicator.style.display = 'none';
+            return;
+        }
+
+        const notifications = await reponse.json();
+        const unread = notifications.filter((n) => !n.dateLecture).length;
+        if (!unread) {
+            indicator.style.display = 'none';
+            indicator.textContent = '';
+            return;
+        }
+
+        indicator.style.display = 'inline-flex';
+        indicator.textContent = unread > 99 ? '99+' : String(unread);
+    } catch (e) {
+        indicator.style.display = 'none';
+    }
 }
 
 function afficherAlerte(message, type) {
@@ -257,7 +290,10 @@ async function annulerTrajet(trajetId) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', chargerDonnees);
+document.addEventListener('DOMContentLoaded', () => {
+    chargerDonnees();
+    chargerNotifIndicator();
+});
 </script>
 
 </body>

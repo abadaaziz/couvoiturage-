@@ -84,6 +84,20 @@ CREATE TABLE IF NOT EXISTS paiements (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================================
+-- TABLE : notifications
+-- ============================================================
+CREATE TABLE IF NOT EXISTS notifications (
+    id               INT AUTO_INCREMENT PRIMARY KEY,
+    utilisateur_id   INT NOT NULL,
+    type             VARCHAR(30)  NOT NULL,
+    titre            VARCHAR(200) NOT NULL,
+    message          VARCHAR(1000) NOT NULL,
+    date_creation    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    date_lecture     DATETIME,
+    CONSTRAINT fk_notification_utilisateur FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
 -- Données de test : un compte admin pour commencer
 -- Mot de passe : "admin123"  (hash SHA-256 pour demo)
 -- ============================================================

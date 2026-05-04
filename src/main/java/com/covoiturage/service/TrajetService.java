@@ -1,18 +1,22 @@
 package com.covoiturage.service;
 
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import com.covoiturage.dao.ReservationDAO;
 import com.covoiturage.dao.TrajetDAO;
 import com.covoiturage.exception.ReservationInvalideException;
 import com.covoiturage.exception.TrajetCompletException;
 import com.covoiturage.exception.UtilisateurSuspenduException;
+import com.covoiturage.model.Reservation;
 import com.covoiturage.model.Trajet;
 import com.covoiturage.model.Trajet.StatutTrajet;
 import com.covoiturage.model.Utilisateur;
 import com.covoiturage.model.Utilisateur.Role;
-
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Service de gestion des trajets de covoiturage.
@@ -23,16 +27,28 @@ import java.util.Optional;
 public class TrajetService {
 
     private final TrajetDAO    trajetDAO;
+    private final ReservationDAO reservationDAO;
     private final NotificationService notificationService;
+    private final InAppNotificationService inAppNotificationService;
 
     public TrajetService() {
         this.trajetDAO           = new TrajetDAO();
+        this.reservationDAO      = new ReservationDAO();
         this.notificationService = new NotificationService();
+        this.inAppNotificationService = new InAppNotificationService();
+    }
+
+    public TrajetService(TrajetDAO trajetDAO, ReservationDAO reservationDAO,
+                         NotificationService notificationService,
+                         InAppNotificationService inAppNotificationService) {
+        this.trajetDAO           = trajetDAO;
+        this.reservationDAO      = reservationDAO;
+        this.notificationService = notificationService;
+        this.inAppNotificationService = inAppNotificationService;
     }
 
     public TrajetService(TrajetDAO trajetDAO, NotificationService notificationService) {
-        this.trajetDAO           = trajetDAO;
-        this.notificationService = notificationService;
+        this(trajetDAO, new ReservationDAO(), notificationService, new InAppNotificationService());
     }
 
     // ── Méthodes publiques ────────────────────────────────────────────────────
@@ -90,6 +106,13 @@ public class TrajetService {
                 " du " + dateHeureDepart + " a bien été enregistré (réf. #" + trajetPersiste.getId() + ")."
             );
 
+            inAppNotificationService.notifierUtilisateur(
+                chauffeur.getId(),
+                "TRAJET",
+                "Trajet propose",
+                "Votre trajet #" + trajetPersiste.getId() + " est publie."
+            );
+
             return trajetPersiste;
 
         } catch (SQLException e) {
@@ -121,6 +144,13 @@ public class TrajetService {
 
             trajetDAO.mettreAJourStatut(trajetId, StatutTrajet.TERMINE);
             System.out.println("[TrajetService] Trajet #" + trajetId + " clôturé.");
+
+            inAppNotificationService.notifierUtilisateur(
+                chauffeurId,
+                "TRAJET",
+                "Trajet termine",
+                "Votre trajet #" + trajetId + " est termine."
+            );
 
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la clôture du trajet : " + e.getMessage(), e);
@@ -239,6 +269,31 @@ public class TrajetService {
                 "Le trajet #" + trajetId + " a été annulé par le chauffeur."
             );
 
+            inAppNotificationService.notifierUtilisateur(
+                chauffeurId,
+                "TRAJET",
+                "Trajet annule",
+                "Votre trajet #" + trajetId + " a ete annule."
+            );
+
+            try {
+                List<Reservation> reservations = reservationDAO.trouverParTrajet(trajetId);
+                Set<Integer> passagersNotifies = new HashSet<>();
+                for (Reservation r : reservations) {
+                    int passagerId = r.getPassager().getId();
+                    if (passagersNotifies.add(passagerId)) {
+                        inAppNotificationService.notifierUtilisateur(
+                            passagerId,
+                            "TRAJET",
+                            "Trajet annule",
+                            "Le trajet #" + trajetId + " a ete annule par le chauffeur."
+                        );
+                    }
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException("Erreur lors du chargement des reservations : " + e.getMessage(), e);
+            }
+
             return penalite;
 
         } catch (SQLException e) {
@@ -253,6 +308,18 @@ public class TrajetService {
                                            String date, int placesMin) {
         try {
             return trajetDAO.rechercher(villeDepart, villeArrivee, date, placesMin);
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la recherche de trajets : " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Recherche flexible avec filtres optionnels.
+     */
+    public List<Trajet> rechercherTrajetsFlexible(String villeDepart, String villeArrivee,
+                                                  String date, Integer placesMin) {
+        try {
+            return trajetDAO.rechercherFlexible(villeDepart, villeArrivee, date, placesMin);
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la recherche de trajets : " + e.getMessage(), e);
         }

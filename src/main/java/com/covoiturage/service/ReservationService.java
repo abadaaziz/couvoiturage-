@@ -29,21 +29,32 @@ public class ReservationService {
     private final TrajetService       trajetService;
     private final PaiementService     paiementService;
     private final NotificationService notificationService;
+    private final InAppNotificationService inAppNotificationService;
 
     public ReservationService() {
         this.reservationDAO      = new ReservationDAO();
         this.trajetService       = new TrajetService();
         this.paiementService     = new PaiementService();
         this.notificationService = new NotificationService();
+        this.inAppNotificationService = new InAppNotificationService();
     }
 
     /** Constructeur pour injection de dépendances */
     public ReservationService(ReservationDAO reservationDAO, TrajetService trajetService,
-                               PaiementService paiementService, NotificationService notificationService) {
+                               PaiementService paiementService, NotificationService notificationService,
+                               InAppNotificationService inAppNotificationService) {
         this.reservationDAO      = reservationDAO;
         this.trajetService       = trajetService;
         this.paiementService     = paiementService;
         this.notificationService = notificationService;
+        this.inAppNotificationService = inAppNotificationService;
+    }
+
+    /** Constructeur pour injection de dependances sans notifications in-app */
+    public ReservationService(ReservationDAO reservationDAO, TrajetService trajetService,
+                               PaiementService paiementService, NotificationService notificationService) {
+        this(reservationDAO, trajetService, paiementService, notificationService,
+            new InAppNotificationService());
     }
 
     // ── Méthodes publiques ────────────────────────────────────────────────────
@@ -143,6 +154,20 @@ public class ReservationService {
                 " souhaite réserver " + nombrePlaces + " place(s) sur votre trajet #" + trajetId + "."
             );
 
+            inAppNotificationService.notifierUtilisateur(
+                passager.getId(),
+                "RESERVATION",
+                "Reservation creee",
+                "Votre reservation #" + reservation.getId() + " est en attente de confirmation."
+            );
+            inAppNotificationService.notifierUtilisateur(
+                trajet.getChauffeur().getId(),
+                "RESERVATION",
+                "Nouvelle reservation",
+                passager.getPrenom() + " " + passager.getNom() +
+                " a reserve " + nombrePlaces + " place(s) sur votre trajet #" + trajetId + "."
+            );
+
             return reservation;
 
         } catch (SQLException e) {
@@ -193,6 +218,19 @@ public class ReservationService {
                 "Votre réservation #" + reservationId + " pour le trajet " +
                 reservation.getTrajet().getVilleDepart() + " → " +
                 reservation.getTrajet().getVilleArrivee() + " est confirmée. Bon voyage !"
+            );
+
+            inAppNotificationService.notifierUtilisateur(
+                reservation.getPassager().getId(),
+                "RESERVATION",
+                "Reservation confirmee",
+                "Votre reservation #" + reservationId + " est confirmee par le chauffeur."
+            );
+            inAppNotificationService.notifierUtilisateur(
+                reservation.getTrajet().getChauffeur().getId(),
+                "RESERVATION",
+                "Reservation confirmee",
+                "Vous avez confirme la reservation #" + reservationId + "."
             );
 
         } catch (SQLException e) {
@@ -251,6 +289,19 @@ public class ReservationService {
                 "Remboursement de " + String.format("%.2f", montantARemb) + "€ " +
                 (remboursementTotal ? "(total)" : "(partiel — moins de 24h avant départ)") +
                 " en cours de traitement."
+            );
+
+            inAppNotificationService.notifierUtilisateur(
+                reservation.getPassager().getId(),
+                "RESERVATION",
+                "Reservation annulee",
+                "Votre reservation #" + reservationId + " a ete annulee."
+            );
+            inAppNotificationService.notifierUtilisateur(
+                reservation.getTrajet().getChauffeur().getId(),
+                "RESERVATION",
+                "Reservation annulee",
+                "Le passager a annule la reservation #" + reservationId + "."
             );
 
             return montantARemb;
@@ -315,6 +366,36 @@ public class ReservationService {
             return reservationDAO.trouverParChauffeur(chauffeurId);
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la récupération des réservations chauffeur : " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Supprime une reservation du passager uniquement si le trajet est passe.
+     */
+    public void supprimerReservationSiTerminee(int reservationId, int passagerId)
+            throws ReservationInvalideException {
+        try {
+            Optional<Reservation> opt = reservationDAO.trouverParId(reservationId);
+            if (opt.isEmpty()) {
+                throw new ReservationInvalideException("Réservation #" + reservationId + " introuvable.");
+            }
+
+            Reservation reservation = opt.get();
+            if (reservation.getPassager().getId() != passagerId) {
+                throw new ReservationInvalideException("Vous n'etes pas autorise a supprimer cette reservation.");
+            }
+
+            if (reservation.getTrajet().getDateHeureDepart() == null ||
+                reservation.getTrajet().getDateHeureDepart().isAfter(java.time.LocalDateTime.now())) {
+                throw new ReservationInvalideException("La reservation ne peut etre supprimee qu'apres la date du trajet.");
+            }
+
+            boolean deleted = reservationDAO.supprimerReservationPasse(reservationId, passagerId);
+            if (!deleted) {
+                throw new ReservationInvalideException("Impossible de supprimer cette reservation.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la suppression de la reservation : " + e.getMessage(), e);
         }
     }
 }

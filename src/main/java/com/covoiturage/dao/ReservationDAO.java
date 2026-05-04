@@ -73,6 +73,10 @@ public class ReservationDAO {
     private static final String SQL_COUNT_ACTIVES_BY_TRAJET =
         "SELECT COUNT(*) FROM reservations WHERE trajet_id=? AND statut IN ('EN_ATTENTE','CONFIRMEE')";
 
+    private static final String SQL_DELETE_PAST_BY_PASSAGER =
+        "DELETE FROM reservations WHERE id = ? AND passager_id = ? " +
+        "AND trajet_id IN (SELECT id FROM trajets WHERE date_heure_depart < CURRENT_TIMESTAMP)";
+
     // ── Méthodes CRUD ─────────────────────────────────────────────────────────
 
     public Reservation inserer(Reservation reservation) throws SQLException {
@@ -199,6 +203,19 @@ public class ReservationDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next() ? rs.getInt(1) : 0;
             }
+        }
+    }
+
+    /**
+     * Supprime une reservation du passager uniquement si le trajet est passe.
+     */
+    public boolean supprimerReservationPasse(int reservationId, int passagerId) throws SQLException {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_DELETE_PAST_BY_PASSAGER)) {
+
+            ps.setInt(1, reservationId);
+            ps.setInt(2, passagerId);
+            return ps.executeUpdate() > 0;
         }
     }
 

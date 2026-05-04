@@ -1,14 +1,19 @@
 package com.covoiturage.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import com.covoiturage.model.Trajet;
 import com.covoiturage.model.Trajet.StatutTrajet;
 import com.covoiturage.model.Utilisateur;
 import com.covoiturage.util.DatabaseConnection;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * DAO pour l'entité {@link Trajet}. JDBC pur, aucun ORM.
@@ -43,6 +48,11 @@ public class TrajetDAO {
         "SELECT t.*, u.nom, u.prenom, u.email, u.telephone, u.note_moyenne " +
         "FROM trajets t JOIN utilisateurs u ON t.chauffeur_id = u.id " +
         "WHERE t.chauffeur_id = ? ORDER BY t.date_heure_depart DESC";
+
+    private static final String SQL_SELECT_RECHERCHE_BASE =
+        "SELECT t.*, u.nom, u.prenom, u.email, u.telephone, u.note_moyenne " +
+        "FROM trajets t JOIN utilisateurs u ON t.chauffeur_id = u.id " +
+        "WHERE t.statut IN ('OUVERT','COMPLET') ";
 
     private static final String SQL_UPDATE_STATUT =
         "UPDATE trajets SET statut=? WHERE id=?";
@@ -134,6 +144,52 @@ public class TrajetDAO {
                 while (rs.next()) liste.add(mapperResultSet(rs));
             }
         }
+        return liste;
+    }
+
+    /**
+     * Recherche flexible avec filtres optionnels.
+     * - depart/arrivee: LIKE si renseigne
+     * - date: egalite sur la date si renseignee (yyyy-MM-dd)
+     * - placesMin: filtre si non nul
+     */
+    public List<Trajet> rechercherFlexible(String villeDepart, String villeArrivee,
+                                           String date, Integer placesMin) throws SQLException {
+        List<Trajet> liste = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(SQL_SELECT_RECHERCHE_BASE);
+        List<Object> params = new ArrayList<>();
+
+        if (villeDepart != null && !villeDepart.isBlank()) {
+            sql.append("AND t.ville_depart LIKE ? ");
+            params.add("%" + villeDepart + "%");
+        }
+        if (villeArrivee != null && !villeArrivee.isBlank()) {
+            sql.append("AND t.ville_arrivee LIKE ? ");
+            params.add("%" + villeArrivee + "%");
+        }
+        if (date != null && !date.isBlank()) {
+            sql.append("AND CAST(t.date_heure_depart AS DATE) = ? ");
+            params.add(date);
+        }
+        if (placesMin != null) {
+            sql.append("AND t.places_disponibles >= ? ");
+            params.add(placesMin);
+        }
+
+        sql.append("ORDER BY t.prix_par_place ASC");
+
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) liste.add(mapperResultSet(rs));
+            }
+        }
+
         return liste;
     }
 

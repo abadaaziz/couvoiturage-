@@ -111,6 +111,24 @@ CREATE TABLE IF NOT EXISTS paiements (
     INDEX idx_statut_paiement      (statut)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ── Table des notifications ─────────────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS notifications (
+    id               INT           AUTO_INCREMENT PRIMARY KEY,
+    utilisateur_id   INT           NOT NULL,
+    type             VARCHAR(30)   NOT NULL,
+    titre            VARCHAR(200)  NOT NULL,
+    message          VARCHAR(1000) NOT NULL,
+    date_creation    DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    date_lecture     DATETIME,
+
+    CONSTRAINT fk_notification_utilisateur
+        FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
+
+    INDEX idx_notification_user (utilisateur_id),
+    INDEX idx_notification_date (date_creation)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ── Données initiales (admin par défaut) ──────────────────────────────────────
 -- Mot de passe : Admin1234! (à changer en production !)
 -- Hash généré avec SHA-256 + sel (classe PasswordUtils)

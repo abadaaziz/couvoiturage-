@@ -329,6 +329,49 @@ select.form-controle {
 .badge-attente   { background: rgba(124,58,237,0.15);  color: var(--couleur-primaire-clair); border: 1px solid rgba(124,58,237,0.3); }
 .badge-admin     { background: var(--gradient-hero);   color: white; }
 
+/* ── Notifications UI ──────────────────────────────────────── */
+.nav-notifications {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.nav-indicator {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 0.35rem;
+    border-radius: var(--rayon-full);
+    background: var(--couleur-danger);
+    color: white;
+    font-size: 0.7rem;
+    line-height: 18px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.notification-item.notification-unread {
+    border-color: rgba(124,58,237,0.4);
+    box-shadow: 0 0 0 1px rgba(124,58,237,0.25) inset;
+}
+
+.notification-item.notification-read {
+    opacity: 0.75;
+}
+
+.notification-title {
+    font-weight: 600;
+}
+
+.notification-unread .notification-title {
+    font-weight: 800;
+}
+
+/* ── Notifications (liste) ─────────────────────────────────── */
+.notification-list {
+    grid-template-columns: 1fr;
+}
+
 /* ── Alertes / Messages ──────────────────────────────────────── */
 .alerte {
     padding: 1rem 1.25rem;

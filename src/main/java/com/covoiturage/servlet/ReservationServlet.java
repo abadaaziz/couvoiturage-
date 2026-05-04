@@ -31,11 +31,12 @@ import jakarta.servlet.http.HttpSession;
  *   <li>GET  /reservation/mes       → lister les réservations du passager connecté</li>
  *   <li>GET  /reservation/chauffeur → lister les réservations liées aux trajets du chauffeur connecté</li>
  *   <li>POST /reservation/confirmer → confirmer une réservation (chauffeur)</li>
+ *   <li>POST /reservation/supprimer → supprimer une réservation passée (passager)</li>
  * </ul>
  */
 @WebServlet(urlPatterns = {
     "/reservation/creer", "/reservation/annuler", "/reservation/mes",
-    "/reservation/chauffeur", "/reservation/confirmer"
+    "/reservation/chauffeur", "/reservation/confirmer", "/reservation/supprimer"
 })
 public class ReservationServlet extends HttpServlet {
 
@@ -108,6 +109,7 @@ public class ReservationServlet extends HttpServlet {
             case "/reservation/creer"   -> traiterCreation(request, response);
             case "/reservation/annuler" -> traiterAnnulation(request, response);
             case "/reservation/confirmer" -> traiterConfirmation(request, response);
+            case "/reservation/supprimer" -> traiterSuppression(request, response);
             default -> envoyerErreurJson(response, HttpServletResponse.SC_NOT_FOUND,
                 "Route non reconnue.");
         }
@@ -246,6 +248,40 @@ public class ReservationServlet extends HttpServlet {
         } catch (PaiementEcheException e) {
             envoyerErreurJson(response, HttpServletResponse.SC_PAYMENT_REQUIRED,
                 "Capture du paiement echouee : " + e.getMessage());
+        }
+    }
+
+    /**
+     * Supprime une reservation si le trajet est passe.
+     * Parametre attendu : reservationId
+     */
+    private void traiterSuppression(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        Utilisateur passager = getUtilisateurConnecte(request);
+        if (passager == null) {
+            envoyerErreurJson(response, HttpServletResponse.SC_UNAUTHORIZED,
+                "Vous devez etre connecte.");
+            return;
+        }
+
+        String reservationIdStr = request.getParameter("reservationId");
+        if (estNullOuVide(reservationIdStr)) {
+            envoyerErreurJson(response, HttpServletResponse.SC_BAD_REQUEST,
+                "L'identifiant de la reservation est obligatoire.");
+            return;
+        }
+
+        try {
+            int reservationId = Integer.parseInt(reservationIdStr);
+            reservationService.supprimerReservationSiTerminee(reservationId, passager.getId());
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().print("{\"succes\":true,\"message\":\"Reservation supprimee.\"}");
+        } catch (NumberFormatException e) {
+            envoyerErreurJson(response, HttpServletResponse.SC_BAD_REQUEST,
+                "Identifiant de reservation invalide.");
+        } catch (ReservationInvalideException e) {
+            envoyerErreurJson(response, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         }
     }
 
