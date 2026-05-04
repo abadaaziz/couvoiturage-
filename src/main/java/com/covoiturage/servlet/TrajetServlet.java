@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Locale;
 
 import com.covoiturage.exception.ReservationInvalideException;
 import com.covoiturage.exception.UtilisateurSuspenduException;
@@ -260,14 +261,14 @@ public class TrajetServlet extends HttpServlet {
                "\"dateHeureDepart\":\"" + t.getDateHeureDepart() + "\"," +
                "\"placesTotal\":" + t.getPlacesTotal() + "," +
                "\"placesDisponibles\":" + t.getPlacesDisponibles() + "," +
-               "\"prixParPlace\":" + t.getPrixParPlace() + "," +
+               "\"prixParPlace\":" + String.format(Locale.US, "%.2f", t.getPrixParPlace()) + "," +
                "\"statut\":\"" + t.getStatut() + "\"," +
                "\"descriptionVehicule\":\"" + echapper(t.getDescriptionVehicule()) + "\"," +
                "\"chauffeur\":{" +
                    "\"id\":" + t.getChauffeur().getId() + "," +
                    "\"nom\":\"" + echapper(t.getChauffeur().getNom()) + "\"," +
                    "\"prenom\":\"" + echapper(t.getChauffeur().getPrenom()) + "\"," +
-                   "\"note\":" + t.getChauffeur().getNoteMoyenne() +
+                   "\"note\":" + String.format(Locale.US, "%.2f", t.getChauffeur().getNoteMoyenne()) +
                "}" +
                "}";
     }

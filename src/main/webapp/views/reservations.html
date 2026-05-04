@@ -56,6 +56,7 @@ async function chargerReservations() {
 
     try {
         const reponse = await fetch('/reservation/mes', {
+            credentials: 'include',
             headers: { 'Accept': 'application/json' }
         });
 
@@ -101,7 +102,8 @@ async function chargerReservations() {
         });
 
     } catch (e) {
-        afficherAlerte('Impossible de charger les reservations.', 'erreur');
+        afficherAlerte('Erreur: ' + e.message, 'erreur');
+        console.error('Reservation load error:', e);
     } finally {
         chargement.style.display = 'none';
     }

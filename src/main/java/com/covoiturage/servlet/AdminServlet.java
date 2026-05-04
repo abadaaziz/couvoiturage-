@@ -3,6 +3,7 @@ package com.covoiturage.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Locale;
 
 import com.covoiturage.model.Utilisateur;
 import com.covoiturage.model.Utilisateur.Role;
@@ -145,7 +146,7 @@ public class AdminServlet extends HttpServlet {
                "\"telephone\":\"" + echapper(u.getTelephone()) + "\"," +
                "\"role\":\"" + u.getRole() + "\"," +
                "\"statutCompte\":\"" + u.getStatutCompte() + "\"," +
-               "\"noteMoyenne\":" + String.format("%.2f", u.getNoteMoyenne()) + "," +
+               "\"noteMoyenne\":" + String.format(Locale.US, "%.2f", u.getNoteMoyenne()) + "," +
                "\"nombreAvis\":" + u.getNombreAvis() + "," +
                "\"dateInscription\":\"" + u.getDateInscription() + "\"" +
                "}";

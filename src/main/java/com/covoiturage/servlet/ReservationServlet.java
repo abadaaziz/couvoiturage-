@@ -3,6 +3,7 @@ package com.covoiturage.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Locale;
 
 import com.covoiturage.exception.PaiementEcheException;
 import com.covoiturage.exception.ReservationInvalideException;
@@ -81,12 +82,18 @@ public class ReservationServlet extends HttpServlet {
             return;
         }
 
-        List<Reservation> reservations = reservationService.listerReservationsPassager(passager.getId());
-
-        response.setContentType("application/json;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.print(reservationListToJson(reservations));
-        out.flush();
+        try {
+            List<Reservation> reservations = reservationService.listerReservationsPassager(passager.getId());
+            getServletContext().log("[DEBUG] Retrieved " + reservations.size() + " reservations for user " + passager.getId());
+            response.setContentType("application/json;charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            out.print(reservationListToJson(reservations));
+            out.flush();
+        } catch (Exception e) {
+            getServletContext().log("Erreur chargement reservations passager " + passager.getId(), e);
+            envoyerErreurJson(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "Erreur serveur: " + e.getMessage());
+        }
     }
 
     // ── POST ──────────────────────────────────────────────────────────────────
@@ -297,10 +304,10 @@ public class ReservationServlet extends HttpServlet {
                "\"passagerPrenom\":\"" + echapper(passagerPrenom) + "\"," +
                "\"passagerEmail\":\"" + echapper(passagerEmail) + "\"," +
                "\"nombrePlaces\":" + r.getNombrePlaces() + "," +
-               "\"montantTotal\":" + r.getMontantTotal() + "," +
+               "\"montantTotal\":" + String.format(Locale.US, "%.2f", r.getMontantTotal()) + "," +
                "\"statut\":\"" + r.getStatut() + "\"," +
                "\"dateReservation\":\"" + r.getDateReservation() + "\"," +
-               "\"montantRembourse\":" + r.getMontantRembourse() +
+               "\"montantRembourse\":" + String.format(Locale.US, "%.2f", r.getMontantRembourse()) +
                "}";
     }
 
