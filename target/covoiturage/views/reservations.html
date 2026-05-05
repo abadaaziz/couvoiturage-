@@ -174,7 +174,6 @@ async function chargerReservations() {
             const annulable = statut !== 'ANNULEE' && statut !== 'REMBOURSEE';
             const dateDepart = new Date(String(r.dateHeureDepart).replace(' ', 'T'));
             const supprimable = !Number.isNaN(dateDepart.getTime()) && dateDepart < new Date();
-            const trajetPasse = !Number.isNaN(dateDepart.getTime()) && dateDepart < new Date();
             const notePassager = r.notePassager;
 
             el.innerHTML = `
@@ -197,7 +196,7 @@ async function chargerReservations() {
                     Remboursement: ${Number(r.montantRembourse).toFixed(2)} EUR
                 </p>
                 ` : ''}
-                ${trajetPasse && r.statut === 'CONFIRMEE' ? `
+                ${r.statut === 'CONFIRMEE' ? `
                 <div style="margin-top:0.75rem;display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap;">
                     <div class="texte-xs texte-secondaire">Noter le chauffeur</div>
                     <button class="btn btn-secondaire btn-sm" data-profil="${r.id}">Profil chauffeur</button>
@@ -354,9 +353,9 @@ function ouvrirProfilChauffeur(reservation) {
     if (tel) tel.textContent = chauffeur.telephone || '—';
     if (email) email.textContent = chauffeur.email || '—';
     if (avatar) avatar.textContent = initiales.toUpperCase();
-    if (info) info.textContent = reservation.statut === 'CONFIRMEE' && new Date(String(reservation.dateHeureDepart).replace(' ', 'T')) < new Date()
+    if (info) info.textContent = reservation.statut === 'CONFIRMEE'
         ? 'Choisissez une note pour ce chauffeur.'
-        : 'La notation est disponible pour un trajet confirmé et passé.';
+        : 'La notation est disponible apres confirmation de la reservation.';
 
     if (selectRes) {
         selectRes.innerHTML = '';
@@ -367,7 +366,10 @@ function ouvrirProfilChauffeur(reservation) {
         selectRes.disabled = true;
     }
     if (selectNote) selectNote.disabled = false;
-    if (btnNoter) btnNoter.disabled = !(reservation.statut === 'CONFIRMEE' && new Date(String(reservation.dateHeureDepart).replace(' ', 'T')) < new Date() && !reservation.notePassager);
+    if (btnNoter) btnNoter.disabled = !(reservation.statut === 'CONFIRMEE' && !reservation.notePassager);
+    if (info && reservation.statut !== 'CONFIRMEE') {
+        info.textContent = 'La notation est disponible apres confirmation de la reservation.';
+    }
 
     if (modal) modal.style.display = 'flex';
 }

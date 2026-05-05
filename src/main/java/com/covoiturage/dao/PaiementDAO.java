@@ -26,6 +26,9 @@ public class PaiementDAO {
     private static final String SQL_SELECT_BY_RESERVATION =
         "SELECT * FROM paiements WHERE reservation_id = ? ORDER BY date_autorisation DESC";
 
+    private static final String SQL_SELECT_BY_REFERENCE =
+        "SELECT * FROM paiements WHERE reference_externe = ?";
+
     private static final String SQL_UPDATE_STATUT =
         "UPDATE paiements SET statut=?, date_capture=?, date_remboursement=?, " +
         "montant_rembourse=?, message_erreur=? WHERE id=?";
@@ -76,6 +79,18 @@ public class PaiementDAO {
             }
         }
         return liste;
+    }
+
+    public Optional<Paiement> trouverParReferenceExterne(String referenceExterne) throws SQLException {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_SELECT_BY_REFERENCE)) {
+
+            ps.setString(1, referenceExterne);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return Optional.of(mapperResultSet(rs));
+            }
+        }
+        return Optional.empty();
     }
 
     /**

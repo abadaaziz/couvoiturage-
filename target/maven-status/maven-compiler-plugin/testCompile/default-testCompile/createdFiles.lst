@@ -1,0 +1,6 @@
+com\covoiturage\service\TrajetServiceTest$FakeReservationDAO.class
+com\covoiturage\service\TrajetServiceTest.class
+com\covoiturage\service\TrajetServiceTest$NoopInAppNotificationService.class
+com\covoiturage\service\TrajetServiceTest$FakeTrajetDAO.class
+com\covoiturage\service\TrajetServiceTest$RecordingPaiementService.class
+com\covoiturage\service\TrajetServiceTest$NoopNotificationService.class

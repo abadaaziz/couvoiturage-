@@ -8,6 +8,7 @@ import com.covoiturage.model.Paiement.StatutPaiement;
 import com.covoiturage.model.Reservation;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -117,6 +118,7 @@ public class PaiementService {
         }
 
         try {
+            persisterRemboursement(referenceTransaction, montantARembourser);
             // En production : appel API prestataire pour émettre le remboursement
             System.out.println("[PaiementService] Remboursement de " + montantARembourser +
                                "€ pour transaction " + referenceTransaction);
@@ -142,6 +144,24 @@ public class PaiementService {
      * @return Référence de la transaction
      * @throws PaiementEcheException si le paiement échoue
      */
+    private void persisterRemboursement(String referenceTransaction, double montantARembourser)
+            throws SQLException {
+        if (referenceTransaction == null || referenceTransaction.isBlank()) {
+            return;
+        }
+
+        var paiement = paiementDAO.trouverParReferenceExterne(referenceTransaction);
+        if (paiement.isEmpty()) {
+            return;
+        }
+
+        Paiement p = paiement.get();
+        p.setStatut(StatutPaiement.REMBOURSE);
+        p.setMontantRembourse(montantARembourser);
+        p.setDateRemboursement(LocalDateTime.now());
+        paiementDAO.mettreAJourStatut(p);
+    }
+
     public String payer(Reservation reservation, double montant, MethodePaiement methode)
             throws PaiementEcheException {
         // Autorisation immédiate

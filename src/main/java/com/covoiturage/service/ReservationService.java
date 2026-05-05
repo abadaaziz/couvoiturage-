@@ -447,10 +447,6 @@ public class ReservationService {
             if (reservation.getStatut() != StatutReservation.CONFIRMEE) {
                 throw new ReservationInvalideException("Seules les reservations confirmees peuvent etre notees.");
             }
-            if (reservation.getTrajet().getDateHeureDepart() == null ||
-                reservation.getTrajet().getDateHeureDepart().isAfter(java.time.LocalDateTime.now())) {
-                throw new ReservationInvalideException("La note est disponible apres la date du trajet.");
-            }
             if (reservation.getNotePassager() != null) {
                 throw new ReservationInvalideException("Vous avez deja note ce chauffeur.");
             }

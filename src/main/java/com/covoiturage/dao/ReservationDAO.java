@@ -28,37 +28,49 @@ public class ReservationDAO {
     private static final String SQL_SELECT_BY_ID =
         "SELECT r.*, " +
         "t.ville_depart, t.ville_arrivee, t.date_heure_depart, t.prix_par_place, t.chauffeur_id, " +
-        "u.nom AS passager_nom, u.prenom AS passager_prenom, u.email AS passager_email " +
+        "u.nom AS passager_nom, u.prenom AS passager_prenom, u.email AS passager_email, " +
+        "c.nom AS chauffeur_nom, c.prenom AS chauffeur_prenom, c.email AS chauffeur_email, " +
+        "c.telephone AS chauffeur_telephone, c.note_moyenne AS chauffeur_note " +
         "FROM reservations r " +
         "JOIN trajets t ON r.trajet_id = t.id " +
         "JOIN utilisateurs u ON r.passager_id = u.id " +
+        "JOIN utilisateurs c ON t.chauffeur_id = c.id " +
         "WHERE r.id = ?";
 
     private static final String SQL_SELECT_BY_PASSAGER =
         "SELECT r.*, " +
         "t.ville_depart, t.ville_arrivee, t.date_heure_depart, t.prix_par_place, t.chauffeur_id, " +
-        "u.nom AS passager_nom, u.prenom AS passager_prenom, u.email AS passager_email " +
+        "u.nom AS passager_nom, u.prenom AS passager_prenom, u.email AS passager_email, " +
+        "c.nom AS chauffeur_nom, c.prenom AS chauffeur_prenom, c.email AS chauffeur_email, " +
+        "c.telephone AS chauffeur_telephone, c.note_moyenne AS chauffeur_note " +
         "FROM reservations r " +
         "JOIN trajets t ON r.trajet_id = t.id " +
         "JOIN utilisateurs u ON r.passager_id = u.id " +
+        "JOIN utilisateurs c ON t.chauffeur_id = c.id " +
         "WHERE r.passager_id = ? ORDER BY r.date_reservation DESC";
 
     private static final String SQL_SELECT_BY_TRAJET =
         "SELECT r.*, " +
         "t.ville_depart, t.ville_arrivee, t.date_heure_depart, t.prix_par_place, t.chauffeur_id, " +
-        "u.nom AS passager_nom, u.prenom AS passager_prenom, u.email AS passager_email " +
+        "u.nom AS passager_nom, u.prenom AS passager_prenom, u.email AS passager_email, " +
+        "c.nom AS chauffeur_nom, c.prenom AS chauffeur_prenom, c.email AS chauffeur_email, " +
+        "c.telephone AS chauffeur_telephone, c.note_moyenne AS chauffeur_note " +
         "FROM reservations r " +
         "JOIN trajets t ON r.trajet_id = t.id " +
         "JOIN utilisateurs u ON r.passager_id = u.id " +
+        "JOIN utilisateurs c ON t.chauffeur_id = c.id " +
         "WHERE r.trajet_id = ? ORDER BY r.date_reservation ASC";
 
     private static final String SQL_SELECT_BY_CHAUFFEUR =
         "SELECT r.*, " +
         "t.ville_depart, t.ville_arrivee, t.date_heure_depart, t.prix_par_place, t.chauffeur_id, " +
-        "u.nom AS passager_nom, u.prenom AS passager_prenom, u.email AS passager_email " +
+        "u.nom AS passager_nom, u.prenom AS passager_prenom, u.email AS passager_email, " +
+        "c.nom AS chauffeur_nom, c.prenom AS chauffeur_prenom, c.email AS chauffeur_email, " +
+        "c.telephone AS chauffeur_telephone, c.note_moyenne AS chauffeur_note " +
         "FROM reservations r " +
         "JOIN trajets t ON r.trajet_id = t.id " +
         "JOIN utilisateurs u ON r.passager_id = u.id " +
+        "JOIN utilisateurs c ON t.chauffeur_id = c.id " +
         "WHERE t.chauffeur_id = ? ORDER BY r.date_reservation DESC";
 
     private static final String SQL_UPDATE_STATUT =
@@ -86,7 +98,6 @@ public class ReservationDAO {
         "JOIN trajets t ON r.trajet_id = t.id " +
         "WHERE r.passager_id = ? AND t.chauffeur_id = ? " +
         "AND r.statut = 'CONFIRMEE' " +
-        "AND t.date_heure_depart < CURRENT_TIMESTAMP " +
         "AND (r.note_passager IS NULL) " +
         "ORDER BY t.date_heure_depart DESC";
 
@@ -286,6 +297,11 @@ public class ReservationDAO {
         trajet.setPrixParPlace(rs.getDouble("prix_par_place"));
         Utilisateur chauffeur = new Utilisateur();
         chauffeur.setId(rs.getInt("chauffeur_id"));
+        chauffeur.setNom(rs.getString("chauffeur_nom"));
+        chauffeur.setPrenom(rs.getString("chauffeur_prenom"));
+        chauffeur.setEmail(rs.getString("chauffeur_email"));
+        chauffeur.setTelephone(rs.getString("chauffeur_telephone"));
+        chauffeur.setNoteMoyenne(rs.getDouble("chauffeur_note"));
         trajet.setChauffeur(chauffeur);
         r.setTrajet(trajet);
 

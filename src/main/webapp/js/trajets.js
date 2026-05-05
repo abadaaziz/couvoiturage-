@@ -403,9 +403,8 @@ function configurerModalReservation() {
 function configurerModalProfil() {
     const modal = document.getElementById('modal-profil');
     const btnFermer = document.getElementById('btn-fermer-modal-profil');
-    const btnNoter = document.getElementById('profil-noter');
 
-    if (!modal || !btnFermer || !btnNoter) return;
+    if (!modal || !btnFermer) return;
 
     const fermer = () => {
         modal.style.display = 'none';
@@ -417,44 +416,6 @@ function configurerModalProfil() {
     modal.addEventListener('click', (e) => {
         if (e.target === modal) fermer();
     });
-
-    btnNoter.addEventListener('click', async () => {
-        const reservationId = document.getElementById('profil-reservation').value;
-        const note = Number(document.getElementById('profil-note-select').value || '0');
-        if (!reservationId) {
-            afficherProfilErreur('Choisissez une reservation.');
-            return;
-        }
-        if (!note || note < 1 || note > 5) {
-            afficherProfilErreur('Choisissez une note entre 1 et 5.');
-            return;
-        }
-
-        try {
-            const reponse = await fetch('/reservation/noter', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                    'Accept': 'application/json'
-                },
-                body: new URLSearchParams({
-                    reservationId: String(reservationId),
-                    note: String(note)
-                }).toString()
-            });
-
-            const data = await reponse.json();
-            if (reponse.ok) {
-                afficherNotification(data.message || 'Merci pour votre note.', 'succes');
-                fermer();
-                await chargerTrajets();
-            } else {
-                afficherProfilErreur(data.erreur || 'Erreur lors de la notation.');
-            }
-        } catch (e) {
-            afficherProfilErreur('Erreur reseau.');
-        }
-    });
 }
 
 function afficherProfilErreur(message) {
@@ -464,19 +425,13 @@ function afficherProfilErreur(message) {
     err.style.display = 'flex';
 }
 
-async function ouvrirProfilChauffeur(trajet) {
+function ouvrirProfilChauffeur(trajet) {
     const modal = document.getElementById('modal-profil');
     const nom = document.getElementById('profil-nom');
     const note = document.getElementById('profil-note');
     const tel = document.getElementById('profil-telephone');
     const email = document.getElementById('profil-email');
     const avatar = document.getElementById('profil-avatar');
-    const info = document.getElementById('profil-info-notation');
-    const loginAction = document.getElementById('profil-login-action');
-    const zone = document.getElementById('profil-notation-zone');
-    const selectRes = document.getElementById('profil-reservation');
-    const selectNote = document.getElementById('profil-note-select');
-    const btnNoter = document.getElementById('profil-noter');
 
     if (!modal || !trajet || !trajet.chauffeur) return;
 
@@ -485,66 +440,11 @@ async function ouvrirProfilChauffeur(trajet) {
 
     nom.textContent = `${chauffeur.prenom || ''} ${chauffeur.nom || ''}`.trim();
     note.textContent = chauffeur.note ? `Note: ${Number(chauffeur.note).toFixed(1)} / 5` : 'Nouveau chauffeur';
-    tel.textContent = chauffeur.telephone || '—';
-    email.textContent = chauffeur.email || '—';
+    tel.textContent = chauffeur.telephone || '-';
+    email.textContent = chauffeur.email || '-';
     avatar.textContent = initiales.toUpperCase();
-
-    if (info) info.textContent = 'Chargement des reservations eligibles...';
-    if (loginAction) loginAction.style.display = 'none';
-    if (selectRes) selectRes.innerHTML = '';
-    if (selectNote) selectNote.value = '';
-    if (selectRes) selectRes.disabled = true;
-    if (selectNote) selectNote.disabled = true;
-    if (btnNoter) btnNoter.disabled = true;
-    if (selectRes) {
-        const placeholder = document.createElement('option');
-        placeholder.value = '';
-        placeholder.textContent = 'Aucune reservation';
-        placeholder.selected = true;
-        selectRes.appendChild(placeholder);
-    }
-
-    try {
-        const reponse = await fetch(`/reservation/eligibles?chauffeurId=${chauffeur.id}`, {
-            credentials: 'include',
-            headers: { 'Accept': 'application/json' }
-        });
-
-        if (reponse.status === 401) {
-            if (info) info.textContent = 'Connectez-vous pour noter ce chauffeur.';
-            if (loginAction) loginAction.style.display = 'inline-flex';
-            return;
-        }
-
-        if (!reponse.ok) {
-            if (info) info.textContent = 'Impossible de charger les reservations eligibles.';
-        } else {
-            const reservations = await reponse.json();
-            if (!reservations.length) {
-                if (info) info.textContent = 'Aucune reservation eligible pour noter ce chauffeur.';
-            } else {
-                if (info) info.textContent = 'Choisissez une reservation pour noter ce chauffeur.';
-                if (selectRes) selectRes.disabled = false;
-                if (selectNote) selectNote.disabled = false;
-                if (btnNoter) btnNoter.disabled = false;
-                if (selectRes) selectRes.innerHTML = '';
-                reservations.forEach((r) => {
-                    const option = document.createElement('option');
-                    const date = new Date(String(r.dateHeureDepart).replace(' ', 'T')).toLocaleDateString('fr-FR');
-                    option.value = String(r.id);
-                    option.textContent = `#${r.id} • ${r.villeDepart} → ${r.villeArrivee} • ${date}`;
-                    selectRes.appendChild(option);
-                });
-            }
-        }
-    } catch (e) {
-        if (info) info.textContent = 'Impossible de charger les reservations.';
-    }
-
     modal.style.display = 'flex';
 }
-
-// ── Formulaire de recherche ────────────────────────────────────────────────
 function configurerRecherche() {
     const form = document.getElementById('form-recherche');
     const btnReset = document.getElementById('btn-reset');
