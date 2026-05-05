@@ -9,7 +9,9 @@ import com.covoiturage.exception.PaiementEcheException;
 import com.covoiturage.exception.ReservationInvalideException;
 import com.covoiturage.exception.TrajetCompletException;
 import com.covoiturage.exception.UtilisateurSuspenduException;
+import com.covoiturage.model.Chauffeur;
 import com.covoiturage.model.Paiement.MethodePaiement;
+import com.covoiturage.model.Passager;
 import com.covoiturage.model.Reservation;
 import com.covoiturage.model.Reservation.StatutReservation;
 import com.covoiturage.model.Trajet;
@@ -122,7 +124,7 @@ public class ReservationService {
             double montant = trajet.getPrixParPlace() * nombrePlaces;
 
             // ── Création de l'entité réservation ──────────────────────────────
-            Reservation reservation = new Reservation(trajet, passager, nombrePlaces);
+                                            Reservation reservation = new Reservation(trajet, (Passager) passager, nombrePlaces);
 
             // La réservation doit exister en base avant d'insérer un paiement
             // (contrainte FK paiements.reservation_id -> reservations.id).
@@ -461,7 +463,7 @@ public class ReservationService {
                 throw new ReservationInvalideException("Chauffeur introuvable.");
             }
 
-            Utilisateur chauffeur = optChauffeur.get();
+            Chauffeur chauffeur = (Chauffeur) optChauffeur.get();
             chauffeur.ajouterAvis(note);
             new com.covoiturage.dao.UtilisateurDAO().mettreAJour(chauffeur);
 

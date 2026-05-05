@@ -1,31 +1,31 @@
 package com.covoiturage.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 
 import com.covoiturage.dao.ReservationDAO;
 import com.covoiturage.dao.TrajetDAO;
 import com.covoiturage.exception.PaiementEcheException;
+import com.covoiturage.model.Chauffeur;
+import com.covoiturage.model.Passager;
 import com.covoiturage.model.Reservation;
 import com.covoiturage.model.Reservation.StatutReservation;
 import com.covoiturage.model.Trajet;
 import com.covoiturage.model.Trajet.StatutTrajet;
-import com.covoiturage.model.Utilisateur;
 
 class TrajetServiceTest {
 
     @Test
     void annulerTrajetChauffeurRembourseReservationConfirmeeAvecVingtPourcentEnPlus()
             throws Exception {
-        Utilisateur chauffeur = utilisateur(10);
-        Utilisateur passager = utilisateur(20);
+        Chauffeur chauffeur = chauffeur(10);
+        Passager passager = passager(20);
 
         Trajet trajet = new Trajet();
         trajet.setId(7);
@@ -66,8 +66,17 @@ class TrajetServiceTest {
         assertEquals(60.0, paiementService.montantRembourse, 0.001);
     }
 
-    private static Utilisateur utilisateur(int id) {
-        Utilisateur utilisateur = new Utilisateur();
+    private static Chauffeur chauffeur(int id) {
+        Chauffeur utilisateur = new Chauffeur();
+        utilisateur.setId(id);
+        utilisateur.setNom("Nom" + id);
+        utilisateur.setPrenom("Prenom" + id);
+        utilisateur.setEmail("user" + id + "@example.com");
+        return utilisateur;
+    }
+
+    private static Passager passager(int id) {
+        Passager utilisateur = new Passager();
         utilisateur.setId(id);
         utilisateur.setNom("Nom" + id);
         utilisateur.setPrenom("Prenom" + id);

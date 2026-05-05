@@ -11,10 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.covoiturage.model.Admin;
+import com.covoiturage.model.Chauffeur;
+import com.covoiturage.model.Passager;
 import com.covoiturage.model.Utilisateur;
-import com.covoiturage.model.Utilisateur.Role;
 import com.covoiturage.model.Utilisateur.StatutCompte;
 import com.covoiturage.util.DatabaseConnection;
+import java.sql.Types;
 
 /**
  * DAO (Data Access Object) pour l'entité {@link Utilisateur}.
@@ -170,10 +173,16 @@ public class UtilisateurDAO {
             ps.setString(2, utilisateur.getPrenom());
             ps.setString(3, utilisateur.getEmail());
             ps.setString(4, utilisateur.getTelephone());
-            ps.setString(5, utilisateur.getRole().name());
+            ps.setString(5, utilisateur.getRole());
             ps.setString(6, utilisateur.getStatutCompte().name());
-            ps.setDouble(7, utilisateur.getNoteMoyenne());
-            ps.setInt(8, utilisateur.getNombreAvis());
+            // note_moyenne et nombre_avis : seulement pertinents pour le chauffeur
+            if (utilisateur instanceof Chauffeur c) {
+                ps.setDouble(7, c.getNoteMoyenne());
+                ps.setInt(8, c.getNombreAvis());
+            } else {
+                ps.setNull(7, Types.DOUBLE);
+                ps.setNull(8, Types.INTEGER);
+            }
             ps.setTimestamp(9, utilisateur.getDerniereConnexion() != null
                 ? Timestamp.valueOf(utilisateur.getDerniereConnexion()) : null);
             ps.setInt(10, utilisateur.getId());
@@ -245,10 +254,16 @@ public class UtilisateurDAO {
         ps.setString(3, u.getEmail());
         ps.setString(4, u.getMotDePasseHash());
         ps.setString(5, u.getTelephone());
-        ps.setString(6, u.getRole().name());
+        ps.setString(6, u.getRole());
         ps.setString(7, u.getStatutCompte().name());
-        ps.setDouble(8, u.getNoteMoyenne());
-        ps.setInt(9, u.getNombreAvis());
+        // note_moyenne et nombre_avis : seulement pour le chauffeur
+        if (u instanceof Chauffeur c) {
+            ps.setDouble(8, c.getNoteMoyenne());
+            ps.setInt(9, c.getNombreAvis());
+        } else {
+            ps.setNull(8, Types.DOUBLE);
+            ps.setNull(9, Types.INTEGER);
+        }
         ps.setTimestamp(10, u.getDateInscription() != null
             ? Timestamp.valueOf(u.getDateInscription()) : Timestamp.valueOf(LocalDateTime.now()));
     }
@@ -257,17 +272,19 @@ public class UtilisateurDAO {
      * Mappe un ResultSet vers un objet {@link Utilisateur}.
      */
     private Utilisateur mapperResultSet(ResultSet rs) throws SQLException {
-        Utilisateur u = new Utilisateur();
+        Utilisateur u = creerInstanceSelonRole(rs.getString("role"));
         u.setId(rs.getInt("id"));
         u.setNom(rs.getString("nom"));
         u.setPrenom(rs.getString("prenom"));
         u.setEmail(rs.getString("email"));
         u.setMotDePasseHash(rs.getString("mot_de_passe_hash"));
         u.setTelephone(rs.getString("telephone"));
-        u.setRole(Role.valueOf(rs.getString("role")));
         u.setStatutCompte(StatutCompte.valueOf(rs.getString("statut_compte")));
-        u.setNoteMoyenne(rs.getDouble("note_moyenne"));
-        u.setNombreAvis(rs.getInt("nombre_avis"));
+        // noteMoyenne et nombreAvis ne concernent que les chauffeurs
+        if (u instanceof Chauffeur c) {
+            c.setNoteMoyenne(rs.getDouble("note_moyenne"));
+            c.setNombreAvis(rs.getInt("nombre_avis"));
+        }
 
         Timestamp tsInscription = rs.getTimestamp("date_inscription");
         if (tsInscription != null) u.setDateInscription(tsInscription.toLocalDateTime());
@@ -276,5 +293,18 @@ public class UtilisateurDAO {
         if (tsConnexion != null) u.setDerniereConnexion(tsConnexion.toLocalDateTime());
 
         return u;
+    }
+
+    private Utilisateur creerInstanceSelonRole(String role) throws SQLException {
+        if (role == null || role.isBlank()) {
+            throw new SQLException("Rôle utilisateur absent en base.");
+        }
+
+        return switch (role.toUpperCase()) {
+            case "ADMIN" -> new Admin();
+            case "CHAUFFEUR" -> new Chauffeur();
+            case "PASSAGER" -> new Passager();
+            default -> throw new SQLException("Rôle utilisateur inconnu : " + role);
+        };
     }
 }

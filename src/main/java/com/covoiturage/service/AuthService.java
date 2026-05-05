@@ -9,8 +9,10 @@ import com.covoiturage.dao.UtilisateurDAO;
 import com.covoiturage.exception.AuthenticationException;
 import com.covoiturage.exception.AuthenticationException.Raison;
 import com.covoiturage.exception.UtilisateurSuspenduException;
+import com.covoiturage.model.Admin;
+import com.covoiturage.model.Chauffeur;
+import com.covoiturage.model.Passager;
 import com.covoiturage.model.Utilisateur;
-import com.covoiturage.model.Utilisateur.Role;
 import com.covoiturage.model.Utilisateur.StatutCompte;
 import com.covoiturage.util.PasswordUtils;
 
@@ -52,13 +54,13 @@ public class AuthService {
      * @param email         Adresse email (doit être unique)
      * @param motDePasse    Mot de passe en clair (sera haché)
      * @param telephone     Numéro de téléphone
-     * @param role          Rôle choisi (PASSAGER ou CHAUFFEUR)
+    * @param role          Rôle choisi (PASSAGER ou CHAUFFEUR)
      * @return Utilisateur créé avec son id généré
      * @throws IllegalArgumentException si les données sont invalides
      * @throws RuntimeException si l'email est déjà pris ou erreur SQL
      */
     public Utilisateur creerCompte(String nom, String prenom, String email,
-                                   String motDePasse, String telephone, Role role) {
+                                   String motDePasse, String telephone, String role) {
         // ── Validations ──────────────────────────────────────────────────────
         validerEmail(email);
         validerMotDePasse(motDePasse);
@@ -74,8 +76,8 @@ public class AuthService {
             // Hachage du mot de passe (ne jamais stocker en clair)
             String hashMdp = PasswordUtils.hacher(motDePasse);
 
-            // Création de l'entité
-            Utilisateur utilisateur = new Utilisateur(nom, prenom, email, hashMdp, telephone, role);
+            // Création de l'entité avec le bon type métier
+            Utilisateur utilisateur = creerUtilisateurSelonRole(nom, prenom, email, hashMdp, telephone, role);
             utilisateur.setStatutCompte(StatutCompte.ACTIF); // activation directe pour la démo
             // En production : StatutCompte.EN_ATTENTE_VALIDATION + envoi email confirmation
 
@@ -266,5 +268,15 @@ public class AuthService {
         if (prenom == null || prenom.isBlank()) {
             throw new IllegalArgumentException("Le prénom est obligatoire.");
         }
+    }
+
+    private Utilisateur creerUtilisateurSelonRole(String nom, String prenom, String email,
+                                                  String hashMdp, String telephone, String role) {
+        return switch (role.toUpperCase()) {
+            case "ADMIN" -> new Admin(nom, prenom, email, hashMdp, telephone);
+            case "CHAUFFEUR" -> new Chauffeur(nom, prenom, email, hashMdp, telephone);
+            case "PASSAGER" -> new Passager(nom, prenom, email, hashMdp, telephone);
+            default -> throw new IllegalArgumentException("Role invalide : " + role);
+        };
     }
 }

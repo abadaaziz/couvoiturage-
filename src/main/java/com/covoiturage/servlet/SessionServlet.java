@@ -43,7 +43,7 @@ public class SessionServlet extends HttpServlet {
             "\"id\":" + u.getId() + "," +
             "\"nom\":\"" + echapper(u.getNom()) + "\"," +
             "\"prenom\":\"" + echapper(u.getPrenom()) + "\"," +
-            "\"role\":\"" + u.getRole() + "\"" +
+            "\"role\":\"" + echapper(u.getRole()) + "\"" +
             "}");
     }
 

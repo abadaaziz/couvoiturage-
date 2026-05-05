@@ -2,24 +2,15 @@ package com.covoiturage.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
  * Entité représentant un utilisateur de la plateforme de covoiturage.
- * Peut être un passager, un chauffeur, ou les deux.
+ * Classe mère partagée par les profils métier.
  */
-public class Utilisateur implements Serializable {
+public abstract class Utilisateur implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    // ── Énumérations internes ─────────────────────────────────────────────────
-
-    /** Rôle de l'utilisateur dans la plateforme */
-    public enum Role {
-        PASSAGER, CHAUFFEUR, ADMIN
-    }
 
     /** Statut du compte */
     public enum StatutCompte {
@@ -34,18 +25,9 @@ public class Utilisateur implements Serializable {
     private String email;
     private String motDePasseHash;   // toujours stocké hashé — jamais en clair
     private String telephone;
-    private Role          role;
     private StatutCompte  statutCompte;
-    private double        noteMoyenne;   // de 0.0 à 5.0
-    private int           nombreAvis;
     private LocalDateTime dateInscription;
     private LocalDateTime derniereConnexion;
-
-    /** Réservations passées (copie défensive à chaque accès) */
-    private final List<Reservation> reservations = new ArrayList<>();
-
-    /** Trajets proposés en tant que chauffeur */
-    private final List<Trajet> trajetsProposés = new ArrayList<>();
 
     // ── Constructeur complet ──────────────────────────────────────────────────
 
@@ -57,19 +39,15 @@ public class Utilisateur implements Serializable {
      * @param email         Adresse email (identifiant unique)
      * @param motDePasseHash Hash bcrypt du mot de passe
      * @param telephone     Numéro de téléphone (pour SMS)
-     * @param role          Rôle initial (PASSAGER, CHAUFFEUR, ADMIN)
      */
     public Utilisateur(String nom, String prenom, String email,
-                       String motDePasseHash, String telephone, Role role) {
+                       String motDePasseHash, String telephone) {
         this.nom            = Objects.requireNonNull(nom,     "Le nom ne peut pas être null");
         this.prenom         = Objects.requireNonNull(prenom,  "Le prénom ne peut pas être null");
         this.email          = Objects.requireNonNull(email,   "L'email ne peut pas être null");
         this.motDePasseHash = Objects.requireNonNull(motDePasseHash, "Le hash du mot de passe ne peut pas être null");
         this.telephone      = telephone;
-        this.role           = Objects.requireNonNull(role, "Le rôle ne peut pas être null");
         this.statutCompte   = StatutCompte.EN_ATTENTE_VALIDATION;
-        this.noteMoyenne    = 0.0;
-        this.nombreAvis     = 0;
         this.dateInscription = LocalDateTime.now();
     }
 
@@ -79,23 +57,6 @@ public class Utilisateur implements Serializable {
         this.dateInscription = LocalDateTime.now();
     }
 
-    // ── Méthodes métier ───────────────────────────────────────────────────────
-
-    /**
-     * Ajoute un avis et recalcule la note moyenne.
-     *
-     * @param note Note entre 1 et 5
-     * @throws IllegalArgumentException si la note est hors intervalle
-     */
-    public void ajouterAvis(int note) {
-        if (note < 1 || note > 5) {
-            throw new IllegalArgumentException("La note doit être comprise entre 1 et 5, reçu : " + note);
-        }
-        // Recalcul incrémental de la moyenne
-        this.noteMoyenne = (this.noteMoyenne * this.nombreAvis + note) / (this.nombreAvis + 1);
-        this.nombreAvis++;
-    }
-
     /**
      * Vérifie si le compte est actif (non suspendu ni bloqué).
      */
@@ -103,22 +64,8 @@ public class Utilisateur implements Serializable {
         return StatutCompte.ACTIF.equals(this.statutCompte);
     }
 
-    /**
-     * Ajoute une réservation à l'historique du passager.
-     * Copie défensive : on ne stocke pas la référence brute.
-     */
-    public void ajouterReservation(Reservation reservation) {
-        Objects.requireNonNull(reservation, "La réservation ne peut pas être null");
-        this.reservations.add(reservation);
-    }
-
-    /**
-     * Ajoute un trajet proposé par ce chauffeur.
-     */
-    public void ajouterTrajetProposé(Trajet trajet) {
-        Objects.requireNonNull(trajet, "Le trajet ne peut pas être null");
-        this.trajetsProposés.add(trajet);
-    }
+    /** Rôle métier porté par la sous-classe concrète. */
+    public abstract String getRole();
 
     // ── Getters / Setters ─────────────────────────────────────────────────────
 
@@ -142,19 +89,10 @@ public class Utilisateur implements Serializable {
     public String getTelephone() { return telephone; }
     public void setTelephone(String telephone) { this.telephone = telephone; }
 
-    public Role getRole() { return role; }
-    public void setRole(Role role) { this.role = Objects.requireNonNull(role); }
-
     public StatutCompte getStatutCompte() { return statutCompte; }
     public void setStatutCompte(StatutCompte statutCompte) {
         this.statutCompte = Objects.requireNonNull(statutCompte);
     }
-
-    public double getNoteMoyenne() { return noteMoyenne; }
-    public void setNoteMoyenne(double noteMoyenne) { this.noteMoyenne = noteMoyenne; }
-
-    public int getNombreAvis() { return nombreAvis; }
-    public void setNombreAvis(int nombreAvis) { this.nombreAvis = nombreAvis; }
 
     public LocalDateTime getDateInscription() { return dateInscription; }
     public void setDateInscription(LocalDateTime dateInscription) {
@@ -164,16 +102,6 @@ public class Utilisateur implements Serializable {
     public LocalDateTime getDerniereConnexion() { return derniereConnexion; }
     public void setDerniereConnexion(LocalDateTime derniereConnexion) {
         this.derniereConnexion = derniereConnexion;
-    }
-
-    /** Retourne une copie défensive de la liste des réservations */
-    public List<Reservation> getReservations() {
-        return new ArrayList<>(this.reservations);
-    }
-
-    /** Retourne une copie défensive de la liste des trajets proposés */
-    public List<Trajet> getTrajetsProposés() {
-        return new ArrayList<>(this.trajetsProposés);
     }
 
     // ── equals / hashCode / toString ─────────────────────────────────────────
@@ -198,10 +126,8 @@ public class Utilisateur implements Serializable {
                ", nom='" + nom + '\'' +
                ", prenom='" + prenom + '\'' +
                ", email='" + email + '\'' +
-               ", role=" + role +
+               ", role=" + getRole() +
                ", statutCompte=" + statutCompte +
-               ", noteMoyenne=" + String.format("%.2f", noteMoyenne) +
-               ", nombreAvis=" + nombreAvis +
                '}';
     }
 }

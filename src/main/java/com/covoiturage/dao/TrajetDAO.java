@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.covoiturage.model.Chauffeur;
 import com.covoiturage.model.Trajet;
 import com.covoiturage.model.Trajet.StatutTrajet;
-import com.covoiturage.model.Utilisateur;
 import com.covoiturage.util.DatabaseConnection;
 
 /**
@@ -59,9 +59,6 @@ public class TrajetDAO {
 
     private static final String SQL_UPDATE_PLACES =
         "UPDATE trajets SET places_disponibles=?, statut=? WHERE id=?";
-
-    private static final String SQL_UPDATE_COMPLET =
-        "UPDATE trajets SET statut='COMPLET' WHERE id=? AND places_disponibles=0";
 
     // ── Méthodes CRUD ─────────────────────────────────────────────────────────
 
@@ -257,7 +254,7 @@ public class TrajetDAO {
         t.setDateCreation(rs.getTimestamp("date_creation").toLocalDateTime());
 
         // Hydratation minimale du chauffeur (sans récursion)
-        Utilisateur chauffeur = new Utilisateur();
+        Chauffeur chauffeur = new Chauffeur();
         chauffeur.setId(rs.getInt("chauffeur_id"));
         chauffeur.setNom(rs.getString("nom"));
         chauffeur.setPrenom(rs.getString("prenom"));

@@ -36,7 +36,7 @@ public class Trajet implements Serializable {
     private int           placesDisponibles;
     private double        prixParPlace;     // en euros
     private StatutTrajet  statut;
-    private Utilisateur   chauffeur;
+    private Chauffeur     chauffeur;
     private String        descriptionVehicule;
     private LocalDateTime dateCreation;
 
@@ -56,7 +56,7 @@ public class Trajet implements Serializable {
      */
     public Trajet(String villeDepart, String villeArrivee,
                   LocalDateTime dateHeureDepart, int placesTotal,
-                  double prixParPlace, Utilisateur chauffeur,
+                  double prixParPlace, Chauffeur chauffeur,
                   String descriptionVehicule) {
 
         if (placesTotal <= 0) {
@@ -206,8 +206,8 @@ public class Trajet implements Serializable {
     public StatutTrajet getStatut() { return statut; }
     public void setStatut(StatutTrajet statut) { this.statut = Objects.requireNonNull(statut); }
 
-    public Utilisateur getChauffeur() { return chauffeur; }
-    public void setChauffeur(Utilisateur chauffeur) {
+    public Chauffeur getChauffeur() { return chauffeur; }
+    public void setChauffeur(Chauffeur chauffeur) {
         this.chauffeur = Objects.requireNonNull(chauffeur);
     }
 

@@ -13,12 +13,13 @@ import com.covoiturage.exception.PaiementEcheException;
 import com.covoiturage.exception.ReservationInvalideException;
 import com.covoiturage.exception.TrajetCompletException;
 import com.covoiturage.exception.UtilisateurSuspenduException;
+import com.covoiturage.model.Admin;
+import com.covoiturage.model.Chauffeur;
 import com.covoiturage.model.Reservation;
 import com.covoiturage.model.Reservation.StatutReservation;
 import com.covoiturage.model.Trajet;
 import com.covoiturage.model.Trajet.StatutTrajet;
 import com.covoiturage.model.Utilisateur;
-import com.covoiturage.model.Utilisateur.Role;
 
 /**
  * Service de gestion des trajets de covoiturage.
@@ -65,9 +66,11 @@ public class TrajetService {
         if (!chauffeur.estActif()) {
             throw new UtilisateurSuspenduException(chauffeur.getEmail());
         }
-        if (chauffeur.getRole() != Role.CHAUFFEUR && chauffeur.getRole() != Role.ADMIN) {
+        // Vérification par type réel — plus robuste qu'une comparaison de chaînes
+        if (!(chauffeur instanceof Chauffeur) && !(chauffeur instanceof Admin)) {
             throw new IllegalArgumentException(
-                "Seul un chauffeur peut proposer un trajet. Role actuel : " + chauffeur.getRole());
+                "Seul un chauffeur peut proposer un trajet. Type reçu : "
+                + chauffeur.getClass().getSimpleName());
         }
         if (dateHeureDepart.isBefore(LocalDateTime.now().plusMinutes(30))) {
             throw new IllegalArgumentException(
@@ -84,7 +87,7 @@ public class TrajetService {
 
         try {
             Trajet trajet = new Trajet(villeDepart, villeArrivee, dateHeureDepart,
-                placesTotal, prixParPlace, chauffeur, descriptionVehicule);
+                placesTotal, prixParPlace, (Chauffeur) chauffeur, descriptionVehicule);
             Trajet trajetPersiste = trajetDAO.inserer(trajet);
 
             notificationService.notifierEmail(

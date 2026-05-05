@@ -5,8 +5,8 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Locale;
 
+import com.covoiturage.model.Chauffeur;
 import com.covoiturage.model.Utilisateur;
-import com.covoiturage.model.Utilisateur.Role;
 import com.covoiturage.service.AuthService;
 
 import jakarta.servlet.ServletException;
@@ -154,18 +154,26 @@ public class AdminServlet extends HttpServlet {
     }
 
     private String utilisateurToJson(Utilisateur u) {
-        return "{" +
-               "\"id\":" + u.getId() + "," +
-               "\"nom\":\"" + echapper(u.getNom()) + "\"," +
-               "\"prenom\":\"" + echapper(u.getPrenom()) + "\"," +
-               "\"email\":\"" + echapper(u.getEmail()) + "\"," +
-               "\"telephone\":\"" + echapper(u.getTelephone()) + "\"," +
-               "\"role\":\"" + u.getRole() + "\"," +
-               "\"statutCompte\":\"" + u.getStatutCompte() + "\"," +
-               "\"noteMoyenne\":" + String.format(Locale.US, "%.2f", u.getNoteMoyenne()) + "," +
-               "\"nombreAvis\":" + u.getNombreAvis() + "," +
-               "\"dateInscription\":\"" + u.getDateInscription() + "\"" +
-               "}";
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        sb.append("\"id\":").append(u.getId()).append(",");
+        sb.append("\"nom\":\"").append(echapper(u.getNom())).append("\",");
+        sb.append("\"prenom\":\"").append(echapper(u.getPrenom())).append("\",");
+        sb.append("\"email\":\"").append(echapper(u.getEmail())).append("\",");
+        sb.append("\"telephone\":\"").append(echapper(u.getTelephone())).append("\",");
+        sb.append("\"role\":\"").append(u.getRole()).append("\",");
+        sb.append("\"statutCompte\":\"").append(u.getStatutCompte()).append("\",");
+        // noteMoyenne et nombreAvis : propres au chauffeur uniquement
+        if (u instanceof Chauffeur c) {
+            sb.append("\"noteMoyenne\":").append(String.format(Locale.US, "%.2f", c.getNoteMoyenne())).append(",");
+            sb.append("\"nombreAvis\":").append(c.getNombreAvis()).append(",");
+        } else {
+            sb.append("\"noteMoyenne\":null,");
+            sb.append("\"nombreAvis\":null,");
+        }
+        sb.append("\"dateInscription\":\"").append(u.getDateInscription()).append("\"");
+        sb.append("}");
+        return sb.toString();
     }
 
     /**
@@ -176,7 +184,8 @@ public class AdminServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         if (session == null) return null;
         Utilisateur u = (Utilisateur) session.getAttribute(LoginServlet.SESSION_UTILISATEUR);
-        if (u == null || u.getRole() != Role.ADMIN) return null;
+        // Vérification par type réel (instanceof) plutôt que par chaîne de rôle
+        if (!(u instanceof com.covoiturage.model.Admin)) return null;
         return u;
     }
 

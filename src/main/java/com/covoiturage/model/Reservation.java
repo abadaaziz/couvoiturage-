@@ -40,7 +40,7 @@ public class Reservation implements Serializable {
 
     private int              id;
     private Trajet           trajet;
-    private Utilisateur      passager;
+    private Passager         passager;
     private int              nombrePlaces;        // places réservées (1 par défaut)
     private double           montantTotal;        // prix total = prixParPlace × nombrePlaces
     private StatutReservation statut;
@@ -57,7 +57,7 @@ public class Reservation implements Serializable {
      * @param passager     Passager qui effectue la réservation
      * @param nombrePlaces Nombre de places réservées (minimum 1)
      */
-    public Reservation(Trajet trajet, Utilisateur passager, int nombrePlaces) {
+    public Reservation(Trajet trajet, Passager passager, int nombrePlaces) {
         if (nombrePlaces <= 0) {
             throw new IllegalArgumentException("Le nombre de places doit être supérieur à 0");
         }
@@ -153,8 +153,8 @@ public class Reservation implements Serializable {
     public Trajet getTrajet() { return trajet; }
     public void setTrajet(Trajet trajet) { this.trajet = Objects.requireNonNull(trajet); }
 
-    public Utilisateur getPassager() { return passager; }
-    public void setPassager(Utilisateur passager) {
+    public Passager getPassager() { return passager; }
+    public void setPassager(Passager passager) {
         this.passager = Objects.requireNonNull(passager);
     }
 

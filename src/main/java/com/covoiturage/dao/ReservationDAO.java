@@ -10,10 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.covoiturage.model.Chauffeur;
+import com.covoiturage.model.Passager;
 import com.covoiturage.model.Reservation;
 import com.covoiturage.model.Reservation.StatutReservation;
 import com.covoiturage.model.Trajet;
-import com.covoiturage.model.Utilisateur;
 import com.covoiturage.util.DatabaseConnection;
 
 /**
@@ -295,7 +296,7 @@ public class ReservationDAO {
         trajet.setVilleArrivee(rs.getString("ville_arrivee"));
         trajet.setDateHeureDepart(rs.getTimestamp("date_heure_depart").toLocalDateTime());
         trajet.setPrixParPlace(rs.getDouble("prix_par_place"));
-        Utilisateur chauffeur = new Utilisateur();
+        Chauffeur chauffeur = new Chauffeur();
         chauffeur.setId(rs.getInt("chauffeur_id"));
         chauffeur.setNom(rs.getString("chauffeur_nom"));
         chauffeur.setPrenom(rs.getString("chauffeur_prenom"));
@@ -306,7 +307,7 @@ public class ReservationDAO {
         r.setTrajet(trajet);
 
         // Passager (hydratation partielle)
-        Utilisateur passager = new Utilisateur();
+        Passager passager = new Passager();
         passager.setId(rs.getInt("passager_id"));
         passager.setNom(rs.getString("passager_nom"));
         passager.setPrenom(rs.getString("passager_prenom"));

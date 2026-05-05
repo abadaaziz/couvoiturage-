@@ -9,10 +9,11 @@ import com.covoiturage.exception.PaiementEcheException;
 import com.covoiturage.exception.ReservationInvalideException;
 import com.covoiturage.exception.TrajetCompletException;
 import com.covoiturage.exception.UtilisateurSuspenduException;
+import com.covoiturage.model.Admin;
+import com.covoiturage.model.Chauffeur;
 import com.covoiturage.model.Paiement.MethodePaiement;
 import com.covoiturage.model.Reservation;
 import com.covoiturage.model.Utilisateur;
-import com.covoiturage.model.Utilisateur.Role;
 import com.covoiturage.service.ReservationService;
 
 import jakarta.servlet.ServletException;
@@ -71,7 +72,7 @@ public class ReservationServlet extends HttpServlet {
             return;
         }
         if ("/reservation/eligibles".equals(chemin)) {
-            traiterEligiblesNotation(request, response, requeteJson);
+            traiterEligiblesNotation(request, response);
             return;
         }
 
@@ -297,8 +298,8 @@ public class ReservationServlet extends HttpServlet {
     /**
      * Liste des reservations eligibles a la notation pour un chauffeur.
      */
-    private void traiterEligiblesNotation(HttpServletRequest request, HttpServletResponse response,
-                                          boolean requeteJson) throws IOException {
+    private void traiterEligiblesNotation(HttpServletRequest request, HttpServletResponse response)
+                                          throws IOException {
         Utilisateur passager = getUtilisateurConnecte(request);
         if (passager == null) {
             envoyerErreurJson(response, HttpServletResponse.SC_UNAUTHORIZED,
@@ -485,7 +486,8 @@ public class ReservationServlet extends HttpServlet {
     private Utilisateur getChauffeurConnecte(HttpServletRequest request) {
         Utilisateur u = getUtilisateurConnecte(request);
         if (u == null) return null;
-        if (u.getRole() != Role.CHAUFFEUR && u.getRole() != Role.ADMIN) return null;
+        // Vérification par type réel — Chauffeur ou Admin peuvent confirmer des réservations
+        if (!(u instanceof Chauffeur) && !(u instanceof Admin)) return null;
         return u;
     }
 

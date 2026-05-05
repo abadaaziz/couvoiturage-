@@ -5,7 +5,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 import com.covoiturage.model.Utilisateur;
-import com.covoiturage.model.Utilisateur.Role;
 import com.covoiturage.service.AuthService;
 
 import jakarta.servlet.ServletException;
@@ -86,10 +85,10 @@ public class InscriptionServlet extends HttpServlet {
         }
 
         // Validation du rôle
-        Role role;
+        String role;
         try {
-            role = Role.valueOf(roleStr.toUpperCase());
-            if (role == Role.ADMIN) {
+            role = roleStr.toUpperCase();
+            if ("ADMIN".equals(role)) {
                 // Impossible de s'inscrire directement en tant qu'ADMIN
                 redirigerAvecErreur(request, response, "Role non autorise a l'inscription.");
                 return;

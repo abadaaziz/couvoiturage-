@@ -9,9 +9,10 @@ import java.util.Locale;
 
 import com.covoiturage.exception.ReservationInvalideException;
 import com.covoiturage.exception.UtilisateurSuspenduException;
+import com.covoiturage.model.Admin;
+import com.covoiturage.model.Chauffeur;
 import com.covoiturage.model.Trajet;
 import com.covoiturage.model.Utilisateur;
-import com.covoiturage.model.Utilisateur.Role;
 import com.covoiturage.service.TrajetService;
 
 import jakarta.servlet.ServletException;
@@ -304,7 +305,8 @@ public class TrajetServlet extends HttpServlet {
     private Utilisateur getChauffeurConnecte(HttpServletRequest request) {
         Utilisateur u = getUtilisateurConnecte(request);
         if (u == null) return null;
-        if (u.getRole() != Role.CHAUFFEUR && u.getRole() != Role.ADMIN) return null;
+        // Vérification par type réel — Chauffeur ou Admin peuvent gérer les trajets
+        if (!(u instanceof Chauffeur) && !(u instanceof Admin)) return null;
         return u;
     }
 

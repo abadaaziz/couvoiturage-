@@ -23,8 +23,8 @@ CREATE TABLE IF NOT EXISTS utilisateurs (
     telephone            VARCHAR(20),
     role                 ENUM('PASSAGER','CHAUFFEUR','ADMIN') NOT NULL DEFAULT 'PASSAGER',
     statut_compte        ENUM('ACTIF','SUSPENDU','BLOQUE','EN_ATTENTE_VALIDATION') NOT NULL DEFAULT 'EN_ATTENTE_VALIDATION',
-    note_moyenne         DOUBLE       NOT NULL DEFAULT 0.0,
-    nombre_avis          INT          NOT NULL DEFAULT 0,
+    note_moyenne         DOUBLE       NULL DEFAULT NULL,  -- uniquement pour les chauffeurs
+    nombre_avis          INT          NULL DEFAULT NULL,  -- uniquement pour les chauffeurs
     date_inscription     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     derniere_connexion   DATETIME
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

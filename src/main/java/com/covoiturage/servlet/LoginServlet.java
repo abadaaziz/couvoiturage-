@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 
 import com.covoiturage.exception.AuthenticationException;
 import com.covoiturage.exception.UtilisateurSuspenduException;
+import com.covoiturage.model.Admin;
 import com.covoiturage.model.Utilisateur;
 import com.covoiturage.service.AuthService;
 
@@ -112,8 +113,8 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute(SESSION_UTILISATEUR, utilisateur);
             session.setMaxInactiveInterval(30 * 60); // 30 minutes
 
-            // ── Redirection selon le rôle ─────────────────────────────────────
-            if (utilisateur.getRole() == Utilisateur.Role.ADMIN) {
+            // Redirection selon le type réel de l'utilisateur
+            if (utilisateur instanceof Admin) {
                 response.sendRedirect(request.getContextPath() + "/admin/users");
             } else {
                 response.sendRedirect(request.getContextPath() + "/trajets");
