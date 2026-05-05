@@ -1,5 +1,10 @@
 package com.covoiturage.service;
 
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 import com.covoiturage.dao.UtilisateurDAO;
 import com.covoiturage.exception.AuthenticationException;
 import com.covoiturage.exception.AuthenticationException.Raison;
@@ -8,11 +13,6 @@ import com.covoiturage.model.Utilisateur;
 import com.covoiturage.model.Utilisateur.Role;
 import com.covoiturage.model.Utilisateur.StatutCompte;
 import com.covoiturage.util.PasswordUtils;
-
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Service d'authentification et de gestion des comptes.
@@ -192,6 +192,26 @@ public class AuthService {
     }
 
     /**
+     * Réactive un compte suspendu ou bloqué.
+     *
+     * @param utilisateurId Identifiant de l'utilisateur à réactiver
+     * @param adminId       Identifiant de l'administrateur
+     */
+    public void reactiverCompte(int utilisateurId, int adminId) {
+        try {
+            Optional<Utilisateur> opt = utilisateurDAO.trouverParId(utilisateurId);
+            if (opt.isEmpty()) {
+                throw new IllegalArgumentException("Utilisateur #" + utilisateurId + " introuvable.");
+            }
+            utilisateurDAO.mettreAJourStatut(utilisateurId, StatutCompte.ACTIF);
+            System.out.println("[AuthService] Compte #" + utilisateurId +
+                               " réactivé par l'admin #" + adminId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la réactivation du compte : " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * Retourne la liste de tous les utilisateurs (usage admin uniquement).
      */
     public List<Utilisateur> listerTousLesUtilisateurs() {
@@ -199,6 +219,17 @@ public class AuthService {
             return utilisateurDAO.trouverTous();
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la récupération des utilisateurs : " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Retourne la liste des utilisateurs bloqués (usage admin uniquement).
+     */
+    public List<Utilisateur> listerUtilisateursBloques() {
+        try {
+            return utilisateurDAO.trouverParStatut(StatutCompte.BLOQUE);
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la récupération des comptes bloqués : " + e.getMessage(), e);
         }
     }
 

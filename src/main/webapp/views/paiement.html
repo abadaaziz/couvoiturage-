@@ -66,6 +66,24 @@
                 </div>
             </div>
 
+            <!-- Simulation PayPal -->
+            <div id="champs-paypal" style="display:none;">
+                <div class="form-groupe">
+                    <label for="paypal-email">Email PayPal</label>
+                          <input type="email" id="paypal-email" class="form-controle"
+                              placeholder="nom@exemple.com">
+                </div>
+            </div>
+
+            <!-- Simulation virement -->
+            <div id="champs-virement" style="display:none;">
+                <div class="form-groupe">
+                    <label for="virement-reference">Reference de virement</label>
+                          <input type="text" id="virement-reference" class="form-controle"
+                              placeholder="VIR-2026-0001">
+                </div>
+            </div>
+
             <input type="hidden" id="reservationId" name="reservationId" value="">
 
             <button type="submit" id="btn-payer" class="btn btn-primaire w-full btn-lg">
@@ -104,10 +122,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Affichage conditionnel des champs
-    document.getElementById('methodePaiement').addEventListener('change', function() {
-        document.getElementById('champs-carte').style.display =
-            this.value === 'CARTE_BANCAIRE' ? 'block' : 'none';
-    });
+    const selectMethode = document.getElementById('methodePaiement');
+    const champsCarte = document.getElementById('champs-carte');
+    const champsPaypal = document.getElementById('champs-paypal');
+    const champsVirement = document.getElementById('champs-virement');
+
+    const basculerChamps = () => {
+        const methode = selectMethode.value;
+        champsCarte.style.display = methode === 'CARTE_BANCAIRE' ? 'block' : 'none';
+        champsPaypal.style.display = methode === 'PAYPAL' ? 'block' : 'none';
+        champsVirement.style.display = methode === 'VIREMENT' ? 'block' : 'none';
+    };
+
+    selectMethode.addEventListener('change', basculerChamps);
+    basculerChamps();
 
     // Soumission
     document.getElementById('form-paiement').addEventListener('submit', async (e) => {
@@ -117,32 +145,95 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function chargerRecapitulatif(reservationId) {
-    // En production : appel GET /reservation/mes et filtrage par id
-    document.getElementById('recap-reservation').innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-            <div>
-                <p class="semi-gras texte-sm">Réservation #${reservationId}</p>
-                <p class="texte-xs texte-secondaire">1 place • En attente de confirmation</p>
+    const zone = document.getElementById('recap-reservation');
+    try {
+        const reponse = await fetch('/reservation/mes?format=json', {
+            credentials: 'include',
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!reponse.ok) throw new Error('Erreur serveur ' + reponse.status);
+        const reservations = await reponse.json();
+        const reservation = reservations.find((r) => String(r.id) === String(reservationId));
+
+        if (!reservation) {
+            zone.innerHTML = '<p class="texte-secondaire texte-sm" style="text-align:center;">Réservation introuvable.</p>';
+            return;
+        }
+
+        const montant = Number(reservation.montantTotal || 0).toFixed(2);
+        const places = reservation.nombrePlaces || 1;
+        zone.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <p class="semi-gras texte-sm">Réservation #${reservation.id}</p>
+                    <p class="texte-xs texte-secondaire">${places} place(s) • ${reservation.villeDepart} → ${reservation.villeArrivee}</p>
+                </div>
+                <p class="trajet-prix" style="font-size:1.25rem;">${montant}€</p>
             </div>
-            <p class="trajet-prix" style="font-size:1.25rem;">—€</p>
-        </div>
-    `;
+        `;
+    } catch (e) {
+        zone.innerHTML = '<p class="texte-secondaire texte-sm" style="text-align:center;">Erreur lors du chargement du récapitulatif.</p>';
+    }
 }
 
 async function traiterPaiement() {
     const btn     = document.getElementById('btn-payer');
     const alerteEl = document.getElementById('alerte-paiement');
+    const methode = document.getElementById('methodePaiement').value;
+
+    const afficherErreur = (message) => {
+        alerteEl.className = 'alerte alerte-erreur';
+        alerteEl.textContent = message;
+        alerteEl.style.display = 'flex';
+    };
+
+    if (methode === 'CARTE_BANCAIRE') {
+        const numero = document.getElementById('num-carte').value.replace(/\s/g, '');
+        const expiration = document.getElementById('expiration').value.trim();
+        const cvv = document.getElementById('cvv').value.trim();
+
+        if (!/^\d{16}$/.test(numero)) {
+            afficherErreur('❌ Numéro de carte invalide (16 chiffres requis).');
+            return;
+        }
+        if (!/^\d{2}\/\d{2}$/.test(expiration)) {
+            afficherErreur('❌ Expiration invalide (format MM/AA).');
+            return;
+        }
+        if (!/^\d{3}$/.test(cvv)) {
+            afficherErreur('❌ CVV invalide (3 chiffres requis).');
+            return;
+        }
+    } else if (methode === 'PAYPAL') {
+        const email = document.getElementById('paypal-email').value.trim();
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            afficherErreur('❌ Email PayPal invalide.');
+            return;
+        }
+    } else if (methode === 'VIREMENT') {
+        const reference = document.getElementById('virement-reference').value.trim();
+        if (!reference) {
+            afficherErreur('❌ Reference de virement obligatoire.');
+            return;
+        }
+    }
 
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner" style="width:18px;height:18px;border-width:2px;"></span> Traitement en cours...';
     alerteEl.style.display = 'none';
 
     try {
-        const formData = new FormData();
-        formData.append('reservationId',   document.getElementById('reservationId').value);
-        formData.append('methodePaiement', document.getElementById('methodePaiement').value);
+        const body = new URLSearchParams();
+        body.set('reservationId', document.getElementById('reservationId').value);
+        body.set('methodePaiement', methode);
 
-        const reponse = await fetch('/paiement', { method: 'POST', body: formData });
+        const reponse = await fetch('/paiement', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+            body: body.toString()
+        });
         const data    = await reponse.json();
 
         if (reponse.ok) {

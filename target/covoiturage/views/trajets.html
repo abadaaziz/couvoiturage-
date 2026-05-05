@@ -77,6 +77,10 @@
                             <option value="2">2 places</option>
                             <option value="3">3 places</option>
                             <option value="4">4 places</option>
+                            <option value="5">5 places</option>
+                            <option value="6">6 places</option>
+                            <option value="7">7 places</option>
+                            <option value="8">8 places</option>
                         </select>
                     </div>
                     <div style="display:flex;gap:0.5rem;align-items:flex-end;">
@@ -149,6 +153,8 @@
                         <option value="4">4</option>
                         <option value="5">5</option>
                         <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
                     </select>
                 </div>
                 <div class="form-groupe">
@@ -212,8 +218,44 @@
     <p>© 2025 CovoitApp — Voyagez ensemble, voyagez malin 🌍</p>
 </footer>
 
-<script src="/js/trajets.js?v=20260420-4"></script>
+<script src="/js/trajets.js?v=20260504-2"></script>
 <script>
+function echapper(v) {
+    if (v == null) return '';
+    return String(v)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+async function chargerSessionNavbar() {
+    try {
+        const reponse = await fetch('/session/me', {
+            method: 'GET',
+            credentials: 'include',
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!reponse.ok) return;
+        const data = await reponse.json();
+        if (!data.connecte) return;
+
+        const zoneActions = document.getElementById('navbar-actions');
+        const nomAffiche = [data.prenom, data.nom].filter(Boolean).join(' ').trim();
+        if (zoneActions) {
+            zoneActions.innerHTML = `
+                <span class="badge" style="background:rgba(34,197,94,0.16);color:#86efac;border:1px solid rgba(34,197,94,0.35);">${echapper(data.role || '')}</span>
+                <span class="texte-sm texte-secondaire">${echapper(nomAffiche || 'Utilisateur')}</span>
+                <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
+            `;
+        }
+    } catch (e) {
+        // Ignore navbar update errors
+    }
+}
+
 async function chargerNotifIndicator() {
     const indicator = document.getElementById('notif-indicator');
     if (!indicator) return;
@@ -245,6 +287,7 @@ async function chargerNotifIndicator() {
 }
 
 document.addEventListener('DOMContentLoaded', chargerNotifIndicator);
+document.addEventListener('DOMContentLoaded', chargerSessionNavbar);
 </script>
 </body>
 </html>

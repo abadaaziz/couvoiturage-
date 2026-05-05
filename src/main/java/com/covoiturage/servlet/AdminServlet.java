@@ -21,11 +21,13 @@ import jakarta.servlet.http.HttpSession;
  *
  * <ul>
  *   <li>GET  /admin/users         → liste de tous les utilisateurs (JSON)</li>
+ *   <li>GET  /admin/bloques       → liste des comptes bloqués (JSON)</li>
  *   <li>POST /admin/suspendre     → suspension d'un compte</li>
  *   <li>POST /admin/bloquer       → blocage définitif d'un compte</li>
+ *   <li>POST /admin/reactiver     → réactivation d'un compte suspendu/bloqué</li>
  * </ul>
  */
-@WebServlet(urlPatterns = {"/admin/users", "/admin/suspendre", "/admin/bloquer"})
+@WebServlet(urlPatterns = {"/admin/users", "/admin/bloques", "/admin/suspendre", "/admin/bloquer", "/admin/reactiver"})
 public class AdminServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -60,12 +62,19 @@ public class AdminServlet extends HttpServlet {
             return;
         }
 
+        String chemin = request.getServletPath();
         if (!requeteJson) {
-            request.getRequestDispatcher("/views/admin.html").forward(request, response);
+            if ("/admin/bloques".equals(chemin)) {
+                request.getRequestDispatcher("/views/admin-bloques.html").forward(request, response);
+            } else {
+                request.getRequestDispatcher("/views/admin.html").forward(request, response);
+            }
             return;
         }
 
-        List<Utilisateur> utilisateurs = authService.listerTousLesUtilisateurs();
+        List<Utilisateur> utilisateurs = "/admin/bloques".equals(chemin)
+            ? authService.listerUtilisateursBloques()
+            : authService.listerTousLesUtilisateurs();
 
         response.setContentType("application/json;charset=UTF-8");
         PrintWriter out = response.getWriter();
@@ -111,6 +120,13 @@ public class AdminServlet extends HttpServlet {
                     response.setContentType("application/json;charset=UTF-8");
                     response.getWriter().print(
                         "{\"succes\":true,\"message\":\"Compte #" + utilisateurId + " bloqué définitivement.\"}"
+                    );
+                }
+                case "/admin/reactiver" -> {
+                    authService.reactiverCompte(utilisateurId, admin.getId());
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().print(
+                        "{\"succes\":true,\"message\":\"Compte #" + utilisateurId + " réactivé.\"}"
                     );
                 }
                 default -> envoyerErreurJson(response, HttpServletResponse.SC_NOT_FOUND,

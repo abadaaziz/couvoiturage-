@@ -8,15 +8,33 @@
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="/trajets" class="navbar-logo">CovoitApp</a>
+<nav class="navbar" role="navigation" aria-label="Navigation principale">
+    <a href="/trajets" class="navbar-logo" id="nav-logo">
+        <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+            <circle cx="24" cy="24" r="24" fill="url(#gn)"/>
+            <path d="M14 28l6-10 4 6 3-4 7 8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="14" cy="29" r="2.5" fill="white"/>
+            <circle cx="34" cy="29" r="2.5" fill="white"/>
+            <defs>
+                <linearGradient id="gn" x1="0" y1="0" x2="48" y2="48">
+                    <stop offset="0%" stop-color="#7c3aed"/>
+                    <stop offset="100%" stop-color="#2563eb"/>
+                </linearGradient>
+            </defs>
+        </svg>
+        CovoitApp
+    </a>
+
     <ul class="navbar-liens">
-        <li><a href="/trajets">Trajets</a></li>
-        <li><a href="/admin/users" class="actif">👥 Utilisateurs</a></li>
+        <li><a href="/trajets" id="nav-trajets">Trajets</a></li>
+        <li><a href="/admin/users" id="nav-mes-reservations" class="actif">Utilisateurs</a></li>
+        <li><a href="/notifications" id="nav-notifications" class="nav-notifications">Notifications
+            <span id="notif-indicator" class="nav-indicator" style="display:none;"></span>
+        </a></li>
     </ul>
-    <div class="navbar-actions">
-        <span class="badge badge-admin">ADMIN</span>
-        <a href="/logout" class="btn btn-secondaire btn-sm">Déconnexion</a>
+
+    <div class="navbar-actions" id="navbar-actions">
+        <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
     </div>
 </nav>
 
@@ -28,7 +46,7 @@
                 <h1>Gestion des utilisateurs</h1>
                 <p class="texte-secondaire mt-1" id="compteur-users">Chargement...</p>
             </div>
-            <div style="display:flex;gap:0.75rem;">
+                 <div style="display:flex;gap:0.75rem;align-items:center;">
                 <input type="text" id="filtre-recherche" class="form-controle"
                        placeholder="🔍 Rechercher..." style="max-width:250px;">
                 <select id="filtre-role" class="form-controle" style="max-width:160px;">
@@ -41,8 +59,8 @@
                     <option value="">Tous les statuts</option>
                     <option value="ACTIF">Actif</option>
                     <option value="SUSPENDU">Suspendu</option>
-                    <option value="BLOQUE">Bloqué</option>
                 </select>
+                <a href="/admin/bloques" class="btn btn-secondaire btn-sm">Comptes bloques</a>
             </div>
         </div>
 
@@ -85,14 +103,73 @@
 let tousLesUtilisateurs = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
+    await chargerSessionNavbar();
+    await chargerNotifIndicator();
     await chargerUtilisateurs();
     configurerFiltres();
 });
 
+async function chargerSessionNavbar() {
+    try {
+        const reponse = await fetch('/session/me', {
+            method: 'GET',
+            credentials: 'include',
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!reponse.ok) return;
+        const data = await reponse.json();
+        if (!data.connecte) return;
+
+        const zoneActions = document.getElementById('navbar-actions');
+        const nomAffiche = [data.prenom, data.nom].filter(Boolean).join(' ').trim();
+        if (zoneActions) {
+            zoneActions.innerHTML = `
+                <span class="badge" style="background:rgba(34,197,94,0.16);color:#86efac;border:1px solid rgba(34,197,94,0.35);">${echapper(data.role)}</span>
+                <span class="texte-sm texte-secondaire">${echapper(nomAffiche || 'Utilisateur')}</span>
+                <a href="/logout" class="btn btn-secondaire btn-sm">Déconnexion</a>
+            `;
+        }
+    } catch (e) {
+        // Ignore navbar update errors
+    }
+}
+
+async function chargerNotifIndicator() {
+    const indicator = document.getElementById('notif-indicator');
+    if (!indicator) return;
+
+    try {
+        const reponse = await fetch('/notifications/mes?format=json', {
+            credentials: 'include',
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!reponse.ok) {
+            indicator.style.display = 'none';
+            return;
+        }
+
+        const notifications = await reponse.json();
+        const unread = notifications.filter((n) => !n.dateLecture).length;
+        if (!unread) {
+            indicator.style.display = 'none';
+            indicator.textContent = '';
+            return;
+        }
+
+        indicator.style.display = 'inline-flex';
+        indicator.textContent = unread > 99 ? '99+' : String(unread);
+    } catch (e) {
+        indicator.style.display = 'none';
+    }
+}
+
 async function chargerUtilisateurs() {
     try {
-        const reponse = await fetch('/admin/users', {
+        const reponse = await fetch('/admin/users?format=json', {
             method: 'GET',
+            credentials: 'include',
             headers: { 'Accept': 'application/json' }
         });
 
@@ -102,7 +179,13 @@ async function chargerUtilisateurs() {
         }
         if (!reponse.ok) throw new Error('Erreur serveur ' + reponse.status);
 
-        tousLesUtilisateurs = await reponse.json();
+        const contentType = reponse.headers.get('Content-Type') || '';
+        if (!contentType.includes('application/json')) {
+            throw new Error('Reponse inattendue (pas du JSON).');
+        }
+
+        const utilisateurs = await reponse.json();
+        tousLesUtilisateurs = utilisateurs.filter((u) => u.statutCompte !== 'BLOQUE');
         afficherUtilisateurs(tousLesUtilisateurs);
         document.getElementById('compteur-users').textContent =
             tousLesUtilisateurs.length + ' utilisateur(s) enregistré(s)';
@@ -155,6 +238,12 @@ function afficherUtilisateurs(utilisateurs) {
                    Bloquer
                </button>` : '';
 
+        const btnReactiver = u.role !== 'ADMIN' && (u.statutCompte === 'SUSPENDU' || u.statutCompte === 'BLOQUE')
+            ? `<button class="btn btn-sm" style="background:rgba(34,197,94,0.16);color:#86efac;border:1px solid rgba(34,197,94,0.35);"
+                       onclick="actionAdmin('reactiver', ${u.id}, '${echapper(u.prenom)} ${echapper(u.nom)}')">
+                   Reactiver
+               </button>` : '';
+
         tr.innerHTML = `
             <td><span class="texte-secondaire texte-sm">#${u.id}</span></td>
             <td>
@@ -178,6 +267,7 @@ function afficherUtilisateurs(utilisateurs) {
                 <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
                     ${btnSuspendre}
                     ${btnBloquer}
+                    ${btnReactiver}
                 </div>
             </td>
         `;
@@ -188,18 +278,21 @@ function afficherUtilisateurs(utilisateurs) {
 async function actionAdmin(action, utilisateurId, nomUtilisateur) {
     const messages = {
         suspendre: `Suspendre le compte de ${nomUtilisateur} ?`,
-        bloquer:   `⚠️ Bloquer DÉFINITIVEMENT le compte de ${nomUtilisateur} ? Cette action est irréversible.`
+        bloquer:   `⚠️ Bloquer DÉFINITIVEMENT le compte de ${nomUtilisateur} ? Cette action est irréversible.`,
+        reactiver: `Réactiver le compte de ${nomUtilisateur} ?`
     };
 
     if (!confirm(messages[action])) return;
 
     try {
-        const formData = new FormData();
-        formData.append('utilisateurId', utilisateurId);
+        const body = new URLSearchParams();
+        body.set('utilisateurId', String(utilisateurId));
 
         const reponse = await fetch(`/admin/${action}`, {
             method: 'POST',
-            body: formData
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body
         });
 
         const data = await reponse.json();

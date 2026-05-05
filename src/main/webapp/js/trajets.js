@@ -13,7 +13,11 @@ const etat = {
 
 function estChauffeurConnecte() {
     return etat.utilisateur &&
-        (etat.utilisateur.role === 'CHAUFFEUR' || etat.utilisateur.role === 'ADMIN');
+    etat.utilisateur.role === 'CHAUFFEUR';
+}
+
+function estAdminConnecte() {
+    return etat.utilisateur && etat.utilisateur.role === 'ADMIN';
 }
 
 // ── Initialisation au chargement de la page ────────────────────────────────
@@ -67,7 +71,10 @@ function configurerNavbar() {
 
     const lienMesReservations = document.getElementById('nav-mes-reservations');
     if (lienMesReservations) {
-        if (estChauffeurConnecte()) {
+        if (estAdminConnecte()) {
+            lienMesReservations.href = '/admin/users';
+            lienMesReservations.textContent = 'Utilisateurs';
+        } else if (estChauffeurConnecte()) {
             lienMesReservations.href = '/trajets/mes';
             lienMesReservations.textContent = 'Mes trajets';
         } else {
@@ -78,8 +85,8 @@ function configurerNavbar() {
 
     // Active le bouton chauffeur si role CHAUFFEUR/ADMIN
     const zoneChauffeur = document.getElementById('zone-chauffeur');
-    if (zoneChauffeur && estChauffeurConnecte()) {
-        zoneChauffeur.style.display = 'block';
+    if (zoneChauffeur) {
+        zoneChauffeur.style.display = estChauffeurConnecte() ? 'block' : 'none';
     }
 }
 
@@ -131,6 +138,10 @@ function afficherTrajets(trajets) {
         carte.classList.add('animation-entree');
         liste.appendChild(carte);
     });
+
+    if (estAdminConnecte()) {
+        liste.querySelectorAll('.btn-reserver').forEach((btn) => btn.remove());
+    }
 }
 
 function creerCarteTrajet(t) {
@@ -193,7 +204,7 @@ function creerCarteTrajet(t) {
                 <p class="semi-gras texte-sm">${echapper(t.chauffeur.prenom)} ${echapper(t.chauffeur.nom)}</p>
                 <p class="texte-xs texte-secondaire">${etoiles} ${t.chauffeur.note ? t.chauffeur.note.toFixed(1) : 'Nouveau'}</p>
             </div>
-            ${t.statut === 'OUVERT' && !estChauffeurConnecte() ? `
+            ${t.statut === 'OUVERT' && !estChauffeurConnecte() && !estAdminConnecte() ? `
             <button class="btn btn-primaire btn-sm btn-reserver" data-id="${t.id}"
                     data-prix="${t.prixParPlace}" data-ville-depart="${echapper(t.villeDepart)}"
                     data-ville-arrivee="${echapper(t.villeArrivee)}">
@@ -303,21 +314,20 @@ async function reserverTrajet(trajetId, nombrePlaces, methodePaiement) {
         const data = await reponse.json();
 
         if (reponse.ok) {
-            afficherNotification('✓ Réservation créée ! En attente de confirmation du chauffeur.', 'succes');
-            await chargerTrajets(); // Actualiser la liste
-            return true;
+            afficherNotification('✓ Réservation créée. Redirection vers le paiement...', 'succes');
+            return data;
         } else if (reponse.status === 401) {
             window.location.href = '/login';
-            return false;
+            return null;
         } else {
             afficherNotification('❌ ' + (data.erreur || 'Erreur lors de la réservation.'), 'erreur');
-            return false;
+            return null;
         }
 
     } catch (err) {
         console.error('[trajets.js] Erreur réservation :', err);
         afficherNotification('❌ Erreur réseau. Veuillez réessayer.', 'erreur');
-        return false;
+        return null;
     }
 }
 
@@ -367,12 +377,17 @@ function configurerModalReservation() {
         btnConfirmer.innerHTML = '<span class="spinner" style="width:16px;height:16px;border-width:2px;"></span> Réservation...';
         errDiv.style.display = 'none';
 
-        const succes = await reserverTrajet(trajet.id, nb, methode);
+        const reservation = await reserverTrajet(trajet.id, nb, methode);
 
         btnConfirmer.disabled = false;
         btnConfirmer.innerHTML = 'Confirmer la réservation';
 
-        if (succes) {
+        if (reservation && reservation.id) {
+            window.location.href = `/paiement?reservationId=${reservation.id}`;
+            return;
+        }
+
+        if (reservation) {
             fermer();
         }
     });

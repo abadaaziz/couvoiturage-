@@ -1,15 +1,20 @@
 package com.covoiturage.dao;
 
-import com.covoiturage.model.Utilisateur;
-import com.covoiturage.model.Utilisateur.Role;
-import com.covoiturage.model.Utilisateur.StatutCompte;
-import com.covoiturage.util.DatabaseConnection;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.covoiturage.model.Utilisateur;
+import com.covoiturage.model.Utilisateur.Role;
+import com.covoiturage.model.Utilisateur.StatutCompte;
+import com.covoiturage.util.DatabaseConnection;
 
 /**
  * DAO (Data Access Object) pour l'entité {@link Utilisateur}.
@@ -31,6 +36,9 @@ public class UtilisateurDAO {
 
     private static final String SQL_SELECT_ALL =
         "SELECT * FROM utilisateurs ORDER BY date_inscription DESC";
+
+    private static final String SQL_SELECT_BY_STATUT =
+        "SELECT * FROM utilisateurs WHERE statut_compte = ? ORDER BY date_inscription DESC";
 
     private static final String SQL_UPDATE =
         "UPDATE utilisateurs SET nom=?, prenom=?, email=?, telephone=?, role=?, statut_compte=?, " +
@@ -125,6 +133,24 @@ public class UtilisateurDAO {
 
             while (rs.next()) {
                 liste.add(mapperResultSet(rs));
+            }
+        }
+        return liste;
+    }
+
+    /**
+     * Retourne tous les utilisateurs d'un statut donné.
+     */
+    public List<Utilisateur> trouverParStatut(StatutCompte statut) throws SQLException {
+        List<Utilisateur> liste = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_SELECT_BY_STATUT)) {
+
+            ps.setString(1, statut.name());
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    liste.add(mapperResultSet(rs));
+                }
             }
         }
         return liste;

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration — CovoitApp</title>
+    <title>Comptes bloques — CovoitApp</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -27,7 +27,7 @@
 
     <ul class="navbar-liens">
         <li><a href="/trajets" id="nav-trajets">Trajets</a></li>
-        <li><a href="/admin/users" id="nav-mes-reservations" class="actif">Utilisateurs</a></li>
+        <li><a href="/admin/users" id="nav-mes-reservations">Utilisateurs</a></li>
         <li><a href="/notifications" id="nav-notifications" class="nav-notifications">Notifications
             <span id="notif-indicator" class="nav-indicator" style="display:none;"></span>
         </a></li>
@@ -43,39 +43,26 @@
 
         <div class="titre-section flex justify-between items-center">
             <div>
-                <h1>Gestion des utilisateurs</h1>
+                <h1>Comptes bloques</h1>
                 <p class="texte-secondaire mt-1" id="compteur-users">Chargement...</p>
             </div>
-                 <div style="display:flex;gap:0.75rem;align-items:center;">
+            <div style="display:flex;gap:0.75rem;align-items:center;">
                 <input type="text" id="filtre-recherche" class="form-controle"
                        placeholder="🔍 Rechercher..." style="max-width:250px;">
-                <select id="filtre-role" class="form-controle" style="max-width:160px;">
-                    <option value="">Tous les rôles</option>
-                    <option value="PASSAGER">Passager</option>
-                    <option value="CHAUFFEUR">Chauffeur</option>
-                    <option value="ADMIN">Admin</option>
-                </select>
-                <select id="filtre-statut" class="form-controle" style="max-width:180px;">
-                    <option value="">Tous les statuts</option>
-                    <option value="ACTIF">Actif</option>
-                    <option value="SUSPENDU">Suspendu</option>
-                </select>
-                <a href="/admin/bloques" class="btn btn-secondaire btn-sm">Comptes bloques</a>
+                <a href="/admin/users" class="btn btn-secondaire btn-sm">Retour utilisateurs</a>
             </div>
         </div>
 
-        <!-- Alertes -->
         <div id="alerte-admin" class="alerte" style="display:none;"></div>
 
-        <!-- Tableau des utilisateurs -->
         <div class="tableau-conteneur">
-            <table id="tableau-utilisateurs" aria-label="Liste des utilisateurs">
+            <table id="tableau-utilisateurs" aria-label="Liste des comptes bloques">
                 <thead>
                     <tr>
                         <th>#ID</th>
                         <th>Utilisateur</th>
                         <th>Email</th>
-                        <th>Rôle</th>
+                        <th>Role</th>
                         <th>Statut</th>
                         <th>Note</th>
                         <th>Inscription</th>
@@ -125,9 +112,9 @@ async function chargerSessionNavbar() {
         const nomAffiche = [data.prenom, data.nom].filter(Boolean).join(' ').trim();
         if (zoneActions) {
             zoneActions.innerHTML = `
-                <span class="badge" style="background:rgba(34,197,94,0.16);color:#86efac;border:1px solid rgba(34,197,94,0.35);">${echapper(data.role)}</span>
+                <span class="badge" style="background:rgba(34,197,94,0.16);color:#86efac;border:1px solid rgba(34,197,94,0.35);">${echapper(data.role || '')}</span>
                 <span class="texte-sm texte-secondaire">${echapper(nomAffiche || 'Utilisateur')}</span>
-                <a href="/logout" class="btn btn-secondaire btn-sm">Déconnexion</a>
+                <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
             `;
         }
     } catch (e) {
@@ -167,7 +154,7 @@ async function chargerNotifIndicator() {
 
 async function chargerUtilisateurs() {
     try {
-        const reponse = await fetch('/admin/users?format=json', {
+        const reponse = await fetch('/admin/bloques?format=json', {
             method: 'GET',
             credentials: 'include',
             headers: { 'Accept': 'application/json' }
@@ -184,14 +171,13 @@ async function chargerUtilisateurs() {
             throw new Error('Reponse inattendue (pas du JSON).');
         }
 
-        const utilisateurs = await reponse.json();
-        tousLesUtilisateurs = utilisateurs.filter((u) => u.statutCompte !== 'BLOQUE');
+        tousLesUtilisateurs = await reponse.json();
         afficherUtilisateurs(tousLesUtilisateurs);
         document.getElementById('compteur-users').textContent =
-            tousLesUtilisateurs.length + ' utilisateur(s) enregistré(s)';
+            tousLesUtilisateurs.length + ' compte(s) bloque(s)';
 
     } catch (err) {
-        afficherAlerte('Erreur lors du chargement des utilisateurs : ' + err.message, 'erreur');
+        afficherAlerte('Erreur lors du chargement des comptes bloques : ' + err.message, 'erreur');
     }
 }
 
@@ -200,7 +186,7 @@ function afficherUtilisateurs(utilisateurs) {
     corps.innerHTML = '';
 
     if (!utilisateurs.length) {
-        corps.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--texte-secondaire);">Aucun utilisateur trouvé.</td></tr>';
+        corps.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--texte-secondaire);">Aucun compte bloque.</td></tr>';
         return;
     }
 
@@ -210,12 +196,7 @@ function afficherUtilisateurs(utilisateurs) {
             ? new Date(u.dateInscription).toLocaleDateString('fr-FR')
             : '—';
 
-        const badgeStatut = {
-            ACTIF:    '<span class="badge badge-ouvert">Actif</span>',
-            SUSPENDU: '<span class="badge badge-complet">Suspendu</span>',
-            BLOQUE:   '<span class="badge badge-annule">Bloqué</span>',
-            EN_ATTENTE_VALIDATION: '<span class="badge badge-attente">En attente</span>'
-        }[u.statutCompte] || u.statutCompte;
+        const badgeStatut = '<span class="badge badge-annule">Bloque</span>';
 
         const badgeRole = u.role === 'ADMIN'
             ? '<span class="badge badge-admin">Admin</span>'
@@ -226,19 +207,7 @@ function afficherUtilisateurs(utilisateurs) {
         const etoiles = '★'.repeat(Math.round(u.noteMoyenne)) + '☆'.repeat(5 - Math.round(u.noteMoyenne));
         const initiales = (u.prenom?.[0] || '') + (u.nom?.[0] || '');
 
-        const btnSuspendre = u.statutCompte !== 'SUSPENDU' && u.role !== 'ADMIN'
-            ? `<button class="btn btn-sm" style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);"
-                       onclick="actionAdmin('suspendre', ${u.id}, '${echapper(u.prenom)} ${echapper(u.nom)}')">
-                   Suspendre
-               </button>` : '';
-
-        const btnBloquer = u.role !== 'ADMIN' && u.statutCompte !== 'BLOQUE'
-            ? `<button class="btn btn-danger btn-sm"
-                       onclick="actionAdmin('bloquer', ${u.id}, '${echapper(u.prenom)} ${echapper(u.nom)}')">
-                   Bloquer
-               </button>` : '';
-
-        const btnReactiver = u.role !== 'ADMIN' && (u.statutCompte === 'SUSPENDU' || u.statutCompte === 'BLOQUE')
+        const btnReactiver = u.role !== 'ADMIN'
             ? `<button class="btn btn-sm" style="background:rgba(34,197,94,0.16);color:#86efac;border:1px solid rgba(34,197,94,0.35);"
                        onclick="actionAdmin('reactiver', ${u.id}, '${echapper(u.prenom)} ${echapper(u.nom)}')">
                    Reactiver
@@ -265,8 +234,6 @@ function afficherUtilisateurs(utilisateurs) {
             <td><span class="texte-sm texte-secondaire">${dateInsc}</span></td>
             <td>
                 <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-                    ${btnSuspendre}
-                    ${btnBloquer}
                     ${btnReactiver}
                 </div>
             </td>
@@ -277,9 +244,7 @@ function afficherUtilisateurs(utilisateurs) {
 
 async function actionAdmin(action, utilisateurId, nomUtilisateur) {
     const messages = {
-        suspendre: `Suspendre le compte de ${nomUtilisateur} ?`,
-        bloquer:   `⚠️ Bloquer DÉFINITIVEMENT le compte de ${nomUtilisateur} ? Cette action est irréversible.`,
-        reactiver: `Réactiver le compte de ${nomUtilisateur} ?`
+        reactiver: `Reactiver le compte de ${nomUtilisateur} ?`
     };
 
     if (!confirm(messages[action])) return;
@@ -301,35 +266,29 @@ async function actionAdmin(action, utilisateurId, nomUtilisateur) {
             afficherAlerte(`✓ ${data.message}`, 'succes');
             await chargerUtilisateurs();
         } else {
-            afficherAlerte('❌ ' + (data.erreur || 'Erreur lors de l\'action.'), 'erreur');
+            afficherAlerte('❌ ' + (data.erreur || "Erreur lors de l'action."), 'erreur');
         }
 
     } catch (err) {
-        afficherAlerte('❌ Erreur réseau : ' + err.message, 'erreur');
+        afficherAlerte('❌ Erreur reseau : ' + err.message, 'erreur');
     }
 }
 
 function configurerFiltres() {
     const filtrer = () => {
         const terme  = document.getElementById('filtre-recherche').value.toLowerCase();
-        const role   = document.getElementById('filtre-role').value;
-        const statut = document.getElementById('filtre-statut').value;
 
         const filtres = tousLesUtilisateurs.filter(u => {
             const nomComplet = (u.prenom + ' ' + u.nom + ' ' + u.email).toLowerCase();
-            return (!terme  || nomComplet.includes(terme))
-                && (!role   || u.role === role)
-                && (!statut || u.statutCompte === statut);
+            return (!terme || nomComplet.includes(terme));
         });
 
         afficherUtilisateurs(filtres);
         document.getElementById('compteur-users').textContent =
-            filtres.length + ' / ' + tousLesUtilisateurs.length + ' utilisateur(s)';
+            filtres.length + ' / ' + tousLesUtilisateurs.length + ' compte(s) bloque(s)';
     };
 
     document.getElementById('filtre-recherche').addEventListener('input', filtrer);
-    document.getElementById('filtre-role').addEventListener('change', filtrer);
-    document.getElementById('filtre-statut').addEventListener('change', filtrer);
 }
 
 function afficherAlerte(message, type) {

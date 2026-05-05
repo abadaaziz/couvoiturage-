@@ -103,6 +103,10 @@ public class ReservationService {
                 "Le trajet #" + trajetId + " n'accepte plus de réservations (statut : " +
                 trajet.getStatut() + ").");
         }
+        if (nombrePlaces < 1 || nombrePlaces > 8) {
+            throw new ReservationInvalideException(
+                "Le nombre de places doit être compris entre 1 et 8.");
+        }
         if (trajet.getPlacesDisponibles() < nombrePlaces) {
             throw new ReservationInvalideException(
                 "Seulement " + trajet.getPlacesDisponibles() +
@@ -266,7 +270,18 @@ public class ReservationService {
             }
 
             // ── Calcul du remboursement ────────────────────────────────────────
-            double montantARemb = reservation.calculerMontantRemboursement();
+            double montantARemb;
+            java.time.LocalDateTime depart = reservation.getTrajet().getDateHeureDepart();
+            if (depart != null) {
+                long heuresAvantDepart = java.time.Duration
+                    .between(java.time.LocalDateTime.now(), depart)
+                    .toHours();
+                montantARemb = heuresAvantDepart > 24
+                    ? reservation.getMontantTotal()
+                    : reservation.getMontantTotal() * 0.50;
+            } else {
+                montantARemb = reservation.getMontantTotal() * 0.50;
+            }
 
             // ── Annulation de la réservation ──────────────────────────────────
             reservation.annuler();

@@ -8,16 +8,32 @@
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="/trajets" class="navbar-logo">CovoitApp</a>
+<nav class="navbar" role="navigation" aria-label="Navigation principale">
+    <a href="/trajets" class="navbar-logo" id="nav-logo">
+        <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+            <circle cx="24" cy="24" r="24" fill="url(#gn)"/>
+            <path d="M14 28l6-10 4 6 3-4 7 8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="14" cy="29" r="2.5" fill="white"/>
+            <circle cx="34" cy="29" r="2.5" fill="white"/>
+            <defs>
+                <linearGradient id="gn" x1="0" y1="0" x2="48" y2="48">
+                    <stop offset="0%" stop-color="#7c3aed"/>
+                    <stop offset="100%" stop-color="#2563eb"/>
+                </linearGradient>
+            </defs>
+        </svg>
+        CovoitApp
+    </a>
+
     <ul class="navbar-liens">
-        <li><a href="/trajets">Trajets</a></li>
-        <li><a href="/reservation/mes">Mes reservations</a></li>
-        <li><a href="/notifications" class="actif nav-notifications">Notifications
+        <li><a href="/trajets" id="nav-trajets">Trajets</a></li>
+        <li><a href="/reservation/mes" id="nav-mes-reservations">Mes reservations</a></li>
+        <li><a href="/notifications" id="nav-notifications" class="actif nav-notifications">Notifications
             <span id="notif-indicator" class="nav-indicator" style="display:none;"></span>
         </a></li>
     </ul>
-    <div class="navbar-actions">
+
+    <div class="navbar-actions" id="navbar-actions">
         <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
     </div>
 </nav>
@@ -102,6 +118,46 @@ function updateNotifIndicator(count) {
 
     indicator.style.display = 'inline-flex';
     indicator.textContent = count > 99 ? '99+' : String(count);
+}
+
+async function chargerSessionNavbar() {
+    try {
+        const reponse = await fetch('/session/me', {
+            method: 'GET',
+            credentials: 'include',
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!reponse.ok) return;
+        const data = await reponse.json();
+        if (!data.connecte) return;
+
+        const zoneActions = document.getElementById('navbar-actions');
+        const nomAffiche = [data.prenom, data.nom].filter(Boolean).join(' ').trim();
+        if (zoneActions) {
+            zoneActions.innerHTML = `
+                <span class="badge" style="background:rgba(34,197,94,0.16);color:#86efac;border:1px solid rgba(34,197,94,0.35);">${echapper(data.role)}</span>
+                <span class="texte-sm texte-secondaire">${echapper(nomAffiche || 'Utilisateur')}</span>
+                <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
+            `;
+        }
+
+        const lienMesReservations = document.getElementById('nav-mes-reservations');
+        if (lienMesReservations) {
+            if (data.role === 'ADMIN') {
+                lienMesReservations.href = '/admin/users';
+                lienMesReservations.textContent = 'Admin users';
+            } else if (data.role === 'CHAUFFEUR') {
+                lienMesReservations.href = '/trajets/mes';
+                lienMesReservations.textContent = 'Mes trajets';
+            } else {
+                lienMesReservations.href = '/reservation/mes';
+                lienMesReservations.textContent = 'Mes reservations';
+            }
+        }
+    } catch (e) {
+        // Ignore navbar update errors
+    }
 }
 
 async function chargerNotifications() {
@@ -260,7 +316,10 @@ async function marquerToutLu() {
 const btnToutLu = document.getElementById('btn-tout-lu');
 btnToutLu.addEventListener('click', marquerToutLu);
 
-document.addEventListener('DOMContentLoaded', chargerNotifications);
+document.addEventListener('DOMContentLoaded', () => {
+    chargerSessionNavbar();
+    chargerNotifications();
+});
 </script>
 
 </body>
