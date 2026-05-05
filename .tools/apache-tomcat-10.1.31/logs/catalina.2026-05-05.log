@@ -873,3 +873,373 @@
 05-May-2026 20:36:55.850 AVERTISSEMENT [Thread-2] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc L'application web [ROOT] a enregistré un pilote JDBC [org.h2.Driver], mais ne l'a pas désenregistré avant l'arrêt de l'application.  Pour éviter une fuite de mémoire, le pilote JDBC a été désenregistré de force.
 05-May-2026 20:36:55.879 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.stop Arrêt du gestionnaire de protocole ["http-nio-8080"]
 05-May-2026 20:36:55.900 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.destroy Destruction du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 20:58:07.810 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Nom version serveur :              Apache Tomcat/10.1.31
+05-May-2026 20:58:07.814 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Serveur compilé :                  Oct 3 2024 19:02:38 UTC
+05-May-2026 20:58:07.815 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version du serveur :               10.1.31.0
+05-May-2026 20:58:07.815 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Nom de l'OS :                      Windows 11
+05-May-2026 20:58:07.815 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version OS :                       10.0
+05-May-2026 20:58:07.816 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture :                     amd64
+05-May-2026 20:58:07.816 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home :                        C:\Program Files\Eclipse Adoptium\jdk-21.0.10.7-hotspot
+05-May-2026 20:58:07.816 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version JVM :                      21.0.10+7-LTS
+05-May-2026 20:58:07.816 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Fournisseur de la JVM :            Eclipse Adoptium
+05-May-2026 20:58:07.816 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE :                    C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 20:58:07.817 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME :                    C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 20:58:07.830 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.util.logging.config.file=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\conf\logging.properties
+05-May-2026 20:58:07.830 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+05-May-2026 20:58:07.832 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djdk.tls.ephemeralDHKeySize=2048
+05-May-2026 20:58:07.832 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+05-May-2026 20:58:07.832 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.lang=ALL-UNNAMED
+05-May-2026 20:58:07.832 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.io=ALL-UNNAMED
+05-May-2026 20:58:07.832 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.util=ALL-UNNAMED
+05-May-2026 20:58:07.832 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+05-May-2026 20:58:07.833 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+05-May-2026 20:58:07.833 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Dcatalina.base=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 20:58:07.833 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Dcatalina.home=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 20:58:07.833 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.io.tmpdir=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\temp
+05-May-2026 20:58:07.836 INFOS [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent Chargement de la librairie Apache Tomcat Native [2.0.8] en utilisant APR version [1.7.4]
+05-May-2026 20:58:07.841 INFOS [main] org.apache.catalina.core.AprLifecycleListener.initializeSSL OpenSSL a été initialisé avec succès [OpenSSL 3.0.14 4 Jun 2024]
+05-May-2026 20:58:08.084 INFOS [main] org.apache.coyote.AbstractProtocol.init Initialisation du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 20:58:08.109 INFOS [main] org.apache.catalina.startup.Catalina.load L'initialisation du serveur a pris [472] millisecondes
+05-May-2026 20:58:08.176 INFOS [main] org.apache.catalina.core.StandardService.startInternal Démarrage du service [Catalina]
+05-May-2026 20:58:08.176 INFOS [main] org.apache.catalina.core.StandardEngine.startInternal Démarrage du moteur de Servlets : [Apache Tomcat/10.1.31]
+05-May-2026 20:58:08.197 INFOS [main] org.apache.catalina.startup.HostConfig.deployWAR Déploiement de l'archive [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] de l'application web
+05-May-2026 20:58:09.320 INFOS [main] org.apache.catalina.startup.HostConfig.deployWAR Le déploiement de l'archive de l'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] s'est terminé en [1 121] ms
+05-May-2026 20:58:09.323 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\docs]
+05-May-2026 20:58:09.367 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\docs] de l'application web s'est terminé en [44] ms
+05-May-2026 20:58:09.369 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\examples]
+05-May-2026 20:58:09.732 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\examples] de l'application web s'est terminé en [364] ms
+05-May-2026 20:58:09.733 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\host-manager]
+05-May-2026 20:58:09.770 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\host-manager] de l'application web s'est terminé en [38] ms
+05-May-2026 20:58:09.771 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\manager]
+05-May-2026 20:58:09.805 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\manager] de l'application web s'est terminé en [34] ms
+05-May-2026 20:58:09.809 INFOS [main] org.apache.coyote.AbstractProtocol.start Démarrage du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 20:58:09.831 INFOS [main] org.apache.catalina.startup.Catalina.start Le démarrage du serveur a pris [1719] millisecondes
+05-May-2026 21:14:04.136 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.pause Le gestionnaire de protocole ["http-nio-8080"] est mis en pause
+05-May-2026 21:14:04.142 INFOS [Thread-2] org.apache.catalina.core.StandardService.stopInternal Arrêt du service [Catalina]
+05-May-2026 21:14:04.147 AVERTISSEMENT [Thread-2] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc L'application web [ROOT] a enregistré un pilote JDBC [org.h2.Driver], mais ne l'a pas désenregistré avant l'arrêt de l'application.  Pour éviter une fuite de mémoire, le pilote JDBC a été désenregistré de force.
+05-May-2026 21:14:04.166 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.stop Arrêt du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 21:14:04.176 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.destroy Destruction du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 21:14:19.454 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Nom version serveur :              Apache Tomcat/10.1.31
+05-May-2026 21:14:19.458 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Serveur compilé :                  Oct 3 2024 19:02:38 UTC
+05-May-2026 21:14:19.459 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version du serveur :               10.1.31.0
+05-May-2026 21:14:19.459 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Nom de l'OS :                      Windows 11
+05-May-2026 21:14:19.461 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version OS :                       10.0
+05-May-2026 21:14:19.461 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture :                     amd64
+05-May-2026 21:14:19.461 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home :                        C:\Program Files\Eclipse Adoptium\jdk-21.0.10.7-hotspot
+05-May-2026 21:14:19.461 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version JVM :                      21.0.10+7-LTS
+05-May-2026 21:14:19.461 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Fournisseur de la JVM :            Eclipse Adoptium
+05-May-2026 21:14:19.461 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE :                    C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 21:14:19.461 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME :                    C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 21:14:19.470 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.util.logging.config.file=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\conf\logging.properties
+05-May-2026 21:14:19.470 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+05-May-2026 21:14:19.470 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djdk.tls.ephemeralDHKeySize=2048
+05-May-2026 21:14:19.471 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+05-May-2026 21:14:19.471 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.lang=ALL-UNNAMED
+05-May-2026 21:14:19.471 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.io=ALL-UNNAMED
+05-May-2026 21:14:19.471 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.util=ALL-UNNAMED
+05-May-2026 21:14:19.471 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+05-May-2026 21:14:19.471 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+05-May-2026 21:14:19.471 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Dcatalina.base=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 21:14:19.472 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Dcatalina.home=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 21:14:19.472 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.io.tmpdir=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\temp
+05-May-2026 21:14:19.474 INFOS [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent Chargement de la librairie Apache Tomcat Native [2.0.8] en utilisant APR version [1.7.4]
+05-May-2026 21:14:19.477 INFOS [main] org.apache.catalina.core.AprLifecycleListener.initializeSSL OpenSSL a été initialisé avec succès [OpenSSL 3.0.14 4 Jun 2024]
+05-May-2026 21:14:19.680 INFOS [main] org.apache.coyote.AbstractProtocol.init Initialisation du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 21:14:19.705 INFOS [main] org.apache.catalina.startup.Catalina.load L'initialisation du serveur a pris [413] millisecondes
+05-May-2026 21:14:19.769 INFOS [main] org.apache.catalina.core.StandardService.startInternal Démarrage du service [Catalina]
+05-May-2026 21:14:19.771 INFOS [main] org.apache.catalina.core.StandardEngine.startInternal Démarrage du moteur de Servlets : [Apache Tomcat/10.1.31]
+05-May-2026 21:14:19.790 INFOS [main] org.apache.catalina.startup.HostConfig.deployWAR Déploiement de l'archive [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] de l'application web
+05-May-2026 21:14:20.732 INFOS [main] org.apache.catalina.startup.HostConfig.deployWAR Le déploiement de l'archive de l'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] s'est terminé en [939] ms
+05-May-2026 21:14:20.732 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\docs]
+05-May-2026 21:14:20.774 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\docs] de l'application web s'est terminé en [41] ms
+05-May-2026 21:14:20.774 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\examples]
+05-May-2026 21:14:21.123 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\examples] de l'application web s'est terminé en [349] ms
+05-May-2026 21:14:21.124 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\host-manager]
+05-May-2026 21:14:21.176 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\host-manager] de l'application web s'est terminé en [51] ms
+05-May-2026 21:14:21.177 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\manager]
+05-May-2026 21:14:21.211 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\manager] de l'application web s'est terminé en [33] ms
+05-May-2026 21:14:21.216 INFOS [main] org.apache.coyote.AbstractProtocol.start Démarrage du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 21:14:21.237 INFOS [main] org.apache.catalina.startup.Catalina.start Le démarrage du serveur a pris [1529] millisecondes
+05-May-2026 21:54:14.277 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Nom version serveur :              Apache Tomcat/10.1.31
+05-May-2026 21:54:14.282 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Serveur compilé :                  Oct 3 2024 19:02:38 UTC
+05-May-2026 21:54:14.282 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version du serveur :               10.1.31.0
+05-May-2026 21:54:14.283 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Nom de l'OS :                      Windows 11
+05-May-2026 21:54:14.283 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version OS :                       10.0
+05-May-2026 21:54:14.283 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture :                     amd64
+05-May-2026 21:54:14.283 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home :                        C:\Program Files\Eclipse Adoptium\jdk-21.0.10.7-hotspot
+05-May-2026 21:54:14.283 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version JVM :                      21.0.10+7-LTS
+05-May-2026 21:54:14.283 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Fournisseur de la JVM :            Eclipse Adoptium
+05-May-2026 21:54:14.284 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE :                    C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 21:54:14.284 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME :                    C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 21:54:14.293 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.util.logging.config.file=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\conf\logging.properties
+05-May-2026 21:54:14.293 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+05-May-2026 21:54:14.293 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djdk.tls.ephemeralDHKeySize=2048
+05-May-2026 21:54:14.293 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+05-May-2026 21:54:14.295 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.lang=ALL-UNNAMED
+05-May-2026 21:54:14.295 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.io=ALL-UNNAMED
+05-May-2026 21:54:14.295 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.util=ALL-UNNAMED
+05-May-2026 21:54:14.295 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+05-May-2026 21:54:14.296 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+05-May-2026 21:54:14.296 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Dcatalina.base=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 21:54:14.296 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Dcatalina.home=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 21:54:14.296 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.io.tmpdir=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\temp
+05-May-2026 21:54:14.298 INFOS [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent Chargement de la librairie Apache Tomcat Native [2.0.8] en utilisant APR version [1.7.4]
+05-May-2026 21:54:14.303 INFOS [main] org.apache.catalina.core.AprLifecycleListener.initializeSSL OpenSSL a été initialisé avec succès [OpenSSL 3.0.14 4 Jun 2024]
+05-May-2026 21:54:14.512 INFOS [main] org.apache.coyote.AbstractProtocol.init Initialisation du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 21:54:14.533 INFOS [main] org.apache.catalina.startup.Catalina.load L'initialisation du serveur a pris [426] millisecondes
+05-May-2026 21:54:14.604 INFOS [main] org.apache.catalina.core.StandardService.startInternal Démarrage du service [Catalina]
+05-May-2026 21:54:14.604 INFOS [main] org.apache.catalina.core.StandardEngine.startInternal Démarrage du moteur de Servlets : [Apache Tomcat/10.1.31]
+05-May-2026 21:54:14.621 INFOS [main] org.apache.catalina.startup.HostConfig.deployWAR Déploiement de l'archive [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] de l'application web
+05-May-2026 21:54:15.820 INFOS [main] org.apache.catalina.startup.HostConfig.deployWAR Le déploiement de l'archive de l'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] s'est terminé en [1 196] ms
+05-May-2026 21:54:15.821 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\docs]
+05-May-2026 21:54:15.875 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\docs] de l'application web s'est terminé en [53] ms
+05-May-2026 21:54:15.875 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\examples]
+05-May-2026 21:54:16.269 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\examples] de l'application web s'est terminé en [394] ms
+05-May-2026 21:54:16.270 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\host-manager]
+05-May-2026 21:54:16.314 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\host-manager] de l'application web s'est terminé en [44] ms
+05-May-2026 21:54:16.315 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\manager]
+05-May-2026 21:54:16.361 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\manager] de l'application web s'est terminé en [46] ms
+05-May-2026 21:54:16.367 INFOS [main] org.apache.coyote.AbstractProtocol.start Démarrage du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 21:54:16.389 INFOS [main] org.apache.catalina.startup.Catalina.start Le démarrage du serveur a pris [1854] millisecondes
+05-May-2026 22:03:39.486 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.pause Le gestionnaire de protocole ["http-nio-8080"] est mis en pause
+05-May-2026 22:03:39.493 INFOS [Thread-2] org.apache.catalina.core.StandardService.stopInternal Arrêt du service [Catalina]
+05-May-2026 22:03:39.502 AVERTISSEMENT [Thread-2] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc L'application web [ROOT] a enregistré un pilote JDBC [org.h2.Driver], mais ne l'a pas désenregistré avant l'arrêt de l'application.  Pour éviter une fuite de mémoire, le pilote JDBC a été désenregistré de force.
+05-May-2026 22:03:39.514 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.stop Arrêt du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:03:39.527 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.destroy Destruction du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:03:54.129 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Nom version serveur :              Apache Tomcat/10.1.31
+05-May-2026 22:03:54.133 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Serveur compilé :                  Oct 3 2024 19:02:38 UTC
+05-May-2026 22:03:54.134 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version du serveur :               10.1.31.0
+05-May-2026 22:03:54.134 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Nom de l'OS :                      Windows 11
+05-May-2026 22:03:54.134 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version OS :                       10.0
+05-May-2026 22:03:54.134 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture :                     amd64
+05-May-2026 22:03:54.136 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home :                        C:\Program Files\Eclipse Adoptium\jdk-21.0.10.7-hotspot
+05-May-2026 22:03:54.136 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version JVM :                      21.0.10+7-LTS
+05-May-2026 22:03:54.136 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Fournisseur de la JVM :            Eclipse Adoptium
+05-May-2026 22:03:54.136 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE :                    C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:03:54.136 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME :                    C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:03:54.146 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.util.logging.config.file=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\conf\logging.properties
+05-May-2026 22:03:54.146 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+05-May-2026 22:03:54.146 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djdk.tls.ephemeralDHKeySize=2048
+05-May-2026 22:03:54.146 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+05-May-2026 22:03:54.146 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.lang=ALL-UNNAMED
+05-May-2026 22:03:54.146 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.io=ALL-UNNAMED
+05-May-2026 22:03:54.146 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.util=ALL-UNNAMED
+05-May-2026 22:03:54.146 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+05-May-2026 22:03:54.146 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+05-May-2026 22:03:54.146 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Dcatalina.base=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:03:54.146 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Dcatalina.home=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:03:54.148 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.io.tmpdir=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\temp
+05-May-2026 22:03:54.150 INFOS [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent Chargement de la librairie Apache Tomcat Native [2.0.8] en utilisant APR version [1.7.4]
+05-May-2026 22:03:54.154 INFOS [main] org.apache.catalina.core.AprLifecycleListener.initializeSSL OpenSSL a été initialisé avec succès [OpenSSL 3.0.14 4 Jun 2024]
+05-May-2026 22:03:54.348 INFOS [main] org.apache.coyote.AbstractProtocol.init Initialisation du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:03:54.368 INFOS [main] org.apache.catalina.startup.Catalina.load L'initialisation du serveur a pris [392] millisecondes
+05-May-2026 22:03:54.434 INFOS [main] org.apache.catalina.core.StandardService.startInternal Démarrage du service [Catalina]
+05-May-2026 22:03:54.434 INFOS [main] org.apache.catalina.core.StandardEngine.startInternal Démarrage du moteur de Servlets : [Apache Tomcat/10.1.31]
+05-May-2026 22:03:54.451 INFOS [main] org.apache.catalina.startup.HostConfig.deployWAR Déploiement de l'archive [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] de l'application web
+05-May-2026 22:03:55.605 INFOS [main] org.apache.catalina.startup.HostConfig.deployWAR Le déploiement de l'archive de l'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] s'est terminé en [1 152] ms
+05-May-2026 22:03:55.607 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\docs]
+05-May-2026 22:03:55.645 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\docs] de l'application web s'est terminé en [38] ms
+05-May-2026 22:03:55.645 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\examples]
+05-May-2026 22:03:56.002 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\examples] de l'application web s'est terminé en [357] ms
+05-May-2026 22:03:56.003 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\host-manager]
+05-May-2026 22:03:56.047 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\host-manager] de l'application web s'est terminé en [43] ms
+05-May-2026 22:03:56.047 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\manager]
+05-May-2026 22:03:56.082 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\manager] de l'application web s'est terminé en [34] ms
+05-May-2026 22:03:56.085 INFOS [main] org.apache.coyote.AbstractProtocol.start Démarrage du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:03:56.105 INFOS [main] org.apache.catalina.startup.Catalina.start Le démarrage du serveur a pris [1735] millisecondes
+05-May-2026 22:12:39.800 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.pause Le gestionnaire de protocole ["http-nio-8080"] est mis en pause
+05-May-2026 22:12:39.810 INFOS [Thread-2] org.apache.catalina.core.StandardService.stopInternal Arrêt du service [Catalina]
+05-May-2026 22:12:39.815 AVERTISSEMENT [Thread-2] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc L'application web [ROOT] a enregistré un pilote JDBC [org.h2.Driver], mais ne l'a pas désenregistré avant l'arrêt de l'application.  Pour éviter une fuite de mémoire, le pilote JDBC a été désenregistré de force.
+05-May-2026 22:12:39.834 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.stop Arrêt du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:12:39.848 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.destroy Destruction du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:12:51.866 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Nom version serveur :              Apache Tomcat/10.1.31
+05-May-2026 22:12:51.872 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Serveur compilé :                  Oct 3 2024 19:02:38 UTC
+05-May-2026 22:12:51.873 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version du serveur :               10.1.31.0
+05-May-2026 22:12:51.873 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Nom de l'OS :                      Windows 11
+05-May-2026 22:12:51.873 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version OS :                       10.0
+05-May-2026 22:12:51.874 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture :                     amd64
+05-May-2026 22:12:51.874 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home :                        C:\Program Files\Eclipse Adoptium\jdk-21.0.10.7-hotspot
+05-May-2026 22:12:51.874 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version JVM :                      21.0.10+7-LTS
+05-May-2026 22:12:51.875 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Fournisseur de la JVM :            Eclipse Adoptium
+05-May-2026 22:12:51.875 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE :                    C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:12:51.875 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME :                    C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:12:51.883 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.util.logging.config.file=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\conf\logging.properties
+05-May-2026 22:12:51.884 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+05-May-2026 22:12:51.884 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djdk.tls.ephemeralDHKeySize=2048
+05-May-2026 22:12:51.884 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+05-May-2026 22:12:51.884 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.lang=ALL-UNNAMED
+05-May-2026 22:12:51.884 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.io=ALL-UNNAMED
+05-May-2026 22:12:51.884 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.util=ALL-UNNAMED
+05-May-2026 22:12:51.884 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+05-May-2026 22:12:51.885 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+05-May-2026 22:12:51.885 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Dcatalina.base=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:12:51.885 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Dcatalina.home=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:12:51.886 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.io.tmpdir=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\temp
+05-May-2026 22:12:51.888 INFOS [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent Chargement de la librairie Apache Tomcat Native [2.0.8] en utilisant APR version [1.7.4]
+05-May-2026 22:12:51.892 INFOS [main] org.apache.catalina.core.AprLifecycleListener.initializeSSL OpenSSL a été initialisé avec succès [OpenSSL 3.0.14 4 Jun 2024]
+05-May-2026 22:12:52.079 INFOS [main] org.apache.coyote.AbstractProtocol.init Initialisation du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:12:52.100 INFOS [main] org.apache.catalina.startup.Catalina.load L'initialisation du serveur a pris [392] millisecondes
+05-May-2026 22:12:52.153 INFOS [main] org.apache.catalina.core.StandardService.startInternal Démarrage du service [Catalina]
+05-May-2026 22:12:52.153 INFOS [main] org.apache.catalina.core.StandardEngine.startInternal Démarrage du moteur de Servlets : [Apache Tomcat/10.1.31]
+05-May-2026 22:12:52.172 INFOS [main] org.apache.catalina.startup.HostConfig.deployWAR Déploiement de l'archive [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] de l'application web
+05-May-2026 22:12:53.285 INFOS [main] org.apache.catalina.startup.HostConfig.deployWAR Le déploiement de l'archive de l'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] s'est terminé en [1 111] ms
+05-May-2026 22:12:53.288 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\docs]
+05-May-2026 22:12:53.333 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\docs] de l'application web s'est terminé en [44] ms
+05-May-2026 22:12:53.333 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\examples]
+05-May-2026 22:12:53.705 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\examples] de l'application web s'est terminé en [372] ms
+05-May-2026 22:12:53.705 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\host-manager]
+05-May-2026 22:12:53.746 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\host-manager] de l'application web s'est terminé en [41] ms
+05-May-2026 22:12:53.747 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\manager]
+05-May-2026 22:12:53.789 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\manager] de l'application web s'est terminé en [41] ms
+05-May-2026 22:12:53.796 INFOS [main] org.apache.coyote.AbstractProtocol.start Démarrage du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:12:53.825 INFOS [main] org.apache.catalina.startup.Catalina.start Le démarrage du serveur a pris [1723] millisecondes
+05-May-2026 22:16:51.433 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.pause Le gestionnaire de protocole ["http-nio-8080"] est mis en pause
+05-May-2026 22:16:51.441 INFOS [Thread-2] org.apache.catalina.core.StandardService.stopInternal Arrêt du service [Catalina]
+05-May-2026 22:16:51.446 AVERTISSEMENT [Thread-2] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc L'application web [ROOT] a enregistré un pilote JDBC [org.h2.Driver], mais ne l'a pas désenregistré avant l'arrêt de l'application.  Pour éviter une fuite de mémoire, le pilote JDBC a été désenregistré de force.
+05-May-2026 22:16:51.459 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.stop Arrêt du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:16:51.466 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.destroy Destruction du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:17:01.933 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Nom version serveur :              Apache Tomcat/10.1.31
+05-May-2026 22:17:01.936 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Serveur compilé :                  Oct 3 2024 19:02:38 UTC
+05-May-2026 22:17:01.936 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version du serveur :               10.1.31.0
+05-May-2026 22:17:01.938 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Nom de l'OS :                      Windows 11
+05-May-2026 22:17:01.938 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version OS :                       10.0
+05-May-2026 22:17:01.938 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture :                     amd64
+05-May-2026 22:17:01.938 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home :                        C:\Program Files\Eclipse Adoptium\jdk-21.0.10.7-hotspot
+05-May-2026 22:17:01.938 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version JVM :                      21.0.10+7-LTS
+05-May-2026 22:17:01.939 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Fournisseur de la JVM :            Eclipse Adoptium
+05-May-2026 22:17:01.939 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE :                    C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:17:01.939 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME :                    C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:17:01.947 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.util.logging.config.file=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\conf\logging.properties
+05-May-2026 22:17:01.947 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+05-May-2026 22:17:01.947 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djdk.tls.ephemeralDHKeySize=2048
+05-May-2026 22:17:01.948 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+05-May-2026 22:17:01.948 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.lang=ALL-UNNAMED
+05-May-2026 22:17:01.948 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.io=ALL-UNNAMED
+05-May-2026 22:17:01.948 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.util=ALL-UNNAMED
+05-May-2026 22:17:01.948 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+05-May-2026 22:17:01.948 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+05-May-2026 22:17:01.948 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Dcatalina.base=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:17:01.948 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Dcatalina.home=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:17:01.948 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.io.tmpdir=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\temp
+05-May-2026 22:17:01.950 INFOS [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent Chargement de la librairie Apache Tomcat Native [2.0.8] en utilisant APR version [1.7.4]
+05-May-2026 22:17:01.955 INFOS [main] org.apache.catalina.core.AprLifecycleListener.initializeSSL OpenSSL a été initialisé avec succès [OpenSSL 3.0.14 4 Jun 2024]
+05-May-2026 22:17:02.146 INFOS [main] org.apache.coyote.AbstractProtocol.init Initialisation du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:17:02.167 INFOS [main] org.apache.catalina.startup.Catalina.load L'initialisation du serveur a pris [383] millisecondes
+05-May-2026 22:17:02.213 INFOS [main] org.apache.catalina.core.StandardService.startInternal Démarrage du service [Catalina]
+05-May-2026 22:17:02.213 INFOS [main] org.apache.catalina.core.StandardEngine.startInternal Démarrage du moteur de Servlets : [Apache Tomcat/10.1.31]
+05-May-2026 22:17:02.229 INFOS [main] org.apache.catalina.startup.HostConfig.deployWAR Déploiement de l'archive [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] de l'application web
+05-May-2026 22:17:03.364 INFOS [main] org.apache.catalina.startup.HostConfig.deployWAR Le déploiement de l'archive de l'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] s'est terminé en [1 133] ms
+05-May-2026 22:17:03.365 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\docs]
+05-May-2026 22:17:03.416 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\docs] de l'application web s'est terminé en [51] ms
+05-May-2026 22:17:03.417 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\examples]
+05-May-2026 22:17:03.779 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\examples] de l'application web s'est terminé en [363] ms
+05-May-2026 22:17:03.781 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\host-manager]
+05-May-2026 22:17:03.821 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\host-manager] de l'application web s'est terminé en [40] ms
+05-May-2026 22:17:03.822 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\manager]
+05-May-2026 22:17:03.858 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\manager] de l'application web s'est terminé en [36] ms
+05-May-2026 22:17:03.861 INFOS [main] org.apache.coyote.AbstractProtocol.start Démarrage du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:17:03.880 INFOS [main] org.apache.catalina.startup.Catalina.start Le démarrage du serveur a pris [1712] millisecondes
+05-May-2026 22:17:43.965 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.pause Le gestionnaire de protocole ["http-nio-8080"] est mis en pause
+05-May-2026 22:17:43.973 INFOS [Thread-2] org.apache.catalina.core.StandardService.stopInternal Arrêt du service [Catalina]
+05-May-2026 22:17:43.985 AVERTISSEMENT [Thread-2] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc L'application web [ROOT] a enregistré un pilote JDBC [org.h2.Driver], mais ne l'a pas désenregistré avant l'arrêt de l'application.  Pour éviter une fuite de mémoire, le pilote JDBC a été désenregistré de force.
+05-May-2026 22:17:43.998 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.stop Arrêt du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:17:44.007 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.destroy Destruction du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:23:08.166 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Nom version serveur :              Apache Tomcat/10.1.31
+05-May-2026 22:23:08.171 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Serveur compilé :                  Oct 3 2024 19:02:38 UTC
+05-May-2026 22:23:08.171 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version du serveur :               10.1.31.0
+05-May-2026 22:23:08.171 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Nom de l'OS :                      Windows 11
+05-May-2026 22:23:08.172 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version OS :                       10.0
+05-May-2026 22:23:08.172 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture :                     amd64
+05-May-2026 22:23:08.172 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home :                        C:\Program Files\Eclipse Adoptium\jdk-21.0.10.7-hotspot
+05-May-2026 22:23:08.172 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version JVM :                      21.0.10+7-LTS
+05-May-2026 22:23:08.172 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Fournisseur de la JVM :            Eclipse Adoptium
+05-May-2026 22:23:08.173 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE :                    C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:23:08.173 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME :                    C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:23:08.181 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.util.logging.config.file=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\conf\logging.properties
+05-May-2026 22:23:08.181 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+05-May-2026 22:23:08.182 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djdk.tls.ephemeralDHKeySize=2048
+05-May-2026 22:23:08.182 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+05-May-2026 22:23:08.182 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.lang=ALL-UNNAMED
+05-May-2026 22:23:08.182 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.io=ALL-UNNAMED
+05-May-2026 22:23:08.182 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.util=ALL-UNNAMED
+05-May-2026 22:23:08.182 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+05-May-2026 22:23:08.182 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+05-May-2026 22:23:08.183 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Dcatalina.base=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:23:08.183 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Dcatalina.home=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:23:08.183 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.io.tmpdir=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\temp
+05-May-2026 22:23:08.185 INFOS [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent Chargement de la librairie Apache Tomcat Native [2.0.8] en utilisant APR version [1.7.4]
+05-May-2026 22:23:08.189 INFOS [main] org.apache.catalina.core.AprLifecycleListener.initializeSSL OpenSSL a été initialisé avec succès [OpenSSL 3.0.14 4 Jun 2024]
+05-May-2026 22:23:08.392 INFOS [main] org.apache.coyote.AbstractProtocol.init Initialisation du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:23:08.412 INFOS [main] org.apache.catalina.startup.Catalina.load L'initialisation du serveur a pris [405] millisecondes
+05-May-2026 22:23:08.461 INFOS [main] org.apache.catalina.core.StandardService.startInternal Démarrage du service [Catalina]
+05-May-2026 22:23:08.461 INFOS [main] org.apache.catalina.core.StandardEngine.startInternal Démarrage du moteur de Servlets : [Apache Tomcat/10.1.31]
+05-May-2026 22:23:08.476 INFOS [main] org.apache.catalina.startup.HostConfig.deployWAR Déploiement de l'archive [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] de l'application web
+05-May-2026 22:23:09.461 INFOS [main] org.apache.catalina.startup.HostConfig.deployWAR Le déploiement de l'archive de l'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] s'est terminé en [981] ms
+05-May-2026 22:23:09.461 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\docs]
+05-May-2026 22:23:09.503 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\docs] de l'application web s'est terminé en [41] ms
+05-May-2026 22:23:09.503 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\examples]
+05-May-2026 22:23:09.852 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\examples] de l'application web s'est terminé en [349] ms
+05-May-2026 22:23:09.852 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\host-manager]
+05-May-2026 22:23:09.892 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\host-manager] de l'application web s'est terminé en [40] ms
+05-May-2026 22:23:09.893 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\manager]
+05-May-2026 22:23:09.929 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\manager] de l'application web s'est terminé en [35] ms
+05-May-2026 22:23:09.934 INFOS [main] org.apache.coyote.AbstractProtocol.start Démarrage du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:23:09.956 INFOS [main] org.apache.catalina.startup.Catalina.start Le démarrage du serveur a pris [1542] millisecondes
+05-May-2026 22:24:50.044 INFOS [Catalina-utility-1] org.apache.catalina.startup.HostConfig.undeploy Retrait de l'application web ayant pour chemin de contexte []
+05-May-2026 22:24:50.048 AVERTISSEMENT [Catalina-utility-1] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc L'application web [ROOT] a enregistré un pilote JDBC [org.h2.Driver], mais ne l'a pas désenregistré avant l'arrêt de l'application.  Pour éviter une fuite de mémoire, le pilote JDBC a été désenregistré de force.
+05-May-2026 22:24:50.160 INFOS [Catalina-utility-1] org.apache.catalina.startup.HostConfig.deployWAR Déploiement de l'archive [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] de l'application web
+05-May-2026 22:24:52.458 INFOS [Catalina-utility-1] org.apache.catalina.startup.HostConfig.deployWAR Le déploiement de l'archive de l'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] s'est terminé en [2 299] ms
+05-May-2026 22:25:02.465 INFOS [Catalina-utility-1] org.apache.catalina.startup.HostConfig.undeploy Retrait de l'application web ayant pour chemin de contexte []
+05-May-2026 22:25:02.469 AVERTISSEMENT [Catalina-utility-1] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc L'application web [ROOT] a enregistré un pilote JDBC [org.h2.Driver], mais ne l'a pas désenregistré avant l'arrêt de l'application.  Pour éviter une fuite de mémoire, le pilote JDBC a été désenregistré de force.
+05-May-2026 22:25:02.659 INFOS [Catalina-utility-1] org.apache.catalina.startup.HostConfig.deployWAR Déploiement de l'archive [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] de l'application web
+05-May-2026 22:25:05.106 INFOS [Catalina-utility-1] org.apache.catalina.startup.HostConfig.deployWAR Le déploiement de l'archive de l'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] s'est terminé en [2 447] ms
+05-May-2026 22:25:15.128 INFOS [Catalina-utility-1] org.apache.catalina.startup.HostConfig.undeploy Retrait de l'application web ayant pour chemin de contexte []
+05-May-2026 22:25:15.149 AVERTISSEMENT [Catalina-utility-1] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc L'application web [ROOT] a enregistré un pilote JDBC [org.h2.Driver], mais ne l'a pas désenregistré avant l'arrêt de l'application.  Pour éviter une fuite de mémoire, le pilote JDBC a été désenregistré de force.
+05-May-2026 22:25:15.316 INFOS [Catalina-utility-1] org.apache.catalina.startup.HostConfig.deployWAR Déploiement de l'archive [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] de l'application web
+05-May-2026 22:25:16.950 INFOS [Catalina-utility-1] org.apache.catalina.startup.HostConfig.deployWAR Le déploiement de l'archive de l'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] s'est terminé en [1 634] ms
+05-May-2026 22:25:17.812 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.pause Le gestionnaire de protocole ["http-nio-8080"] est mis en pause
+05-May-2026 22:25:17.819 INFOS [Thread-2] org.apache.catalina.core.StandardService.stopInternal Arrêt du service [Catalina]
+05-May-2026 22:25:17.822 AVERTISSEMENT [Thread-2] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc L'application web [ROOT] a enregistré un pilote JDBC [org.h2.Driver], mais ne l'a pas désenregistré avant l'arrêt de l'application.  Pour éviter une fuite de mémoire, le pilote JDBC a été désenregistré de force.
+05-May-2026 22:25:17.834 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.stop Arrêt du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:25:17.843 INFOS [Thread-2] org.apache.coyote.AbstractProtocol.destroy Destruction du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:25:28.336 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Nom version serveur :              Apache Tomcat/10.1.31
+05-May-2026 22:25:28.340 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Serveur compilé :                  Oct 3 2024 19:02:38 UTC
+05-May-2026 22:25:28.340 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version du serveur :               10.1.31.0
+05-May-2026 22:25:28.341 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Nom de l'OS :                      Windows 11
+05-May-2026 22:25:28.341 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version OS :                       10.0
+05-May-2026 22:25:28.341 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture :                     amd64
+05-May-2026 22:25:28.341 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home :                        C:\Program Files\Eclipse Adoptium\jdk-21.0.10.7-hotspot
+05-May-2026 22:25:28.342 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Version JVM :                      21.0.10+7-LTS
+05-May-2026 22:25:28.342 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Fournisseur de la JVM :            Eclipse Adoptium
+05-May-2026 22:25:28.342 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE :                    C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:25:28.342 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME :                    C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:25:28.350 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.util.logging.config.file=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\conf\logging.properties
+05-May-2026 22:25:28.351 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+05-May-2026 22:25:28.351 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djdk.tls.ephemeralDHKeySize=2048
+05-May-2026 22:25:28.351 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+05-May-2026 22:25:28.351 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.lang=ALL-UNNAMED
+05-May-2026 22:25:28.351 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.io=ALL-UNNAMED
+05-May-2026 22:25:28.351 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.util=ALL-UNNAMED
+05-May-2026 22:25:28.352 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+05-May-2026 22:25:28.352 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+05-May-2026 22:25:28.352 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Dcatalina.base=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:25:28.352 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Dcatalina.home=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31
+05-May-2026 22:25:28.352 INFOS [main] org.apache.catalina.startup.VersionLoggerListener.log Argument de la ligne de commande : -Djava.io.tmpdir=C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\temp
+05-May-2026 22:25:28.355 INFOS [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent Chargement de la librairie Apache Tomcat Native [2.0.8] en utilisant APR version [1.7.4]
+05-May-2026 22:25:28.358 INFOS [main] org.apache.catalina.core.AprLifecycleListener.initializeSSL OpenSSL a été initialisé avec succès [OpenSSL 3.0.14 4 Jun 2024]
+05-May-2026 22:25:28.560 INFOS [main] org.apache.coyote.AbstractProtocol.init Initialisation du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:25:28.582 INFOS [main] org.apache.catalina.startup.Catalina.load L'initialisation du serveur a pris [423] millisecondes
+05-May-2026 22:25:28.630 INFOS [main] org.apache.catalina.core.StandardService.startInternal Démarrage du service [Catalina]
+05-May-2026 22:25:28.631 INFOS [main] org.apache.catalina.core.StandardEngine.startInternal Démarrage du moteur de Servlets : [Apache Tomcat/10.1.31]
+05-May-2026 22:25:28.647 INFOS [main] org.apache.catalina.startup.HostConfig.deployWAR Déploiement de l'archive [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] de l'application web
+05-May-2026 22:25:29.769 INFOS [main] org.apache.catalina.startup.HostConfig.deployWAR Le déploiement de l'archive de l'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\ROOT.war] s'est terminé en [1 119] ms
+05-May-2026 22:25:29.770 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\docs]
+05-May-2026 22:25:29.815 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\docs] de l'application web s'est terminé en [45] ms
+05-May-2026 22:25:29.816 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\examples]
+05-May-2026 22:25:30.191 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\examples] de l'application web s'est terminé en [375] ms
+05-May-2026 22:25:30.194 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\host-manager]
+05-May-2026 22:25:30.237 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\host-manager] de l'application web s'est terminé en [43] ms
+05-May-2026 22:25:30.239 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Déploiement du répertoire d'application web [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\manager]
+05-May-2026 22:25:30.274 INFOS [main] org.apache.catalina.startup.HostConfig.deployDirectory Le déploiement du répertoire [C:\Users\Ahmed Aziz\.gemini\antigravity\scratch\covoiturage\.tools\apache-tomcat-10.1.31\webapps\manager] de l'application web s'est terminé en [37] ms
+05-May-2026 22:25:30.281 INFOS [main] org.apache.coyote.AbstractProtocol.start Démarrage du gestionnaire de protocole ["http-nio-8080"]
+05-May-2026 22:25:30.300 INFOS [main] org.apache.catalina.startup.Catalina.start Le démarrage du serveur a pris [1716] millisecondes

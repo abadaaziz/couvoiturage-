@@ -273,3 +273,213 @@ DELETE FROM reservations WHERE id = ? AND passager_id = ? AND trajet_id IN (SELE
 05-May-2026 20:02:07.885 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: attributeAdded('StockTicker', 'async.Stockticker@264c5d07')
 05-May-2026 20:36:55.868 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log SessionListener: contextDestroyed()
 05-May-2026 20:36:55.868 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log ContextListener: contextDestroyed()
+05-May-2026 20:58:09.720 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: contextInitialized()
+05-May-2026 20:58:09.720 INFOS [main] org.apache.catalina.core.ApplicationContext.log SessionListener: contextInitialized()
+05-May-2026 20:58:09.722 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: attributeAdded('StockTicker', 'async.Stockticker@1d782abe')
+05-May-2026 20:59:52.488 INFOS [http-nio-8080-exec-4] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 21:02:00.971 INFOS [http-nio-8080-exec-1] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 21:14:04.153 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log SessionListener: contextDestroyed()
+05-May-2026 21:14:04.153 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log ContextListener: contextDestroyed()
+05-May-2026 21:14:21.113 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: contextInitialized()
+05-May-2026 21:14:21.113 INFOS [main] org.apache.catalina.core.ApplicationContext.log SessionListener: contextInitialized()
+05-May-2026 21:14:21.115 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: attributeAdded('StockTicker', 'async.Stockticker@52a36910')
+05-May-2026 21:15:02.184 INFOS [http-nio-8080-exec-2] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 21:15:08.072 INFOS [http-nio-8080-exec-7] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 21:54:16.251 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: contextInitialized()
+05-May-2026 21:54:16.251 INFOS [main] org.apache.catalina.core.ApplicationContext.log SessionListener: contextInitialized()
+05-May-2026 21:54:16.256 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: attributeAdded('StockTicker', 'async.Stockticker@22fba58c')
+05-May-2026 21:54:37.498 INFOS [http-nio-8080-exec-3] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 22:03:39.507 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log SessionListener: contextDestroyed()
+05-May-2026 22:03:39.507 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log ContextListener: contextDestroyed()
+05-May-2026 22:03:55.984 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: contextInitialized()
+05-May-2026 22:03:55.984 INFOS [main] org.apache.catalina.core.ApplicationContext.log SessionListener: contextInitialized()
+05-May-2026 22:03:55.988 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: attributeAdded('StockTicker', 'async.Stockticker@1d782abe')
+05-May-2026 22:04:40.881 INFOS [http-nio-8080-exec-3] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 22:07:24.726 INFOS [http-nio-8080-exec-6] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 22:07:26.031 INFOS [http-nio-8080-exec-9] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 22:07:39.257 INFOS [http-nio-8080-exec-7] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 22:08:42.484 INFOS [http-nio-8080-exec-4] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 22:12:27.157 INFOS [http-nio-8080-exec-2] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 22:12:39.825 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log SessionListener: contextDestroyed()
+05-May-2026 22:12:39.825 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log ContextListener: contextDestroyed()
+05-May-2026 22:12:53.693 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: contextInitialized()
+05-May-2026 22:12:53.693 INFOS [main] org.apache.catalina.core.ApplicationContext.log SessionListener: contextInitialized()
+05-May-2026 22:12:53.696 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: attributeAdded('StockTicker', 'async.Stockticker@2fe88a09')
+05-May-2026 22:13:19.411 INFOS [http-nio-8080-exec-4] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 22:14:18.188 INFOS [http-nio-8080-exec-10] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 22:16:40.374 INFOS [http-nio-8080-exec-6] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 22:16:51.451 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log SessionListener: contextDestroyed()
+05-May-2026 22:16:51.451 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log ContextListener: contextDestroyed()
+05-May-2026 22:17:03.765 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: contextInitialized()
+05-May-2026 22:17:03.765 INFOS [main] org.apache.catalina.core.ApplicationContext.log SessionListener: contextInitialized()
+05-May-2026 22:17:03.768 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: attributeAdded('StockTicker', 'async.Stockticker@22fba58c')
+05-May-2026 22:17:25.184 INFOS [http-nio-8080-exec-9] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 22:17:43.990 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log SessionListener: contextDestroyed()
+05-May-2026 22:17:43.990 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log ContextListener: contextDestroyed()
+05-May-2026 22:23:09.841 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: contextInitialized()
+05-May-2026 22:23:09.841 INFOS [main] org.apache.catalina.core.ApplicationContext.log SessionListener: contextInitialized()
+05-May-2026 22:23:09.843 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: attributeAdded('StockTicker', 'async.Stockticker@54da32dc')
+05-May-2026 22:23:22.185 INFOS [http-nio-8080-exec-1] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 22:25:17.826 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log SessionListener: contextDestroyed()
+05-May-2026 22:25:17.826 INFOS [Thread-2] org.apache.catalina.core.ApplicationContext.log ContextListener: contextDestroyed()
+05-May-2026 22:25:30.173 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: contextInitialized()
+05-May-2026 22:25:30.173 INFOS [main] org.apache.catalina.core.ApplicationContext.log SessionListener: contextInitialized()
+05-May-2026 22:25:30.177 INFOS [main] org.apache.catalina.core.ApplicationContext.log ContextListener: attributeAdded('StockTicker', 'async.Stockticker@7e8a46b7')
+05-May-2026 22:25:41.636 INFOS [http-nio-8080-exec-1] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 22:26:44.025 INFOS [http-nio-8080-exec-4] org.apache.catalina.core.ApplicationContext.log [DEBUG] Retrieved 19 reservations for user 4
+05-May-2026 22:26:58.482 GRAVE [http-nio-8080-exec-1] org.apache.catalina.core.StandardWrapperValve.invoke "Servlet.service()" pour la servlet [com.covoiturage.servlet.ReservationServlet] a généré une exception
+	java.lang.RuntimeException: Erreur lors de la suppression de la reservation : Intégrité référentielle violation de contrainte: "FK_PAIEMENT_RESERVATION: PUBLIC.PAIEMENTS FOREIGN KEY(RESERVATION_ID) REFERENCES PUBLIC.RESERVATIONS(ID) (15)"
+Referential integrity constraint violation: "FK_PAIEMENT_RESERVATION: PUBLIC.PAIEMENTS FOREIGN KEY(RESERVATION_ID) REFERENCES PUBLIC.RESERVATIONS(ID) (15)"; SQL statement:
+DELETE FROM reservations WHERE id = ? AND passager_id = ? AND trajet_id IN (SELECT id FROM trajets WHERE date_heure_depart < CURRENT_TIMESTAMP) [23503-224]
+		at com.covoiturage.service.ReservationService.supprimerReservationSiTerminee(ReservationService.java:426)
+		at com.covoiturage.servlet.ReservationServlet.traiterSuppression(ReservationServlet.java:287)
+		at com.covoiturage.servlet.ReservationServlet.doPost(ReservationServlet.java:121)
+		at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+		at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+		at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+		at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+		at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+		at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+		at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+		at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+		at org.apache.catalina.valves.AbstractAccessLogValve.invoke(AbstractAccessLogValve.java:663)
+		at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+		at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+		at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:384)
+		at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+		at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905)
+		at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741)
+		at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+		at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190)
+		at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+		at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+		at java.base/java.lang.Thread.run(Thread.java:1583)
+	Caused by: org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException: Intégrité référentielle violation de contrainte: "FK_PAIEMENT_RESERVATION: PUBLIC.PAIEMENTS FOREIGN KEY(RESERVATION_ID) REFERENCES PUBLIC.RESERVATIONS(ID) (15)"
+Referential integrity constraint violation: "FK_PAIEMENT_RESERVATION: PUBLIC.PAIEMENTS FOREIGN KEY(RESERVATION_ID) REFERENCES PUBLIC.RESERVATIONS(ID) (15)"; SQL statement:
+DELETE FROM reservations WHERE id = ? AND passager_id = ? AND trajet_id IN (SELECT id FROM trajets WHERE date_heure_depart < CURRENT_TIMESTAMP) [23503-224]
+		at org.h2.message.DbException.getJdbcSQLException(DbException.java:520)
+		at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+		at org.h2.message.DbException.get(DbException.java:223)
+		at org.h2.message.DbException.get(DbException.java:199)
+		at org.h2.constraint.ConstraintReferential.checkRow(ConstraintReferential.java:365)
+		at org.h2.constraint.ConstraintReferential.checkRowRefTable(ConstraintReferential.java:382)
+		at org.h2.constraint.ConstraintReferential.checkRow(ConstraintReferential.java:256)
+		at org.h2.table.Table.fireConstraints(Table.java:1200)
+		at org.h2.table.Table.fireAfterRow(Table.java:1218)
+		at org.h2.command.dml.Delete.update(Delete.java:92)
+		at org.h2.command.dml.DataChangeStatement.update(DataChangeStatement.java:74)
+		at org.h2.command.CommandContainer.update(CommandContainer.java:169)
+		at org.h2.command.Command.executeUpdate(Command.java:256)
+		at org.h2.jdbc.JdbcPreparedStatement.executeUpdateInternal(JdbcPreparedStatement.java:216)
+		at org.h2.jdbc.JdbcPreparedStatement.executeUpdate(JdbcPreparedStatement.java:174)
+		at com.covoiturage.dao.ReservationDAO.supprimerReservationPasse(ReservationDAO.java:256)
+		at com.covoiturage.service.ReservationService.supprimerReservationSiTerminee(ReservationService.java:421)
+		... 26 more
+05-May-2026 22:27:05.437 GRAVE [http-nio-8080-exec-8] org.apache.catalina.core.StandardWrapperValve.invoke "Servlet.service()" pour la servlet [com.covoiturage.servlet.ReservationServlet] a généré une exception
+	java.lang.RuntimeException: Erreur lors de la suppression de la reservation : Intégrité référentielle violation de contrainte: "FK_PAIEMENT_RESERVATION: PUBLIC.PAIEMENTS FOREIGN KEY(RESERVATION_ID) REFERENCES PUBLIC.RESERVATIONS(ID) (15)"
+Referential integrity constraint violation: "FK_PAIEMENT_RESERVATION: PUBLIC.PAIEMENTS FOREIGN KEY(RESERVATION_ID) REFERENCES PUBLIC.RESERVATIONS(ID) (15)"; SQL statement:
+DELETE FROM reservations WHERE id = ? AND passager_id = ? AND trajet_id IN (SELECT id FROM trajets WHERE date_heure_depart < CURRENT_TIMESTAMP) [23503-224]
+		at com.covoiturage.service.ReservationService.supprimerReservationSiTerminee(ReservationService.java:426)
+		at com.covoiturage.servlet.ReservationServlet.traiterSuppression(ReservationServlet.java:287)
+		at com.covoiturage.servlet.ReservationServlet.doPost(ReservationServlet.java:121)
+		at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+		at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+		at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+		at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+		at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+		at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+		at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+		at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+		at org.apache.catalina.valves.AbstractAccessLogValve.invoke(AbstractAccessLogValve.java:663)
+		at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+		at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+		at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:384)
+		at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+		at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905)
+		at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741)
+		at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+		at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190)
+		at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+		at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+		at java.base/java.lang.Thread.run(Thread.java:1583)
+	Caused by: org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException: Intégrité référentielle violation de contrainte: "FK_PAIEMENT_RESERVATION: PUBLIC.PAIEMENTS FOREIGN KEY(RESERVATION_ID) REFERENCES PUBLIC.RESERVATIONS(ID) (15)"
+Referential integrity constraint violation: "FK_PAIEMENT_RESERVATION: PUBLIC.PAIEMENTS FOREIGN KEY(RESERVATION_ID) REFERENCES PUBLIC.RESERVATIONS(ID) (15)"; SQL statement:
+DELETE FROM reservations WHERE id = ? AND passager_id = ? AND trajet_id IN (SELECT id FROM trajets WHERE date_heure_depart < CURRENT_TIMESTAMP) [23503-224]
+		at org.h2.message.DbException.getJdbcSQLException(DbException.java:520)
+		at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+		at org.h2.message.DbException.get(DbException.java:223)
+		at org.h2.message.DbException.get(DbException.java:199)
+		at org.h2.constraint.ConstraintReferential.checkRow(ConstraintReferential.java:365)
+		at org.h2.constraint.ConstraintReferential.checkRowRefTable(ConstraintReferential.java:382)
+		at org.h2.constraint.ConstraintReferential.checkRow(ConstraintReferential.java:256)
+		at org.h2.table.Table.fireConstraints(Table.java:1200)
+		at org.h2.table.Table.fireAfterRow(Table.java:1218)
+		at org.h2.command.dml.Delete.update(Delete.java:92)
+		at org.h2.command.dml.DataChangeStatement.update(DataChangeStatement.java:74)
+		at org.h2.command.CommandContainer.update(CommandContainer.java:169)
+		at org.h2.command.Command.executeUpdate(Command.java:256)
+		at org.h2.jdbc.JdbcPreparedStatement.executeUpdateInternal(JdbcPreparedStatement.java:216)
+		at org.h2.jdbc.JdbcPreparedStatement.executeUpdate(JdbcPreparedStatement.java:174)
+		at com.covoiturage.dao.ReservationDAO.supprimerReservationPasse(ReservationDAO.java:256)
+		at com.covoiturage.service.ReservationService.supprimerReservationSiTerminee(ReservationService.java:421)
+		... 26 more
+05-May-2026 22:27:12.301 GRAVE [http-nio-8080-exec-7] org.apache.catalina.core.StandardWrapperValve.invoke "Servlet.service()" pour la servlet [com.covoiturage.servlet.ReservationServlet] a généré une exception
+	java.lang.RuntimeException: Erreur lors de la suppression de la reservation : Intégrité référentielle violation de contrainte: "FK_PAIEMENT_RESERVATION: PUBLIC.PAIEMENTS FOREIGN KEY(RESERVATION_ID) REFERENCES PUBLIC.RESERVATIONS(ID) (15)"
+Referential integrity constraint violation: "FK_PAIEMENT_RESERVATION: PUBLIC.PAIEMENTS FOREIGN KEY(RESERVATION_ID) REFERENCES PUBLIC.RESERVATIONS(ID) (15)"; SQL statement:
+DELETE FROM reservations WHERE id = ? AND passager_id = ? AND trajet_id IN (SELECT id FROM trajets WHERE date_heure_depart < CURRENT_TIMESTAMP) [23503-224]
+		at com.covoiturage.service.ReservationService.supprimerReservationSiTerminee(ReservationService.java:426)
+		at com.covoiturage.servlet.ReservationServlet.traiterSuppression(ReservationServlet.java:287)
+		at com.covoiturage.servlet.ReservationServlet.doPost(ReservationServlet.java:121)
+		at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+		at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+		at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+		at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+		at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+		at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+		at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+		at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+		at org.apache.catalina.valves.AbstractAccessLogValve.invoke(AbstractAccessLogValve.java:663)
+		at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+		at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+		at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:384)
+		at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+		at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905)
+		at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741)
+		at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+		at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190)
+		at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+		at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+		at java.base/java.lang.Thread.run(Thread.java:1583)
+	Caused by: org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException: Intégrité référentielle violation de contrainte: "FK_PAIEMENT_RESERVATION: PUBLIC.PAIEMENTS FOREIGN KEY(RESERVATION_ID) REFERENCES PUBLIC.RESERVATIONS(ID) (15)"
+Referential integrity constraint violation: "FK_PAIEMENT_RESERVATION: PUBLIC.PAIEMENTS FOREIGN KEY(RESERVATION_ID) REFERENCES PUBLIC.RESERVATIONS(ID) (15)"; SQL statement:
+DELETE FROM reservations WHERE id = ? AND passager_id = ? AND trajet_id IN (SELECT id FROM trajets WHERE date_heure_depart < CURRENT_TIMESTAMP) [23503-224]
+		at org.h2.message.DbException.getJdbcSQLException(DbException.java:520)
+		at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+		at org.h2.message.DbException.get(DbException.java:223)
+		at org.h2.message.DbException.get(DbException.java:199)
+		at org.h2.constraint.ConstraintReferential.checkRow(ConstraintReferential.java:365)
+		at org.h2.constraint.ConstraintReferential.checkRowRefTable(ConstraintReferential.java:382)
+		at org.h2.constraint.ConstraintReferential.checkRow(ConstraintReferential.java:256)
+		at org.h2.table.Table.fireConstraints(Table.java:1200)
+		at org.h2.table.Table.fireAfterRow(Table.java:1218)
+		at org.h2.command.dml.Delete.update(Delete.java:92)
+		at org.h2.command.dml.DataChangeStatement.update(DataChangeStatement.java:74)
+		at org.h2.command.CommandContainer.update(CommandContainer.java:169)
+		at org.h2.command.Command.executeUpdate(Command.java:256)
+		at org.h2.jdbc.JdbcPreparedStatement.executeUpdateInternal(JdbcPreparedStatement.java:216)
+		at org.h2.jdbc.JdbcPreparedStatement.executeUpdate(JdbcPreparedStatement.java:174)
+		at com.covoiturage.dao.ReservationDAO.supprimerReservationPasse(ReservationDAO.java:256)
+		at com.covoiturage.service.ReservationService.supprimerReservationSiTerminee(ReservationService.java:421)
+		... 26 more

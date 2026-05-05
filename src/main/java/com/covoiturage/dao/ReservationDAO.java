@@ -246,14 +246,51 @@ public class ReservationDAO {
 
     /**
      * Supprime une reservation du passager uniquement si le trajet est passe.
+     * Supprime d'abord les paiements associés (contrainte FK) puis la réservation.
      */
     public boolean supprimerReservationPasse(int reservationId, int passagerId) throws SQLException {
-        try (Connection conn = DatabaseConnection.getInstance().getConnection();
-             PreparedStatement ps = conn.prepareStatement(SQL_DELETE_PAST_BY_PASSAGER)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                // 1. Vérifier que la réservation appartient au passager ET que le trajet est passé
+                boolean eligible = false;
+                try (PreparedStatement check = conn.prepareStatement(
+                        "SELECT COUNT(*) FROM reservations r " +
+                        "JOIN trajets t ON r.trajet_id = t.id " +
+                        "WHERE r.id = ? AND r.passager_id = ? AND t.date_heure_depart < CURRENT_TIMESTAMP")) {
+                    check.setInt(1, reservationId);
+                    check.setInt(2, passagerId);
+                    try (ResultSet rs = check.executeQuery()) {
+                        eligible = rs.next() && rs.getInt(1) > 0;
+                    }
+                }
+                if (!eligible) {
+                    conn.rollback();
+                    return false;
+                }
 
-            ps.setInt(1, reservationId);
-            ps.setInt(2, passagerId);
-            return ps.executeUpdate() > 0;
+                // 2. Supprimer les paiements liés (lève la contrainte FK)
+                try (PreparedStatement delPay = conn.prepareStatement(
+                        "DELETE FROM paiements WHERE reservation_id = ?")) {
+                    delPay.setInt(1, reservationId);
+                    delPay.executeUpdate();
+                }
+
+                // 3. Supprimer la réservation
+                try (PreparedStatement delRes = conn.prepareStatement(
+                        "DELETE FROM reservations WHERE id = ? AND passager_id = ?")) {
+                    delRes.setInt(1, reservationId);
+                    delRes.setInt(2, passagerId);
+                    int rows = delRes.executeUpdate();
+                    conn.commit();
+                    return rows > 0;
+                }
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
         }
     }
 
