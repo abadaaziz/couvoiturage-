@@ -70,12 +70,25 @@ public class ReservationDAO {
     private static final String SQL_UPDATE_REFERENCE_TRANSACTION =
         "UPDATE reservations SET reference_transaction=? WHERE id=?";
 
+    private static final String SQL_UPDATE_NOTE_PASSAGER =
+        "UPDATE reservations SET note_passager=? WHERE id=?";
+
     private static final String SQL_COUNT_ACTIVES_BY_TRAJET =
         "SELECT COUNT(*) FROM reservations WHERE trajet_id=? AND statut IN ('EN_ATTENTE','CONFIRMEE')";
 
     private static final String SQL_DELETE_PAST_BY_PASSAGER =
         "DELETE FROM reservations WHERE id = ? AND passager_id = ? " +
         "AND trajet_id IN (SELECT id FROM trajets WHERE date_heure_depart < CURRENT_TIMESTAMP)";
+
+    private static final String SQL_SELECT_ELIGIBLE_RATING =
+        "SELECT r.id, t.ville_depart, t.ville_arrivee, t.date_heure_depart " +
+        "FROM reservations r " +
+        "JOIN trajets t ON r.trajet_id = t.id " +
+        "WHERE r.passager_id = ? AND t.chauffeur_id = ? " +
+        "AND r.statut = 'CONFIRMEE' " +
+        "AND t.date_heure_depart < CURRENT_TIMESTAMP " +
+        "AND (r.note_passager IS NULL) " +
+        "ORDER BY t.date_heure_depart DESC";
 
     // ── Méthodes CRUD ─────────────────────────────────────────────────────────
 
@@ -193,6 +206,19 @@ public class ReservationDAO {
     }
 
     /**
+     * Enregistre la note du passager pour une reservation.
+     */
+    public void mettreAJourNotePassager(int reservationId, int note) throws SQLException {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_NOTE_PASSAGER)) {
+
+            ps.setInt(1, note);
+            ps.setInt(2, reservationId);
+            ps.executeUpdate();
+        }
+    }
+
+    /**
      * Compte le nombre de réservations actives sur un trajet.
      */
     public int compterReservationsActives(int trajetId) throws SQLException {
@@ -217,6 +243,32 @@ public class ReservationDAO {
             ps.setInt(2, passagerId);
             return ps.executeUpdate() > 0;
         }
+    }
+
+    /**
+     * Liste des reservations eligibles a la notation pour un chauffeur.
+     */
+    public List<Reservation> trouverEligiblesNotation(int passagerId, int chauffeurId) throws SQLException {
+        List<Reservation> liste = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_SELECT_ELIGIBLE_RATING)) {
+
+            ps.setInt(1, passagerId);
+            ps.setInt(2, chauffeurId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Reservation r = new Reservation();
+                    r.setId(rs.getInt("id"));
+                    Trajet t = new Trajet();
+                    t.setVilleDepart(rs.getString("ville_depart"));
+                    t.setVilleArrivee(rs.getString("ville_arrivee"));
+                    t.setDateHeureDepart(rs.getTimestamp("date_heure_depart").toLocalDateTime());
+                    r.setTrajet(t);
+                    liste.add(r);
+                }
+            }
+        }
+        return liste;
     }
 
     // ── Mapping ───────────────────────────────────────────────────────────────
@@ -249,6 +301,13 @@ public class ReservationDAO {
         r.setMontantTotal(rs.getDouble("montant_total"));
         r.setStatut(StatutReservation.valueOf(rs.getString("statut")));
         r.setReferenceTransaction(rs.getString("reference_transaction"));
+
+        int notePassager = rs.getInt("note_passager");
+        if (rs.wasNull()) {
+            r.setNotePassager(null);
+        } else {
+            r.setNotePassager(notePassager);
+        }
 
         Timestamp tsRes = rs.getTimestamp("date_reservation");
         if (tsRes != null) r.setDateReservation(tsRes.toLocalDateTime());

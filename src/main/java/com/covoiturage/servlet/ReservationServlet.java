@@ -30,13 +30,17 @@ import jakarta.servlet.http.HttpSession;
  *   <li>POST /reservation/annuler → annuler une réservation</li>
  *   <li>GET  /reservation/mes       → lister les réservations du passager connecté</li>
  *   <li>GET  /reservation/chauffeur → lister les réservations liées aux trajets du chauffeur connecté</li>
+ *   <li>GET  /reservation/eligibles → lister les reservations eligibles a la notation</li>
  *   <li>POST /reservation/confirmer → confirmer une réservation (chauffeur)</li>
  *   <li>POST /reservation/supprimer → supprimer une réservation passée (passager)</li>
+ *   <li>POST /reservation/noter → noter le chauffeur (passager)</li>
  * </ul>
  */
 @WebServlet(urlPatterns = {
     "/reservation/creer", "/reservation/annuler", "/reservation/mes",
-    "/reservation/chauffeur", "/reservation/confirmer", "/reservation/supprimer"
+    "/reservation/chauffeur", "/reservation/confirmer", "/reservation/supprimer",
+    "/reservation/eligibles",
+    "/reservation/noter"
 })
 public class ReservationServlet extends HttpServlet {
 
@@ -64,6 +68,10 @@ public class ReservationServlet extends HttpServlet {
 
         if ("/reservation/chauffeur".equals(chemin)) {
             traiterListeChauffeur(request, response, requeteJson);
+            return;
+        }
+        if ("/reservation/eligibles".equals(chemin)) {
+            traiterEligiblesNotation(request, response, requeteJson);
             return;
         }
 
@@ -110,6 +118,7 @@ public class ReservationServlet extends HttpServlet {
             case "/reservation/annuler" -> traiterAnnulation(request, response);
             case "/reservation/confirmer" -> traiterConfirmation(request, response);
             case "/reservation/supprimer" -> traiterSuppression(request, response);
+            case "/reservation/noter" -> traiterNotation(request, response);
             default -> envoyerErreurJson(response, HttpServletResponse.SC_NOT_FOUND,
                 "Route non reconnue.");
         }
@@ -285,6 +294,77 @@ public class ReservationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Liste des reservations eligibles a la notation pour un chauffeur.
+     */
+    private void traiterEligiblesNotation(HttpServletRequest request, HttpServletResponse response,
+                                          boolean requeteJson) throws IOException {
+        Utilisateur passager = getUtilisateurConnecte(request);
+        if (passager == null) {
+            envoyerErreurJson(response, HttpServletResponse.SC_UNAUTHORIZED,
+                "Vous devez etre connecte.");
+            return;
+        }
+
+        String chauffeurIdStr = request.getParameter("chauffeurId");
+        if (estNullOuVide(chauffeurIdStr)) {
+            envoyerErreurJson(response, HttpServletResponse.SC_BAD_REQUEST,
+                "chauffeurId obligatoire.");
+            return;
+        }
+
+        try {
+            int chauffeurId = Integer.parseInt(chauffeurIdStr);
+            List<Reservation> reservations = reservationService.listerEligiblesNotation(passager.getId(), chauffeurId);
+
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().print(reservationEligiblesToJson(reservations));
+
+        } catch (NumberFormatException e) {
+            envoyerErreurJson(response, HttpServletResponse.SC_BAD_REQUEST,
+                "Identifiant chauffeur invalide.");
+        }
+    }
+
+    /**
+     * Notation du chauffeur par le passager.
+     * Parametres attendus : reservationId, note
+     */
+    private void traiterNotation(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        Utilisateur passager = getUtilisateurConnecte(request);
+        if (passager == null) {
+            envoyerErreurJson(response, HttpServletResponse.SC_UNAUTHORIZED,
+                "Vous devez etre connecte.");
+            return;
+        }
+
+        String reservationIdStr = request.getParameter("reservationId");
+        String noteStr = request.getParameter("note");
+
+        if (estNullOuVide(reservationIdStr) || estNullOuVide(noteStr)) {
+            envoyerErreurJson(response, HttpServletResponse.SC_BAD_REQUEST,
+                "Reservation et note obligatoires.");
+            return;
+        }
+
+        try {
+            int reservationId = Integer.parseInt(reservationIdStr);
+            int note = Integer.parseInt(noteStr);
+
+            reservationService.noterChauffeur(reservationId, passager.getId(), note);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().print("{\"succes\":true,\"message\":\"Merci pour votre note.\"}");
+
+        } catch (NumberFormatException e) {
+            envoyerErreurJson(response, HttpServletResponse.SC_BAD_REQUEST,
+                "Parametres invalides.");
+        } catch (ReservationInvalideException e) {
+            envoyerErreurJson(response, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+        }
+    }
+
     private void traiterListeChauffeur(HttpServletRequest request, HttpServletResponse response,
                                        boolean requeteJson) throws IOException, ServletException {
         Utilisateur chauffeur = getChauffeurConnecte(request);
@@ -324,10 +404,22 @@ public class ReservationServlet extends HttpServlet {
         String passagerNom = "";
         String passagerPrenom = "";
         String passagerEmail = "";
+        String chauffeurNom = "";
+        String chauffeurPrenom = "";
+        String chauffeurEmail = "";
+        String chauffeurTelephone = "";
+        double chauffeurNote = 0.0;
         if (r.getPassager() != null) {
             passagerNom = r.getPassager().getNom();
             passagerPrenom = r.getPassager().getPrenom();
             passagerEmail = r.getPassager().getEmail();
+        }
+        if (r.getTrajet() != null && r.getTrajet().getChauffeur() != null) {
+            chauffeurNom = r.getTrajet().getChauffeur().getNom();
+            chauffeurPrenom = r.getTrajet().getChauffeur().getPrenom();
+            chauffeurEmail = r.getTrajet().getChauffeur().getEmail();
+            chauffeurTelephone = r.getTrajet().getChauffeur().getTelephone();
+            chauffeurNote = r.getTrajet().getChauffeur().getNoteMoyenne();
         }
 
         return "{" +
@@ -336,6 +428,14 @@ public class ReservationServlet extends HttpServlet {
                "\"villeDepart\":\"" + echapper(r.getTrajet().getVilleDepart()) + "\"," +
                "\"villeArrivee\":\"" + echapper(r.getTrajet().getVilleArrivee()) + "\"," +
                "\"dateHeureDepart\":\"" + r.getTrajet().getDateHeureDepart() + "\"," +
+               "\"chauffeur\":{" +
+                   "\"id\":" + (r.getTrajet().getChauffeur() != null ? r.getTrajet().getChauffeur().getId() : 0) + "," +
+                   "\"nom\":\"" + echapper(chauffeurNom) + "\"," +
+                   "\"prenom\":\"" + echapper(chauffeurPrenom) + "\"," +
+                   "\"email\":\"" + echapper(chauffeurEmail) + "\"," +
+                   "\"telephone\":\"" + echapper(chauffeurTelephone) + "\"," +
+                   "\"note\":" + String.format(Locale.US, "%.2f", chauffeurNote) +
+               "}," +
                "\"passagerNom\":\"" + echapper(passagerNom) + "\"," +
                "\"passagerPrenom\":\"" + echapper(passagerPrenom) + "\"," +
                "\"passagerEmail\":\"" + echapper(passagerEmail) + "\"," +
@@ -343,8 +443,25 @@ public class ReservationServlet extends HttpServlet {
                "\"montantTotal\":" + String.format(Locale.US, "%.2f", r.getMontantTotal()) + "," +
                "\"statut\":\"" + r.getStatut() + "\"," +
                "\"dateReservation\":\"" + r.getDateReservation() + "\"," +
-               "\"montantRembourse\":" + String.format(Locale.US, "%.2f", r.getMontantRembourse()) +
+               "\"montantRembourse\":" + String.format(Locale.US, "%.2f", r.getMontantRembourse()) + "," +
+               "\"notePassager\":" + (r.getNotePassager() == null ? "null" : r.getNotePassager()) +
                "}";
+    }
+
+    private String reservationEligiblesToJson(List<Reservation> reservations) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < reservations.size(); i++) {
+            Reservation r = reservations.get(i);
+            if (i > 0) sb.append(",");
+            sb.append("{")
+              .append("\"id\":").append(r.getId()).append(",")
+              .append("\"villeDepart\":\"").append(echapper(r.getTrajet().getVilleDepart())).append("\",")
+              .append("\"villeArrivee\":\"").append(echapper(r.getTrajet().getVilleArrivee())).append("\",")
+              .append("\"dateHeureDepart\":\"").append(r.getTrajet().getDateHeureDepart()).append("\"")
+              .append("}");
+        }
+        sb.append("]");
+        return sb.toString();
     }
 
     private String echapper(String s) {

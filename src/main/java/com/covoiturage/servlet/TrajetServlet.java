@@ -275,6 +275,8 @@ public class TrajetServlet extends HttpServlet {
                    "\"id\":" + t.getChauffeur().getId() + "," +
                    "\"nom\":\"" + echapper(t.getChauffeur().getNom()) + "\"," +
                    "\"prenom\":\"" + echapper(t.getChauffeur().getPrenom()) + "\"," +
+                   "\"email\":\"" + echapper(t.getChauffeur().getEmail()) + "\"," +
+                   "\"telephone\":\"" + echapper(t.getChauffeur().getTelephone()) + "\"," +
                    "\"note\":" + String.format(Locale.US, "%.2f", t.getChauffeur().getNoteMoyenne()) +
                "}" +
                "}";

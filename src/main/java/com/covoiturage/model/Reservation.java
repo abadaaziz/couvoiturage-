@@ -48,6 +48,7 @@ public class Reservation implements Serializable {
     private LocalDateTime    dateAnnulation;
     private double           montantRembourse;    // calculé lors de l'annulation
     private String           referenceTransaction; // référence de l'autorisation de paiement
+    private Integer          notePassager;        // note du chauffeur (1-5)
 
     // ── Constructeur complet ──────────────────────────────────────────────────
 
@@ -182,6 +183,11 @@ public class Reservation implements Serializable {
     public double getMontantRembourse() { return montantRembourse; }
     public void setMontantRembourse(double montantRembourse) {
         this.montantRembourse = montantRembourse;
+    }
+
+    public Integer getNotePassager() { return notePassager; }
+    public void setNotePassager(Integer notePassager) {
+        this.notePassager = notePassager;
     }
 
     public String getReferenceTransaction() { return referenceTransaction; }

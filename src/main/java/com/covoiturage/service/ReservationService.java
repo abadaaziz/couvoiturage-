@@ -385,6 +385,17 @@ public class ReservationService {
     }
 
     /**
+     * Liste les reservations eligibles a la notation pour un chauffeur donne.
+     */
+    public List<Reservation> listerEligiblesNotation(int passagerId, int chauffeurId) {
+        try {
+            return reservationDAO.trouverEligiblesNotation(passagerId, chauffeurId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la récupération des réservations notables : " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * Supprime une reservation du passager uniquement si le trajet est passe.
      */
     public void supprimerReservationSiTerminee(int reservationId, int passagerId)
@@ -411,6 +422,55 @@ public class ReservationService {
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la suppression de la reservation : " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Permet a un passager de noter le chauffeur apres un trajet confirme.
+     */
+    public void noterChauffeur(int reservationId, int passagerId, int note)
+            throws ReservationInvalideException {
+        if (note < 1 || note > 5) {
+            throw new ReservationInvalideException("La note doit etre comprise entre 1 et 5.");
+        }
+
+        try {
+            Optional<Reservation> opt = reservationDAO.trouverParId(reservationId);
+            if (opt.isEmpty()) {
+                throw new ReservationInvalideException("Reservation #" + reservationId + " introuvable.");
+            }
+
+            Reservation reservation = opt.get();
+            if (reservation.getPassager().getId() != passagerId) {
+                throw new ReservationInvalideException("Vous n'etes pas autorise a noter cette reservation.");
+            }
+            if (reservation.getStatut() != StatutReservation.CONFIRMEE) {
+                throw new ReservationInvalideException("Seules les reservations confirmees peuvent etre notees.");
+            }
+            if (reservation.getTrajet().getDateHeureDepart() == null ||
+                reservation.getTrajet().getDateHeureDepart().isAfter(java.time.LocalDateTime.now())) {
+                throw new ReservationInvalideException("La note est disponible apres la date du trajet.");
+            }
+            if (reservation.getNotePassager() != null) {
+                throw new ReservationInvalideException("Vous avez deja note ce chauffeur.");
+            }
+
+            // Enregistrer la note sur la reservation
+            reservationDAO.mettreAJourNotePassager(reservationId, note);
+
+            // Mettre a jour la note moyenne du chauffeur
+            int chauffeurId = reservation.getTrajet().getChauffeur().getId();
+            Optional<Utilisateur> optChauffeur = new com.covoiturage.dao.UtilisateurDAO().trouverParId(chauffeurId);
+            if (optChauffeur.isEmpty()) {
+                throw new ReservationInvalideException("Chauffeur introuvable.");
+            }
+
+            Utilisateur chauffeur = optChauffeur.get();
+            chauffeur.ajouterAvis(note);
+            new com.covoiturage.dao.UtilisateurDAO().mettreAJour(chauffeur);
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la notation : " + e.getMessage(), e);
         }
     }
 }

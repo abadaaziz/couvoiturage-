@@ -70,10 +70,17 @@ public class DatabaseInitializer implements ServletContextListener {
                     date_annulation       DATETIME,
                     montant_rembourse     DOUBLE   NOT NULL DEFAULT 0.0,
                     reference_transaction VARCHAR(100),
+                    note_passager         INT,
                     CONSTRAINT fk_reservation_trajet   FOREIGN KEY (trajet_id)   REFERENCES trajets(id),
                     CONSTRAINT fk_reservation_passager FOREIGN KEY (passager_id) REFERENCES utilisateurs(id)
                 )
             """);
+
+            try {
+                stmt.execute("ALTER TABLE reservations ADD COLUMN IF NOT EXISTS note_passager INT");
+            } catch (SQLException e) {
+                // Ignore if not supported
+            }
 
             // ── Table paiements ─────────────────────────────────────────────
             stmt.execute("""
@@ -104,6 +111,18 @@ public class DatabaseInitializer implements ServletContextListener {
                     date_creation    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     date_lecture     DATETIME,
                     CONSTRAINT fk_notification_utilisateur FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id)
+                )
+            """);
+
+            // ── Table notes application ───────────────────────────────────
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS app_ratings (
+                    id             INT AUTO_INCREMENT PRIMARY KEY,
+                    utilisateur_id INT NOT NULL,
+                    note           INT NOT NULL,
+                    date_creation  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    CONSTRAINT fk_app_ratings_user FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id),
+                    CONSTRAINT uk_app_ratings_user UNIQUE (utilisateur_id)
                 )
             """);
 

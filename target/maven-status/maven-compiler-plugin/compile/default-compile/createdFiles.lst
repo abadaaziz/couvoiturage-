@@ -31,8 +31,10 @@ com\covoiturage\servlet\TrajetServlet.class
 com\covoiturage\model\Trajet.class
 com\covoiturage\model\Trajet$StatutTrajet.class
 com\covoiturage\service\TrajetService.class
+com\covoiturage\servlet\AppRatingServlet.class
 com\covoiturage\servlet\InscriptionServlet.class
 com\covoiturage\model\Notification.class
+com\covoiturage\dao\AppRatingDAO.class
 com\covoiturage\service\AuthService.class
 com\covoiturage\model\Utilisateur$Role.class
 com\covoiturage\service\InAppNotificationService.class

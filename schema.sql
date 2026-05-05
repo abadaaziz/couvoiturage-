@@ -61,8 +61,20 @@ CREATE TABLE IF NOT EXISTS reservations (
     date_annulation       DATETIME,
     montant_rembourse     DOUBLE   NOT NULL DEFAULT 0.0,
     reference_transaction VARCHAR(100),
+    note_passager         TINYINT       NULL CHECK (note_passager BETWEEN 1 AND 5),
     CONSTRAINT fk_reservation_trajet  FOREIGN KEY (trajet_id)   REFERENCES trajets(id),
     CONSTRAINT fk_reservation_passager FOREIGN KEY (passager_id) REFERENCES utilisateurs(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ── Table des notes de l'application ─────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS app_ratings (
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    utilisateur_id INT NOT NULL,
+    note           TINYINT NOT NULL CHECK (note BETWEEN 1 AND 5),
+    date_creation  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_app_ratings_user FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    UNIQUE KEY uk_app_ratings_user (utilisateur_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================================

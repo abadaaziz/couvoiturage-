@@ -73,6 +73,7 @@ CREATE TABLE IF NOT EXISTS reservations (
     date_reservation      DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     date_annulation       DATETIME,
     reference_transaction VARCHAR(100),
+    note_passager         TINYINT       NULL CHECK (note_passager BETWEEN 1 AND 5),
 
     CONSTRAINT fk_reservation_trajet
         FOREIGN KEY (trajet_id)   REFERENCES trajets(id)      ON DELETE CASCADE,
@@ -85,6 +86,17 @@ CREATE TABLE IF NOT EXISTS reservations (
     INDEX idx_trajet_id   (trajet_id),
     INDEX idx_passager_id (passager_id),
     INDEX idx_statut_res  (statut)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── Table des notes de l'application ─────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS app_ratings (
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    utilisateur_id INT NOT NULL,
+    note           TINYINT NOT NULL CHECK (note BETWEEN 1 AND 5),
+    date_creation  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_app_ratings_user FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    UNIQUE KEY uk_app_ratings_user (utilisateur_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ── Table des paiements ───────────────────────────────────────────────────────

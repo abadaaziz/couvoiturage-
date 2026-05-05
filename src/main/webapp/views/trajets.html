@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Trouvez et réservez votre covoiturage sur CovoitApp.">
-    <title>Trajets disponibles — CovoitApp</title>
+    <meta name="description" content="Trouvez et réservez votre covoiturage en Tunisie sur Fi Thnity.">
+    <title>Trajets disponibles — Fi Thnity</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -24,7 +24,7 @@
                 </linearGradient>
             </defs>
         </svg>
-        CovoitApp
+        Fi Thnity
     </a>
 
     <ul class="navbar-liens">
@@ -58,13 +58,13 @@
                 <div class="recherche-grille">
                     <div class="form-groupe" style="margin-bottom:0;">
                         <label for="rech-depart">Départ</label>
-                        <input type="text" id="rech-depart" name="depart"
-                               class="form-controle" placeholder="Ex : Paris">
+                           <input type="text" id="rech-depart" name="depart"
+                               class="form-controle" placeholder="Ex : Tunis">
                     </div>
                     <div class="form-groupe" style="margin-bottom:0;">
                         <label for="rech-arrivee">Arrivée</label>
-                        <input type="text" id="rech-arrivee" name="arrivee"
-                               class="form-controle" placeholder="Ex : Lyon">
+                           <input type="text" id="rech-arrivee" name="arrivee"
+                               class="form-controle" placeholder="Ex : Sfax">
                     </div>
                     <div class="form-groupe" style="margin-bottom:0;">
                         <label for="rech-date">Date</label>
@@ -132,11 +132,11 @@
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
                 <div class="form-groupe">
                     <label for="nv-depart">Ville de départ *</label>
-                    <input type="text" id="nv-depart" class="form-controle" placeholder="Paris" required>
+                    <input type="text" id="nv-depart" class="form-controle" placeholder="Tunis" required>
                 </div>
                 <div class="form-groupe">
                     <label for="nv-arrivee">Ville d'arrivée *</label>
-                    <input type="text" id="nv-arrivee" class="form-controle" placeholder="Lyon" required>
+                    <input type="text" id="nv-arrivee" class="form-controle" placeholder="Sousse" required>
                 </div>
             </div>
             <div class="form-groupe">
@@ -165,8 +165,8 @@
             </div>
             <div class="form-groupe">
                 <label for="nv-vehicule">Description du véhicule</label>
-                <input type="text" id="nv-vehicule" class="form-controle"
-                       placeholder="Ex : Peugeot 308 grise — AB-123-CD">
+                          <input type="text" id="nv-vehicule" class="form-controle"
+                              placeholder="Ex : Peugeot 308 grise — 123 TN 4567">
             </div>
             <button type="submit" id="btn-soumettre-trajet" class="btn btn-primaire w-full">
                 Publier le trajet
@@ -213,9 +213,62 @@
     </div>
 </div>
 
+<!-- ── Modal : Profil chauffeur ───────────────────────────── -->
+<div id="modal-profil" style="display:none;position:fixed;inset:0;z-index:2200;
+     background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);
+     align-items:center;justify-content:center;padding:1rem;">
+    <div class="card" style="max-width:520px;width:100%;max-height:90vh;overflow-y:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+            <h2 style="font-size:1.2rem;">Profil chauffeur</h2>
+            <button id="btn-fermer-modal-profil" style="background:none;border:none;color:var(--texte-secondaire);font-size:1.5rem;cursor:pointer;">×</button>
+        </div>
+
+        <div id="profil-erreur" class="alerte alerte-erreur" style="display:none;"></div>
+
+        <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem;">
+            <div class="avatar" id="profil-avatar" style="width:44px;height:44px;font-size:1rem;"></div>
+            <div>
+                <p class="semi-gras" id="profil-nom"></p>
+                <p class="texte-xs texte-secondaire" id="profil-note"></p>
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+            <div class="form-groupe" style="margin-bottom:0;">
+                <label>Telephone</label>
+                <div class="form-controle" id="profil-telephone" style="display:flex;align-items:center;"></div>
+            </div>
+            <div class="form-groupe" style="margin-bottom:0;">
+                <label>Email</label>
+                <div class="form-controle" id="profil-email" style="display:flex;align-items:center;"></div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:1rem;">
+            <p class="semi-gras" style="margin-bottom:0.5rem;">Noter ce chauffeur</p>
+            <p class="texte-xs texte-secondaire" id="profil-info-notation" style="margin-bottom:0.75rem;"></p>
+            <a id="profil-login-action" href="/login" class="btn btn-primaire btn-sm" style="display:none;width:fit-content;margin-bottom:0.75rem;">
+                Se connecter pour noter
+            </a>
+            <div id="profil-notation-zone" style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+                <select id="profil-reservation" class="form-controle" style="max-width:200px;"></select>
+                <select id="profil-note-select" class="form-controle" style="max-width:120px;">
+                    <option value="">Note</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+                <button id="profil-noter" class="btn btn-secondaire btn-sm">Envoyer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ── Pied de page ────────────────────────────────────────────── -->
 <footer class="footer">
-    <p>© 2025 CovoitApp — Voyagez ensemble, voyagez malin 🌍</p>
+    <p>© 2025 Fi Thnity — Voyagez ensemble, voyagez malin 🌍</p>
 </footer>
 
 <script src="/js/trajets.js?v=20260504-2"></script>
