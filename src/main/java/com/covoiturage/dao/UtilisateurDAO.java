@@ -28,8 +28,8 @@ public class UtilisateurDAO {
     // ── Requêtes SQL ──────────────────────────────────────────────────────────
 
     private static final String SQL_INSERT =
-        "INSERT INTO utilisateurs (nom, prenom, email, mot_de_passe_hash, telephone, role, statut_compte, note_moyenne, nombre_avis, date_inscription) " +
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        "INSERT INTO utilisateurs (nom, prenom, email, mot_de_passe_hash, telephone, role, statut_compte, note_moyenne, nombre_avis, date_inscription, tentatives_connexion_echouees) " +
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     private static final String SQL_SELECT_BY_ID =
         "SELECT * FROM utilisateurs WHERE id = ?";
@@ -45,13 +45,22 @@ public class UtilisateurDAO {
 
     private static final String SQL_UPDATE =
         "UPDATE utilisateurs SET nom=?, prenom=?, email=?, telephone=?, role=?, statut_compte=?, " +
-        "note_moyenne=?, nombre_avis=?, derniere_connexion=? WHERE id=?";
+        "note_moyenne=?, nombre_avis=?, derniere_connexion=?, tentatives_connexion_echouees=? WHERE id=?";
 
     private static final String SQL_UPDATE_STATUT =
         "UPDATE utilisateurs SET statut_compte=? WHERE id=?";
 
     private static final String SQL_UPDATE_CONNEXION =
         "UPDATE utilisateurs SET derniere_connexion=? WHERE id=?";
+
+    private static final String SQL_INCREMENT_TENTATIVES_CONNEXION =
+        "UPDATE utilisateurs SET tentatives_connexion_echouees = tentatives_connexion_echouees + 1 WHERE id=?";
+
+    private static final String SQL_RESET_TENTATIVES_CONNEXION =
+        "UPDATE utilisateurs SET tentatives_connexion_echouees = 0 WHERE id=?";
+
+    private static final String SQL_SELECT_TENTATIVES_CONNEXION =
+        "SELECT tentatives_connexion_echouees FROM utilisateurs WHERE id=?";
 
     private static final String SQL_DELETE =
         "DELETE FROM utilisateurs WHERE id=?";
@@ -185,7 +194,8 @@ public class UtilisateurDAO {
             }
             ps.setTimestamp(9, utilisateur.getDerniereConnexion() != null
                 ? Timestamp.valueOf(utilisateur.getDerniereConnexion()) : null);
-            ps.setInt(10, utilisateur.getId());
+            ps.setInt(10, utilisateur.getTentativesConnexionEchouees());
+            ps.setInt(11, utilisateur.getId());
             ps.executeUpdate();
         }
     }
@@ -213,6 +223,40 @@ public class UtilisateurDAO {
 
             ps.setTimestamp(1, Timestamp.valueOf(dateConnexion));
             ps.setInt(2, utilisateurId);
+            ps.executeUpdate();
+        }
+    }
+
+    /**
+     * Incrémente le compteur d'échecs de connexion et retourne sa nouvelle valeur.
+     */
+    public int incrementerTentativesConnexionEchouees(int utilisateurId) throws SQLException {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(SQL_INCREMENT_TENTATIVES_CONNEXION)) {
+                ps.setInt(1, utilisateurId);
+                ps.executeUpdate();
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement(SQL_SELECT_TENTATIVES_CONNEXION)) {
+                ps.setInt(1, utilisateurId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt("tentatives_connexion_echouees");
+                    }
+                }
+            }
+        }
+        throw new SQLException("Utilisateur #" + utilisateurId + " introuvable.");
+    }
+
+    /**
+     * Réinitialise le compteur d'échecs de connexion après un succès ou une réactivation.
+     */
+    public void reinitialiserTentativesConnexionEchouees(int utilisateurId) throws SQLException {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_RESET_TENTATIVES_CONNEXION)) {
+
+            ps.setInt(1, utilisateurId);
             ps.executeUpdate();
         }
     }
@@ -266,6 +310,7 @@ public class UtilisateurDAO {
         }
         ps.setTimestamp(10, u.getDateInscription() != null
             ? Timestamp.valueOf(u.getDateInscription()) : Timestamp.valueOf(LocalDateTime.now()));
+        ps.setInt(11, u.getTentativesConnexionEchouees());
     }
 
     /**
@@ -291,6 +336,7 @@ public class UtilisateurDAO {
 
         Timestamp tsConnexion = rs.getTimestamp("derniere_connexion");
         if (tsConnexion != null) u.setDerniereConnexion(tsConnexion.toLocalDateTime());
+        u.setTentativesConnexionEchouees(rs.getInt("tentatives_connexion_echouees"));
 
         return u;
     }

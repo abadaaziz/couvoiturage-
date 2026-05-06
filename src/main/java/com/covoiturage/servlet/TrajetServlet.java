@@ -239,7 +239,7 @@ public class TrajetServlet extends HttpServlet {
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().print("{\"succes\":true,\"penalite\":" + penalite +
                 ",\"message\":\"Trajet annulé. Pénalité appliquée : " +
-                String.format("%.2f", penalite) + "€\"}");
+                String.format("%.2f", penalite) + " DT\"}");
 
         } catch (NumberFormatException e) {
             envoyerErreurJson(response, HttpServletResponse.SC_BAD_REQUEST,

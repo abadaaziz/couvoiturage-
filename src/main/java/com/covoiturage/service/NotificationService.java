@@ -17,7 +17,7 @@ public class NotificationService {
     // ── Configuration simulée ─────────────────────────────────────────────────
 
     private static final String EXPEDITEUR_EMAIL = "noreply@covoiturageapp.fr";
-    private static final String NOM_APP          = "CovoitApp";
+    private static final String NOM_APP          = "Same Trip";
 
     // ── Méthodes publiques ────────────────────────────────────────────────────
 

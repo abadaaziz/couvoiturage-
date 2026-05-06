@@ -213,7 +213,7 @@ public class ReservationServlet extends HttpServlet {
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().print("{\"succes\":true,\"montantRembourse\":" + montantRembourse +
                 ",\"message\":\"Réservation annulée. Remboursement de " +
-                String.format("%.2f", montantRembourse) + "€ en cours.\"}");
+                String.format("%.2f", montantRembourse) + " DT en cours.\"}");
 
         } catch (NumberFormatException e) {
             envoyerErreurJson(response, HttpServletResponse.SC_BAD_REQUEST,

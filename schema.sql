@@ -1,5 +1,5 @@
 -- ============================================================
---  CovoitApp — Script de création de la base de données
+--  Same Trip — Script de création de la base de données
 --  Compatible MySQL 8.0+ / MariaDB 10.5+
 --  Exécuter une seule fois avant le premier lancement.
 -- ============================================================
@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS utilisateurs (
     telephone            VARCHAR(20),
     role                 ENUM('PASSAGER','CHAUFFEUR','ADMIN') NOT NULL DEFAULT 'PASSAGER',
     statut_compte        ENUM('ACTIF','SUSPENDU','BLOQUE','EN_ATTENTE_VALIDATION') NOT NULL DEFAULT 'EN_ATTENTE_VALIDATION',
+    tentatives_connexion_echouees INT NOT NULL DEFAULT 0,
     note_moyenne         DOUBLE       NULL DEFAULT NULL,  -- uniquement pour les chauffeurs
     nombre_avis          INT          NULL DEFAULT NULL,  -- uniquement pour les chauffeurs
     date_inscription     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -114,6 +115,6 @@ CREATE TABLE IF NOT EXISTS notifications (
 -- Mot de passe : "admin123"  (hash SHA-256 pour demo)
 -- ============================================================
 INSERT IGNORE INTO utilisateurs (nom, prenom, email, mot_de_passe_hash, telephone, role, statut_compte)
-VALUES ('Admin', 'CovoitApp', 'admin@covoitapp.com',
+VALUES ('Admin', 'Same Trip', 'admin@covoitapp.com',
     '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
         '0600000000', 'ADMIN', 'ACTIF');

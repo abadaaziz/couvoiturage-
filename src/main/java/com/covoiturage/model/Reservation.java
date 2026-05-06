@@ -85,7 +85,7 @@ public class Reservation implements Serializable {
      *   <li>Sinon → remboursement partiel à 50 %</li>
      * </ul>
      *
-     * @return Montant à rembourser en euros
+     * @return Montant à rembourser en dinars tunisiens
      */
     public double calculerMontantRemboursement() {
         if (trajet == null) return 0.0;
@@ -217,7 +217,7 @@ public class Reservation implements Serializable {
                ", trajetId=" + (trajet != null ? trajet.getId() : "null") +
                ", passager=" + (passager != null ? passager.getEmail() : "null") +
                ", nombrePlaces=" + nombrePlaces +
-               ", montantTotal=" + montantTotal + "€" +
+               ", montantTotal=" + montantTotal + " DT" +
                ", statut=" + statut +
                ", dateReservation=" + dateReservation +
                '}';

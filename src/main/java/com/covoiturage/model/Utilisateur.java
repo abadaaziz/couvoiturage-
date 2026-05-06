@@ -28,6 +28,7 @@ public abstract class Utilisateur implements Serializable {
     private StatutCompte  statutCompte;
     private LocalDateTime dateInscription;
     private LocalDateTime derniereConnexion;
+    private int tentativesConnexionEchouees;
 
     // ── Constructeur complet ──────────────────────────────────────────────────
 
@@ -104,6 +105,11 @@ public abstract class Utilisateur implements Serializable {
         this.derniereConnexion = derniereConnexion;
     }
 
+    public int getTentativesConnexionEchouees() { return tentativesConnexionEchouees; }
+    public void setTentativesConnexionEchouees(int tentativesConnexionEchouees) {
+        this.tentativesConnexionEchouees = Math.max(0, tentativesConnexionEchouees);
+    }
+
     // ── equals / hashCode / toString ─────────────────────────────────────────
 
     @Override
@@ -128,6 +134,7 @@ public abstract class Utilisateur implements Serializable {
                ", email='" + email + '\'' +
                ", role=" + getRole() +
                ", statutCompte=" + statutCompte +
+               ", tentativesConnexionEchouees=" + tentativesConnexionEchouees +
                '}';
     }
 }

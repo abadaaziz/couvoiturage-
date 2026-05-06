@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes reservations - Fi Thnity</title>
+    <title>Mes reservations - Same Trip</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -22,7 +22,7 @@
                 </linearGradient>
             </defs>
         </svg>
-        Fi Thnity
+        Same Trip
     </a>
 
     <ul class="navbar-liens">
@@ -48,7 +48,7 @@
         <div class="card" style="margin-bottom:1.5rem;">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
                 <div>
-                    <p class="semi-gras">Notez Fi Thnity</p>
+                    <p class="semi-gras">Notez Same Trip</p>
                     <p class="texte-xs texte-secondaire">Votre avis compte pour ameliorer l'app.</p>
                 </div>
                 <div style="display:flex;gap:0.5rem;align-items:center;">
@@ -130,7 +130,7 @@
 </div>
 
 <footer class="footer">
-    <p>© 2025 Fi Thnity</p>
+    <p>© 2025 Same Trip</p>
 </footer>
 
 <script>
@@ -185,7 +185,7 @@ async function chargerReservations() {
                     <span class="badge">${echapper(statut)}</span>
                 </div>
                 <div style="margin-top:0.75rem;display:flex;justify-content:space-between;align-items:center;">
-                    <p class="texte-sm">${r.nombrePlaces} place(s) • ${Number(r.montantTotal).toFixed(2)} EUR</p>
+                    <p class="texte-sm">${r.nombrePlaces} place(s) • ${Number(r.montantTotal).toFixed(2)} DT</p>
                     <div style="display:flex;gap:0.5rem;align-items:center;">
                         ${annulable ? `<button class="btn btn-danger btn-sm" data-id="${r.id}">Annuler</button>` : ''}
                         ${supprimable ? `<button class="btn btn-danger btn-sm" data-supprimer="${r.id}">Supprimer</button>` : ''}
@@ -193,7 +193,7 @@ async function chargerReservations() {
                 </div>
                 ${r.montantRembourse && Number(r.montantRembourse) > 0 ? `
                 <p class="texte-xs texte-secondaire" style="margin-top:0.5rem;">
-                    Remboursement: ${Number(r.montantRembourse).toFixed(2)} EUR
+                    Remboursement: ${Number(r.montantRembourse).toFixed(2)} DT
                 </p>
                 ` : ''}
                 ${r.statut === 'CONFIRMEE' ? `

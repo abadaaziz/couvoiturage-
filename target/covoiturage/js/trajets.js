@@ -190,7 +190,7 @@ function creerCarteTrajet(t) {
             </div>
             <div class="trajet-info-item">
                 <span class="trajet-info-label">💰 Prix</span>
-                <span class="trajet-prix">${t.prixParPlace.toFixed(2)}€</span>
+                <span class="trajet-prix">${t.prixParPlace.toFixed(2)} DT</span>
             </div>
         </div>
 
@@ -288,7 +288,7 @@ function ouvrirReservation(trajet) {
     const calculerMontant = () => {
         const nb = Number(selectPlaces.value || '1');
         const total = nb * Number(trajet.prixParPlace || 0);
-        montant.textContent = `Montant estimé: ${total.toFixed(2)}€`;
+        montant.textContent = `Montant estimé: ${total.toFixed(2)} DT`;
     };
 
     selectPlaces.onchange = calculerMontant;

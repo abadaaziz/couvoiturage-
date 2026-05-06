@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS utilisateurs (
     role                ENUM('PASSAGER','CHAUFFEUR','ADMIN') NOT NULL DEFAULT 'PASSAGER',
     statut_compte       ENUM('ACTIF','SUSPENDU','BLOQUE','EN_ATTENTE_VALIDATION')
                         NOT NULL DEFAULT 'EN_ATTENTE_VALIDATION',
+    tentatives_connexion_echouees INT NOT NULL DEFAULT 0,
     note_moyenne        DECIMAL(3,2) NOT NULL DEFAULT 0.00,
     nombre_avis         INT          NOT NULL DEFAULT 0,
     date_inscription    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,

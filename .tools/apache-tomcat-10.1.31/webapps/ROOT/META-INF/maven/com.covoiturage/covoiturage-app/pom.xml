@@ -11,7 +11,7 @@
     <version>1.0.0</version>
     <packaging>war</packaging>
 
-    <name>CovoitApp</name>
+    <name>Same Trip</name>
     <description>Application de covoiturage — Java Servlets purs + JDBC pur</description>
 
     <!-- ── Propriétés ────────────────────────────────────────────────────── -->

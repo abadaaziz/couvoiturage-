@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paiement — Fi Thnity</title>
+    <title>Paiement — Same Trip</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
 <nav class="navbar">
-    <a href="/trajets" class="navbar-logo">Fi Thnity</a>
+    <a href="/trajets" class="navbar-logo">Same Trip</a>
     <div class="navbar-actions">
         <a href="/logout" class="btn btn-secondaire btn-sm">Déconnexion</a>
     </div>
@@ -169,7 +169,7 @@ async function chargerRecapitulatif(reservationId) {
                     <p class="semi-gras texte-sm">Réservation #${reservation.id}</p>
                     <p class="texte-xs texte-secondaire">${places} place(s) • ${reservation.villeDepart} → ${reservation.villeArrivee}</p>
                 </div>
-                <p class="trajet-prix" style="font-size:1.25rem;">${montant}€</p>
+                <p class="trajet-prix" style="font-size:1.25rem;">${montant} DT</p>
             </div>
         `;
     } catch (e) {

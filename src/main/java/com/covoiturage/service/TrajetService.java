@@ -82,7 +82,7 @@ public class TrajetService {
         }
         if (prixParPlace < 0 || prixParPlace > 500) {
             throw new IllegalArgumentException(
-                "Le prix par place doit etre compris entre 0 et 500 euros.");
+                "Le prix par place doit etre compris entre 0 et 500 DT.");
         }
 
         try {
@@ -211,7 +211,7 @@ public class TrajetService {
 
             if (penalite > 0) {
                 System.out.println("[TrajetService] Penalite chauffeur #" + chauffeurId +
-                    " : " + penalite + " EUR");
+                    " : " + penalite + " DT");
             }
 
             trajetDAO.mettreAJourStatut(trajetId, StatutTrajet.ANNULE);

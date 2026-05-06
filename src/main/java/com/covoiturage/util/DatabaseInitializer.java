@@ -32,11 +32,16 @@ public class DatabaseInitializer implements ServletContextListener {
                     telephone            VARCHAR(20),
                     role                 VARCHAR(20)  NOT NULL DEFAULT 'PASSAGER',
                     statut_compte        VARCHAR(40)  NOT NULL DEFAULT 'EN_ATTENTE_VALIDATION',
+                    tentatives_connexion_echouees INT NOT NULL DEFAULT 0,
                     note_moyenne         DOUBLE       NOT NULL DEFAULT 0.0,
                     nombre_avis          INT          NOT NULL DEFAULT 0,
                     date_inscription     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     derniere_connexion   DATETIME
                 )
+            """);
+            stmt.execute("""
+                ALTER TABLE utilisateurs
+                ADD COLUMN IF NOT EXISTS tentatives_connexion_echouees INT NOT NULL DEFAULT 0
             """);
 
             // ── Table trajets ───────────────────────────────────────────────
@@ -132,13 +137,13 @@ public class DatabaseInitializer implements ServletContextListener {
             stmt.execute("""
                 MERGE INTO utilisateurs (nom, prenom, email, mot_de_passe_hash, telephone, role, statut_compte)
                 KEY (email)
-                VALUES ('Admin', 'CovoitApp', 'admin@covoitapp.com',
+                VALUES ('Admin', 'Same Trip', 'admin@covoitapp.com',
                         '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
                         '0600000000', 'ADMIN', 'ACTIF')
             """);
 
-            // ── Données de démo : quelques trajets ─────────────────────────
-            insertDemoDataIfEmpty(stmt);
+            // Nettoyage des anciens comptes de demo Jean/Sophie sans creer de trajets.
+            supprimerUtilisateursDemoJeanEtSophie(stmt);
 
             System.out.println("[DatabaseInitializer] Base de données prête ✓");
 
@@ -149,78 +154,62 @@ public class DatabaseInitializer implements ServletContextListener {
     }
 
     /**
-     * Insère des données de démonstration si la table trajets est vide OU si tous les trajets
-     * existants sont dans le passé (cas d'une base ancienne réutilisée).
+     * Supprime les comptes de demo Jean/Sophie et toutes leurs donnees liees.
      */
-    private void insertDemoDataIfEmpty(Statement stmt) throws SQLException {
-        // Compter les trajets futurs ouverts
-        var rs = stmt.executeQuery(
-            "SELECT COUNT(*) FROM trajets WHERE statut='OUVERT' AND date_heure_depart > CURRENT_TIMESTAMP");
-        rs.next();
-        int trajetsFuturs = rs.getInt(1);
-
-        if (trajetsFuturs > 0) return; // données fraîches déjà présentes
-
-        // Supprimer les anciens trajets de démo passés (et leurs réservations) pour repartir propre
-        stmt.execute("DELETE FROM paiements WHERE reservation_id IN " +
-            "(SELECT id FROM reservations WHERE trajet_id IN " +
-            "(SELECT id FROM trajets WHERE date_heure_depart <= CURRENT_TIMESTAMP))");
-        stmt.execute("DELETE FROM reservations WHERE trajet_id IN " +
-            "(SELECT id FROM trajets WHERE date_heure_depart <= CURRENT_TIMESTAMP)");
-        stmt.execute("DELETE FROM trajets WHERE date_heure_depart <= CURRENT_TIMESTAMP");
-
-        // Compte chauffeur de démo
+    private void supprimerUtilisateursDemoJeanEtSophie(Statement stmt) throws SQLException {
         stmt.execute("""
-            MERGE INTO utilisateurs (nom, prenom, email, mot_de_passe_hash, telephone, role, statut_compte, note_moyenne, nombre_avis)
-            KEY (email)
-            VALUES ('Dupont', 'Jean', 'jean.dupont@demo.com',
-                    '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
-                    '0612345678', 'CHAUFFEUR', 'ACTIF', 4.5, 12)
+            DELETE FROM paiements WHERE reservation_id IN (
+                SELECT id FROM reservations
+                WHERE passager_id IN (
+                    SELECT id FROM utilisateurs
+                    WHERE email IN ('jean.dupont@demo.com', 'sophie.martin@demo.com')
+                )
+                OR trajet_id IN (
+                    SELECT id FROM trajets
+                    WHERE chauffeur_id IN (
+                        SELECT id FROM utilisateurs
+                        WHERE email IN ('jean.dupont@demo.com', 'sophie.martin@demo.com')
+                    )
+                )
+            )
         """);
-
         stmt.execute("""
-            MERGE INTO utilisateurs (nom, prenom, email, mot_de_passe_hash, telephone, role, statut_compte, note_moyenne, nombre_avis)
-            KEY (email)
-            VALUES ('Martin', 'Sophie', 'sophie.martin@demo.com',
-                    '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
-                    '0698765432', 'CHAUFFEUR', 'ACTIF', 4.8, 25)
+            DELETE FROM reservations
+            WHERE passager_id IN (
+                SELECT id FROM utilisateurs
+                WHERE email IN ('jean.dupont@demo.com', 'sophie.martin@demo.com')
+            )
+            OR trajet_id IN (
+                SELECT id FROM trajets
+                WHERE chauffeur_id IN (
+                    SELECT id FROM utilisateurs
+                    WHERE email IN ('jean.dupont@demo.com', 'sophie.martin@demo.com')
+                )
+            )
         """);
-
-        // Trajets de démo (dates dans le futur)
         stmt.execute("""
-            INSERT INTO trajets (ville_depart, ville_arrivee, date_heure_depart,
-                                 places_total, places_disponibles, prix_par_place,
-                                 statut, chauffeur_id, description_vehicule, date_creation)
-            SELECT 'Paris', 'Lyon',
-                   DATEADD('DAY', 3, CURRENT_TIMESTAMP),
-                   4, 3, 25.0, 'OUVERT',
-                   u.id, 'Peugeot 308 Blanche - AB-123-CD', CURRENT_TIMESTAMP
-            FROM utilisateurs u WHERE u.email = 'jean.dupont@demo.com'
+            DELETE FROM notifications WHERE utilisateur_id IN (
+                SELECT id FROM utilisateurs
+                WHERE email IN ('jean.dupont@demo.com', 'sophie.martin@demo.com')
+            )
         """);
-
         stmt.execute("""
-            INSERT INTO trajets (ville_depart, ville_arrivee, date_heure_depart,
-                                 places_total, places_disponibles, prix_par_place,
-                                 statut, chauffeur_id, description_vehicule, date_creation)
-            SELECT 'Marseille', 'Paris',
-                   DATEADD('DAY', 5, CURRENT_TIMESTAMP),
-                   3, 3, 35.0, 'OUVERT',
-                   u.id, 'Renault Clio Grise - EF-456-GH', CURRENT_TIMESTAMP
-            FROM utilisateurs u WHERE u.email = 'sophie.martin@demo.com'
+            DELETE FROM app_ratings WHERE utilisateur_id IN (
+                SELECT id FROM utilisateurs
+                WHERE email IN ('jean.dupont@demo.com', 'sophie.martin@demo.com')
+            )
         """);
-
         stmt.execute("""
-            INSERT INTO trajets (ville_depart, ville_arrivee, date_heure_depart,
-                                 places_total, places_disponibles, prix_par_place,
-                                 statut, chauffeur_id, description_vehicule, date_creation)
-            SELECT 'Bordeaux', 'Toulouse',
-                   DATEADD('DAY', 2, CURRENT_TIMESTAMP),
-                   2, 2, 15.0, 'OUVERT',
-                   u.id, 'Tesla Model 3 Noire - IJ-789-KL', CURRENT_TIMESTAMP
-            FROM utilisateurs u WHERE u.email = 'jean.dupont@demo.com'
+            DELETE FROM trajets WHERE chauffeur_id IN (
+                SELECT id FROM utilisateurs
+                WHERE email IN ('jean.dupont@demo.com', 'sophie.martin@demo.com')
+            )
         """);
-
-        System.out.println("[DatabaseInitializer] Données de démo insérées ✓");
+        stmt.execute("""
+            DELETE FROM utilisateurs
+            WHERE email IN ('jean.dupont@demo.com', 'sophie.martin@demo.com')
+        """);
+        System.out.println("[DatabaseInitializer] Comptes de demo Jean/Sophie supprimes.");
     }
 
     @Override

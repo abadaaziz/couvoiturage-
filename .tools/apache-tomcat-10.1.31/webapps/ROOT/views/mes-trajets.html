@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes trajets - Fi Thnity</title>
+    <title>Mes trajets - Same Trip</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -22,7 +22,7 @@
                 </linearGradient>
             </defs>
         </svg>
-        Fi Thnity
+        Same Trip
     </a>
 
     <ul class="navbar-liens">
@@ -61,7 +61,7 @@
 </main>
 
 <footer class="footer">
-    <p>© 2025 Fi Thnity</p>
+    <p>© 2025 Same Trip</p>
 </footer>
 
 <script>
@@ -219,7 +219,7 @@ function afficherTrajets() {
                 <div>
                     <p class="semi-gras">${echapper(t.villeDepart)} -> ${echapper(t.villeArrivee)}</p>
                     <p class="texte-sm texte-secondaire">Depart: ${formaterDate(t.dateHeureDepart)}</p>
-                    <p class="texte-sm texte-secondaire">Places: ${Number(t.placesDisponibles)} / ${Number(t.placesTotal)} | Prix: ${Number(t.prixParPlace).toFixed(2)} EUR</p>
+                    <p class="texte-sm texte-secondaire">Places: ${Number(t.placesDisponibles)} / ${Number(t.placesTotal)} | Prix: ${Number(t.prixParPlace).toFixed(2)} DT</p>
                 </div>
                 <span class="badge">${echapper(t.statut)}</span>
             </div>
@@ -266,7 +266,7 @@ function renderReservations(reservations) {
             <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:0.6rem 0;border-bottom:1px dashed var(--bordure);">
                 <div>
                     <p class="texte-sm semi-gras">#${r.id} - ${client}</p>
-                    <p class="texte-xs texte-secondaire">${Number(r.nombrePlaces)} place(s) - ${Number(r.montantTotal).toFixed(2)} EUR - ${echapper(r.statut)}</p>
+                    <p class="texte-xs texte-secondaire">${Number(r.nombrePlaces)} place(s) - ${Number(r.montantTotal).toFixed(2)} DT - ${echapper(r.statut)}</p>
                 </div>
                 ${peutConfirmer ? `<button class="btn btn-primaire btn-sm" data-confirmer="${r.id}">Confirmer</button>` : ''}
             </div>

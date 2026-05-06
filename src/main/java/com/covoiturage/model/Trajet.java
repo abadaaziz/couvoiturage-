@@ -34,7 +34,7 @@ public class Trajet implements Serializable {
     private LocalDateTime dateHeureDepart;
     private int           placesTotal;
     private int           placesDisponibles;
-    private double        prixParPlace;     // en euros
+    private double        prixParPlace;     // en dinars tunisiens
     private StatutTrajet  statut;
     private Chauffeur     chauffeur;
     private String        descriptionVehicule;
@@ -50,7 +50,7 @@ public class Trajet implements Serializable {
      * @param villeArrivee       Ville d'arrivée
      * @param dateHeureDepart    Date et heure du départ
      * @param placesTotal        Nombre total de places proposées
-     * @param prixParPlace       Prix par place en euros
+     * @param prixParPlace       Prix par place en dinars tunisiens
      * @param chauffeur          Chauffeur qui propose le trajet
      * @param descriptionVehicule Description du véhicule (marque, couleur, immat.)
      */
@@ -246,7 +246,7 @@ public class Trajet implements Serializable {
                ", " + villeDepart + " → " + villeArrivee +
                ", départ=" + dateHeureDepart +
                ", places=" + placesDisponibles + "/" + placesTotal +
-               ", prix=" + prixParPlace + "€" +
+               ", prix=" + prixParPlace + " DT" +
                ", statut=" + statut +
                '}';
     }

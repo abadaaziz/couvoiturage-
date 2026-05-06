@@ -23,4 +23,4 @@ if exist .tools\apache-tomcat-10.1.31\webapps\ROOT rmdir /S /Q .tools\apache-tom
 REM Start Tomcat in background (more stable than foreground run for repeated restarts).
 call "%CATALINA_HOME%\bin\startup.bat"
 
-echo CovoitApp started on http://localhost:8080
+echo Same Trip started on http://localhost:8080

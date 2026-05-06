@@ -26,6 +26,7 @@ public class AuthService {
 
     /** Taille minimale du mot de passe */
     private static final int LONGUEUR_MIN_MDP = 8;
+    private static final int MAX_TENTATIVES_CONNEXION = 5;
 
     private final UtilisateurDAO utilisateurDAO;
 
@@ -125,14 +126,24 @@ public class AuthService {
 
             // Vérification du mot de passe
             if (!PasswordUtils.verifier(motDePasse, utilisateur.getMotDePasseHash())) {
+                int tentatives = utilisateurDAO.incrementerTentativesConnexionEchouees(utilisateur.getId());
+                int tentativesRestantes = MAX_TENTATIVES_CONNEXION - tentatives;
+                if (tentatives >= MAX_TENTATIVES_CONNEXION) {
+                    utilisateurDAO.mettreAJourStatut(utilisateur.getId(), StatutCompte.SUSPENDU);
+                    throw new AuthenticationException(Raison.COMPTE_BLOQUE,
+                        "Trop de tentatives de connexion. Votre compte est suspendu.");
+                }
                 throw new AuthenticationException(Raison.MOT_DE_PASSE_INCORRECT,
-                    "Mot de passe incorrect.");
+                    "Mot de passe incorrect. Il vous reste " + tentativesRestantes +
+                    " tentative(s) avant suspension.");
             }
 
             // Mise à jour de la dernière connexion
             LocalDateTime maintenant = LocalDateTime.now();
             utilisateur.setDerniereConnexion(maintenant);
             utilisateurDAO.mettreAJourDerniereConnexion(utilisateur.getId(), maintenant);
+            utilisateurDAO.reinitialiserTentativesConnexionEchouees(utilisateur.getId());
+            utilisateur.setTentativesConnexionEchouees(0);
 
             return utilisateur;
 
@@ -206,6 +217,7 @@ public class AuthService {
                 throw new IllegalArgumentException("Utilisateur #" + utilisateurId + " introuvable.");
             }
             utilisateurDAO.mettreAJourStatut(utilisateurId, StatutCompte.ACTIF);
+            utilisateurDAO.reinitialiserTentativesConnexionEchouees(utilisateurId);
             System.out.println("[AuthService] Compte #" + utilisateurId +
                                " réactivé par l'admin #" + adminId);
         } catch (SQLException e) {

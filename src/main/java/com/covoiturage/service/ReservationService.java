@@ -151,7 +151,7 @@ public class ReservationService {
             );
             notificationService.notifierSMS(
                 passager.getTelephone(),
-                "CovoitApp : Réservation #" + reservation.getId() + " en attente de confirmation."
+                "Same Trip : Réservation #" + reservation.getId() + " en attente de confirmation."
             );
             notificationService.notifierEmail(
                 trajet.getChauffeur().getEmail(),
@@ -303,7 +303,7 @@ public class ReservationService {
                 reservation.getPassager().getEmail(),
                 "Réservation annulée",
                 "Votre réservation #" + reservationId + " a été annulée. " +
-                "Remboursement de " + String.format("%.2f", montantARemb) + "€ " +
+                "Remboursement de " + String.format("%.2f", montantARemb) + " DT " +
                 (remboursementTotal ? "(total)" : "(partiel — moins de 24h avant départ)") +
                 " en cours de traitement."
             );

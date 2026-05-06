@@ -39,7 +39,7 @@ public class PaiementService {
      * La capture interviendra à la confirmation du chauffeur.
      *
      * @param reservation Réservation associée au paiement
-     * @param montant     Montant à bloquer en euros
+     * @param montant     Montant à bloquer en dinars tunisiens
      * @param methode     Méthode de paiement
      * @return Référence unique de la transaction (pour la capture ultérieure)
      * @throws PaiementEcheException si l'autorisation échoue
@@ -60,7 +60,7 @@ public class PaiementService {
             paiementDAO.inserer(paiement);
 
             System.out.println("[PaiementService] Autorisation OK — réf. " + referenceExterne +
-                               " — montant " + montant + "€");
+                               " — montant " + montant + " DT");
             return referenceExterne;
 
         } catch (SQLException e) {
@@ -121,11 +121,11 @@ public class PaiementService {
             persisterRemboursement(referenceTransaction, montantARembourser);
             // En production : appel API prestataire pour émettre le remboursement
             System.out.println("[PaiementService] Remboursement de " + montantARembourser +
-                               "€ pour transaction " + referenceTransaction);
+                               " DT pour transaction " + referenceTransaction);
 
             // Simulation : succès garanti
             System.out.println("[PaiementService] Remboursement OK — " +
-                               String.format("%.2f", montantARembourser) + "€ restitués.");
+                               String.format("%.2f", montantARembourser) + " DT restitués.");
 
         } catch (Exception e) {
             throw new PaiementEcheException(

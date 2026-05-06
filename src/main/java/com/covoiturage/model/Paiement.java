@@ -53,7 +53,7 @@ public class Paiement implements Serializable {
 
     /**
      * @param reservation      Réservation associée à ce paiement
-     * @param montant          Montant à payer en euros
+     * @param montant          Montant à payer en dinars tunisiens
      * @param methode          Méthode de paiement choisie
      * @param referenceExterne Référence retournée par le prestataire de paiement
      */
@@ -197,8 +197,8 @@ public class Paiement implements Serializable {
     public String toString() {
         return "Paiement{" +
                "id=" + id +
-               ", montant=" + montant + "€" +
-               ", montantRembourse=" + montantRembourse + "€" +
+               ", montant=" + montant + " DT" +
+               ", montantRembourse=" + montantRembourse + " DT" +
                ", statut=" + statut +
                ", methode=" + methode +
                ", reference='" + referenceExterne + '\'' +
