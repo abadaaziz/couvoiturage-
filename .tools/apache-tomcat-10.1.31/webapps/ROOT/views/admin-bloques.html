@@ -1,219 +1,222 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comptes bloques — Same Trip</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
 
-<nav class="navbar" role="navigation" aria-label="Navigation principale">
-    <a href="/trajets" class="navbar-logo" id="nav-logo">
-        <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="24" r="24" fill="url(#gn)"/>
-            <path d="M14 28l6-10 4 6 3-4 7 8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="14" cy="29" r="2.5" fill="white"/>
-            <circle cx="34" cy="29" r="2.5" fill="white"/>
-            <defs>
-                <linearGradient id="gn" x1="0" y1="0" x2="48" y2="48">
-                    <stop offset="0%" stop-color="#7c3aed"/>
-                    <stop offset="100%" stop-color="#2563eb"/>
-                </linearGradient>
-            </defs>
-        </svg>
-        Same Trip
-    </a>
+    <nav class="navbar" role="navigation" aria-label="Navigation principale">
+        <a href="/trajets" class="navbar-logo" id="nav-logo">
+            <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="24" fill="url(#gn)" />
+                <path d="M14 28l6-10 4 6 3-4 7 8" stroke="white" stroke-width="2.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <circle cx="14" cy="29" r="2.5" fill="white" />
+                <circle cx="34" cy="29" r="2.5" fill="white" />
+                <defs>
+                    <linearGradient id="gn" x1="0" y1="0" x2="48" y2="48">
+                        <stop offset="0%" stop-color="#7c3aed" />
+                        <stop offset="100%" stop-color="#2563eb" />
+                    </linearGradient>
+                </defs>
+            </svg>
+            Same Trip
+        </a>
 
-    <ul class="navbar-liens">
-        <li><a href="/trajets" id="nav-trajets">Trajets</a></li>
-        <li><a href="/admin/users" id="nav-mes-reservations">Utilisateurs</a></li>
-        <li><a href="/notifications" id="nav-notifications" class="nav-notifications">Notifications
-            <span id="notif-indicator" class="nav-indicator" style="display:none;"></span>
-        </a></li>
-    </ul>
+        <ul class="navbar-liens">
+            <li><a href="/trajets" id="nav-trajets">Trajets</a></li>
+            <li><a href="/admin/users" id="nav-mes-reservations">Utilisateurs</a></li>
+            <li><a href="/notifications" id="nav-notifications" class="nav-notifications">Notifications
+                    <span id="notif-indicator" class="nav-indicator" style="display:none;"></span>
+                </a></li>
+        </ul>
 
-    <div class="navbar-actions" id="navbar-actions">
-        <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
-    </div>
-</nav>
-
-<main class="page-principale">
-    <div class="conteneur" style="padding-top:2rem;padding-bottom:4rem;">
-
-        <div class="titre-section flex justify-between items-center">
-            <div>
-                <h1>Comptes bloques</h1>
-                <p class="texte-secondaire mt-1" id="compteur-users">Chargement...</p>
-            </div>
-            <div style="display:flex;gap:0.75rem;align-items:center;">
-                <input type="text" id="filtre-recherche" class="form-controle"
-                       placeholder="🔍 Rechercher..." style="max-width:250px;">
-                <a href="/admin/users" class="btn btn-secondaire btn-sm">Retour utilisateurs</a>
-            </div>
+        <div class="navbar-actions" id="navbar-actions">
+            <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
         </div>
+    </nav>
 
-        <div id="alerte-admin" class="alerte" style="display:none;"></div>
+    <main class="page-principale">
+        <div class="conteneur" style="padding-top:2rem;padding-bottom:4rem;">
 
-        <div class="tableau-conteneur">
-            <table id="tableau-utilisateurs" aria-label="Liste des comptes bloques">
-                <thead>
-                    <tr>
-                        <th>#ID</th>
-                        <th>Utilisateur</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Statut</th>
-                        <th>Note</th>
-                        <th>Inscription</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="corps-tableau">
-                    <tr>
-                        <td colspan="8" style="text-align:center;padding:3rem;color:var(--texte-secondaire);">
-                            <div class="spinner" style="margin:0 auto;"></div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="titre-section flex justify-between items-center">
+                <div>
+                    <h1>Comptes bloques</h1>
+                    <p class="texte-secondaire mt-1" id="compteur-users">Chargement...</p>
+                </div>
+                <div style="display:flex;gap:0.75rem;align-items:center;">
+                    <input type="text" id="filtre-recherche" class="form-controle" placeholder="🔍 Rechercher..."
+                        style="max-width:250px;">
+                    <a href="/admin/users" class="btn btn-secondaire btn-sm">Retour utilisateurs</a>
+                </div>
+            </div>
+
+            <div id="alerte-admin" class="alerte" style="display:none;"></div>
+
+            <div class="tableau-conteneur">
+                <table id="tableau-utilisateurs" aria-label="Liste des comptes bloques">
+                    <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th>Utilisateur</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Statut</th>
+                            <th>Note</th>
+                            <th>Inscription</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corps-tableau">
+                        <tr>
+                            <td colspan="8" style="text-align:center;padding:3rem;color:var(--texte-secondaire);">
+                                <div class="spinner" style="margin:0 auto;"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
         </div>
+    </main>
 
-    </div>
-</main>
+    <footer class="footer">
+        <p>© 2026 Same Trip — Interface Administration</p>
+    </footer>
 
-<footer class="footer">
-    <p>© 2025 Same Trip — Interface Administration</p>
-</footer>
+    <script>
+        let tousLesUtilisateurs = [];
 
-<script>
-let tousLesUtilisateurs = [];
-
-document.addEventListener('DOMContentLoaded', async () => {
-    await chargerSessionNavbar();
-    await chargerNotifIndicator();
-    await chargerUtilisateurs();
-    configurerFiltres();
-});
-
-async function chargerSessionNavbar() {
-    try {
-        const reponse = await fetch('/session/me', {
-            method: 'GET',
-            credentials: 'include',
-            headers: { 'Accept': 'application/json' }
+        document.addEventListener('DOMContentLoaded', async () => {
+            await chargerSessionNavbar();
+            await chargerNotifIndicator();
+            await chargerUtilisateurs();
+            configurerFiltres();
         });
 
-        if (!reponse.ok) return;
-        const data = await reponse.json();
-        if (!data.connecte) return;
+        async function chargerSessionNavbar() {
+            try {
+                const reponse = await fetch('/session/me', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
 
-        const zoneActions = document.getElementById('navbar-actions');
-        const nomAffiche = [data.prenom, data.nom].filter(Boolean).join(' ').trim();
-        if (zoneActions) {
-            zoneActions.innerHTML = `
+                if (!reponse.ok) return;
+                const data = await reponse.json();
+                if (!data.connecte) return;
+
+                const zoneActions = document.getElementById('navbar-actions');
+                const nomAffiche = [data.prenom, data.nom].filter(Boolean).join(' ').trim();
+                if (zoneActions) {
+                    zoneActions.innerHTML = `
                 <span class="badge" style="background:rgba(34,197,94,0.16);color:#86efac;border:1px solid rgba(34,197,94,0.35);">${echapper(data.role || '')}</span>
                 <span class="texte-sm texte-secondaire">${echapper(nomAffiche || 'Utilisateur')}</span>
                 <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
             `;
-        }
-    } catch (e) {
-        // Ignore navbar update errors
-    }
-}
-
-async function chargerNotifIndicator() {
-    const indicator = document.getElementById('notif-indicator');
-    if (!indicator) return;
-
-    try {
-        const reponse = await fetch('/notifications/mes?format=json', {
-            credentials: 'include',
-            headers: { 'Accept': 'application/json' }
-        });
-
-        if (!reponse.ok) {
-            indicator.style.display = 'none';
-            return;
+                }
+            } catch (e) {
+                // Ignore navbar update errors
+            }
         }
 
-        const notifications = await reponse.json();
-        const unread = notifications.filter((n) => !n.dateLecture).length;
-        if (!unread) {
-            indicator.style.display = 'none';
-            indicator.textContent = '';
-            return;
+        async function chargerNotifIndicator() {
+            const indicator = document.getElementById('notif-indicator');
+            if (!indicator) return;
+
+            try {
+                const reponse = await fetch('/notifications/mes?format=json', {
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (!reponse.ok) {
+                    indicator.style.display = 'none';
+                    return;
+                }
+
+                const notifications = await reponse.json();
+                const unread = notifications.filter((n) => !n.dateLecture).length;
+                if (!unread) {
+                    indicator.style.display = 'none';
+                    indicator.textContent = '';
+                    return;
+                }
+
+                indicator.style.display = 'inline-flex';
+                indicator.textContent = unread > 99 ? '99+' : String(unread);
+            } catch (e) {
+                indicator.style.display = 'none';
+            }
         }
 
-        indicator.style.display = 'inline-flex';
-        indicator.textContent = unread > 99 ? '99+' : String(unread);
-    } catch (e) {
-        indicator.style.display = 'none';
-    }
-}
+        async function chargerUtilisateurs() {
+            try {
+                const reponse = await fetch('/admin/bloques?format=json', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
 
-async function chargerUtilisateurs() {
-    try {
-        const reponse = await fetch('/admin/bloques?format=json', {
-            method: 'GET',
-            credentials: 'include',
-            headers: { 'Accept': 'application/json' }
-        });
+                if (reponse.status === 403) {
+                    window.location.href = '/trajets';
+                    return;
+                }
+                if (!reponse.ok) throw new Error('Erreur serveur ' + reponse.status);
 
-        if (reponse.status === 403) {
-            window.location.href = '/trajets';
-            return;
+                const contentType = reponse.headers.get('Content-Type') || '';
+                if (!contentType.includes('application/json')) {
+                    throw new Error('Reponse inattendue (pas du JSON).');
+                }
+
+                tousLesUtilisateurs = await reponse.json();
+                afficherUtilisateurs(tousLesUtilisateurs);
+                document.getElementById('compteur-users').textContent =
+                    tousLesUtilisateurs.length + ' compte(s) bloque(s)';
+
+            } catch (err) {
+                afficherAlerte('Erreur lors du chargement des comptes bloques : ' + err.message, 'erreur');
+            }
         }
-        if (!reponse.ok) throw new Error('Erreur serveur ' + reponse.status);
 
-        const contentType = reponse.headers.get('Content-Type') || '';
-        if (!contentType.includes('application/json')) {
-            throw new Error('Reponse inattendue (pas du JSON).');
-        }
+        function afficherUtilisateurs(utilisateurs) {
+            const corps = document.getElementById('corps-tableau');
+            corps.innerHTML = '';
 
-        tousLesUtilisateurs = await reponse.json();
-        afficherUtilisateurs(tousLesUtilisateurs);
-        document.getElementById('compteur-users').textContent =
-            tousLesUtilisateurs.length + ' compte(s) bloque(s)';
+            if (!utilisateurs.length) {
+                corps.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--texte-secondaire);">Aucun compte bloque.</td></tr>';
+                return;
+            }
 
-    } catch (err) {
-        afficherAlerte('Erreur lors du chargement des comptes bloques : ' + err.message, 'erreur');
-    }
-}
+            utilisateurs.forEach(u => {
+                const tr = document.createElement('tr');
+                const dateInsc = u.dateInscription
+                    ? new Date(u.dateInscription).toLocaleDateString('fr-FR')
+                    : '—';
 
-function afficherUtilisateurs(utilisateurs) {
-    const corps = document.getElementById('corps-tableau');
-    corps.innerHTML = '';
+                const badgeStatut = '<span class="badge badge-annule">Bloque</span>';
 
-    if (!utilisateurs.length) {
-        corps.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--texte-secondaire);">Aucun compte bloque.</td></tr>';
-        return;
-    }
+                const badgeRole = u.role === 'ADMIN'
+                    ? '<span class="badge badge-admin">Admin</span>'
+                    : u.role === 'CHAUFFEUR'
+                        ? '<span class="badge badge-confirme">Chauffeur</span>'
+                        : '<span class="badge" style="background:rgba(100,116,139,0.15);color:#94a3b8;border:1px solid rgba(100,116,139,0.3);">Passager</span>';
 
-    utilisateurs.forEach(u => {
-        const tr = document.createElement('tr');
-        const dateInsc = u.dateInscription
-            ? new Date(u.dateInscription).toLocaleDateString('fr-FR')
-            : '—';
+                const etoiles = '★'.repeat(Math.round(u.noteMoyenne)) + '☆'.repeat(5 - Math.round(u.noteMoyenne));
+                const initiales = (u.prenom?.[0] || '') + (u.nom?.[0] || '');
 
-        const badgeStatut = '<span class="badge badge-annule">Bloque</span>';
-
-        const badgeRole = u.role === 'ADMIN'
-            ? '<span class="badge badge-admin">Admin</span>'
-            : u.role === 'CHAUFFEUR'
-            ? '<span class="badge badge-confirme">Chauffeur</span>'
-            : '<span class="badge" style="background:rgba(100,116,139,0.15);color:#94a3b8;border:1px solid rgba(100,116,139,0.3);">Passager</span>';
-
-        const etoiles = '★'.repeat(Math.round(u.noteMoyenne)) + '☆'.repeat(5 - Math.round(u.noteMoyenne));
-        const initiales = (u.prenom?.[0] || '') + (u.nom?.[0] || '');
-
-        const btnReactiver = u.role !== 'ADMIN'
-            ? `<button class="btn btn-sm" style="background:rgba(34,197,94,0.16);color:#86efac;border:1px solid rgba(34,197,94,0.35);"
+                const btnReactiver = u.role !== 'ADMIN'
+                    ? `<button class="btn btn-sm" style="background:rgba(34,197,94,0.16);color:#86efac;border:1px solid rgba(34,197,94,0.35);"
                        onclick="actionAdmin('reactiver', ${u.id}, '${echapper(u.prenom)} ${echapper(u.nom)}')">
                    Reactiver
                </button>` : '';
 
-        tr.innerHTML = `
+                tr.innerHTML = `
             <td><span class="texte-secondaire texte-sm">#${u.id}</span></td>
             <td>
                 <div style="display:flex;align-items:center;gap:0.75rem;">
@@ -238,71 +241,72 @@ function afficherUtilisateurs(utilisateurs) {
                 </div>
             </td>
         `;
-        corps.appendChild(tr);
-    });
-}
-
-async function actionAdmin(action, utilisateurId, nomUtilisateur) {
-    const messages = {
-        reactiver: `Reactiver le compte de ${nomUtilisateur} ?`
-    };
-
-    if (!confirm(messages[action])) return;
-
-    try {
-        const body = new URLSearchParams();
-        body.set('utilisateurId', String(utilisateurId));
-
-        const reponse = await fetch(`/admin/${action}`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body
-        });
-
-        const data = await reponse.json();
-
-        if (reponse.ok) {
-            afficherAlerte(`✓ ${data.message}`, 'succes');
-            await chargerUtilisateurs();
-        } else {
-            afficherAlerte('❌ ' + (data.erreur || "Erreur lors de l'action."), 'erreur');
+                corps.appendChild(tr);
+            });
         }
 
-    } catch (err) {
-        afficherAlerte('❌ Erreur reseau : ' + err.message, 'erreur');
-    }
-}
+        async function actionAdmin(action, utilisateurId, nomUtilisateur) {
+            const messages = {
+                reactiver: `Reactiver le compte de ${nomUtilisateur} ?`
+            };
 
-function configurerFiltres() {
-    const filtrer = () => {
-        const terme  = document.getElementById('filtre-recherche').value.toLowerCase();
+            if (!confirm(messages[action])) return;
 
-        const filtres = tousLesUtilisateurs.filter(u => {
-            const nomComplet = (u.prenom + ' ' + u.nom + ' ' + u.email).toLowerCase();
-            return (!terme || nomComplet.includes(terme));
-        });
+            try {
+                const body = new URLSearchParams();
+                body.set('utilisateurId', String(utilisateurId));
 
-        afficherUtilisateurs(filtres);
-        document.getElementById('compteur-users').textContent =
-            filtres.length + ' / ' + tousLesUtilisateurs.length + ' compte(s) bloque(s)';
-    };
+                const reponse = await fetch(`/admin/${action}`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body
+                });
 
-    document.getElementById('filtre-recherche').addEventListener('input', filtrer);
-}
+                const data = await reponse.json();
 
-function afficherAlerte(message, type) {
-    const el = document.getElementById('alerte-admin');
-    el.className = `alerte alerte-${type}`;
-    el.textContent = message;
-    el.style.display = 'flex';
-    setTimeout(() => { el.style.display = 'none'; }, 5000);
-}
+                if (reponse.ok) {
+                    afficherAlerte(`✓ ${data.message}`, 'succes');
+                    await chargerUtilisateurs();
+                } else {
+                    afficherAlerte('❌ ' + (data.erreur || "Erreur lors de l'action."), 'erreur');
+                }
 
-function echapper(s) {
-    if (!s) return '';
-    return String(s).replace(/'/g, "\\'").replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-</script>
+            } catch (err) {
+                afficherAlerte('❌ Erreur reseau : ' + err.message, 'erreur');
+            }
+        }
+
+        function configurerFiltres() {
+            const filtrer = () => {
+                const terme = document.getElementById('filtre-recherche').value.toLowerCase();
+
+                const filtres = tousLesUtilisateurs.filter(u => {
+                    const nomComplet = (u.prenom + ' ' + u.nom + ' ' + u.email).toLowerCase();
+                    return (!terme || nomComplet.includes(terme));
+                });
+
+                afficherUtilisateurs(filtres);
+                document.getElementById('compteur-users').textContent =
+                    filtres.length + ' / ' + tousLesUtilisateurs.length + ' compte(s) bloque(s)';
+            };
+
+            document.getElementById('filtre-recherche').addEventListener('input', filtrer);
+        }
+
+        function afficherAlerte(message, type) {
+            const el = document.getElementById('alerte-admin');
+            el.className = `alerte alerte-${type}`;
+            el.textContent = message;
+            el.style.display = 'flex';
+            setTimeout(() => { el.style.display = 'none'; }, 5000);
+        }
+
+        function echapper(s) {
+            if (!s) return '';
+            return String(s).replace(/'/g, "\\'").replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+    </script>
 </body>
+
 </html>

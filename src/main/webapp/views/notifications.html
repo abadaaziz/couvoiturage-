@@ -1,204 +1,207 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notifications - Same Trip</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
 
-<nav class="navbar" role="navigation" aria-label="Navigation principale">
-    <a href="/trajets" class="navbar-logo" id="nav-logo">
-        <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="24" r="24" fill="url(#gn)"/>
-            <path d="M14 28l6-10 4 6 3-4 7 8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="14" cy="29" r="2.5" fill="white"/>
-            <circle cx="34" cy="29" r="2.5" fill="white"/>
-            <defs>
-                <linearGradient id="gn" x1="0" y1="0" x2="48" y2="48">
-                    <stop offset="0%" stop-color="#7c3aed"/>
-                    <stop offset="100%" stop-color="#2563eb"/>
-                </linearGradient>
-            </defs>
-        </svg>
-        Same Trip
-    </a>
+    <nav class="navbar" role="navigation" aria-label="Navigation principale">
+        <a href="/trajets" class="navbar-logo" id="nav-logo">
+            <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="24" fill="url(#gn)" />
+                <path d="M14 28l6-10 4 6 3-4 7 8" stroke="white" stroke-width="2.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <circle cx="14" cy="29" r="2.5" fill="white" />
+                <circle cx="34" cy="29" r="2.5" fill="white" />
+                <defs>
+                    <linearGradient id="gn" x1="0" y1="0" x2="48" y2="48">
+                        <stop offset="0%" stop-color="#7c3aed" />
+                        <stop offset="100%" stop-color="#2563eb" />
+                    </linearGradient>
+                </defs>
+            </svg>
+            Same Trip
+        </a>
 
-    <ul class="navbar-liens">
-        <li><a href="/trajets" id="nav-trajets">Trajets</a></li>
-        <li><a href="/reservation/mes" id="nav-mes-reservations">Mes reservations</a></li>
-        <li><a href="/notifications" id="nav-notifications" class="actif nav-notifications">Notifications
-            <span id="notif-indicator" class="nav-indicator" style="display:none;"></span>
-        </a></li>
-    </ul>
+        <ul class="navbar-liens">
+            <li><a href="/trajets" id="nav-trajets">Trajets</a></li>
+            <li><a href="/reservation/mes" id="nav-mes-reservations">Mes reservations</a></li>
+            <li><a href="/notifications" id="nav-notifications" class="actif nav-notifications">Notifications
+                    <span id="notif-indicator" class="nav-indicator" style="display:none;"></span>
+                </a></li>
+        </ul>
 
-    <div class="navbar-actions" id="navbar-actions">
-        <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
-    </div>
-</nav>
-
-<main class="page-principale">
-    <div class="conteneur" style="padding-top:2rem;padding-bottom:4rem;">
-        <div class="titre-section">
-            <h1>Notifications</h1>
-            <p class="texte-secondaire mt-1">Toutes vos activites recentes</p>
+        <div class="navbar-actions" id="navbar-actions">
+            <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
         </div>
+    </nav>
 
-        <div id="alerte" class="alerte" style="display:none;"></div>
+    <main class="page-principale">
+        <div class="conteneur" style="padding-top:2rem;padding-bottom:4rem;">
+            <div class="titre-section">
+                <h1>Notifications</h1>
+                <p class="texte-secondaire mt-1">Toutes vos activites recentes</p>
+            </div>
 
-        <div style="display:flex;justify-content:flex-end;margin-bottom:1rem;">
-            <button id="btn-tout-lu" class="btn btn-secondaire btn-sm">Tout marquer lu</button>
+            <div id="alerte" class="alerte" style="display:none;"></div>
+
+            <div style="display:flex;justify-content:flex-end;margin-bottom:1rem;">
+                <button id="btn-tout-lu" class="btn btn-secondaire btn-sm">Tout marquer lu</button>
+            </div>
+
+            <div id="chargement" class="chargement" style="display:flex;">
+                <div class="spinner"></div>
+                <span>Chargement des notifications...</span>
+            </div>
+
+            <div id="liste" class="trajets-grille notification-list"></div>
+
+            <p id="vide" style="display:none;text-align:center;padding:3rem;color:var(--texte-secondaire);">
+                Aucune notification pour le moment.
+            </p>
         </div>
+    </main>
 
-        <div id="chargement" class="chargement" style="display:flex;">
-            <div class="spinner"></div>
-            <span>Chargement des notifications...</span>
-        </div>
+    <footer class="footer">
+        <p>© 2026 Same Trip</p>
+    </footer>
 
-        <div id="liste" class="trajets-grille notification-list"></div>
+    <script>
+        function afficherAlerte(message, type) {
+            const el = document.getElementById('alerte');
+            el.className = 'alerte alerte-' + type;
+            el.textContent = message;
+            el.style.display = 'flex';
+            setTimeout(() => { el.style.display = 'none'; }, 3500);
+        }
 
-        <p id="vide" style="display:none;text-align:center;padding:3rem;color:var(--texte-secondaire);">
-            Aucune notification pour le moment.
-        </p>
-    </div>
-</main>
+        function echapper(v) {
+            if (v == null) return '';
+            return String(v)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
 
-<footer class="footer">
-    <p>© 2025 Same Trip</p>
-</footer>
+        function formaterDate(valeur) {
+            if (!valeur) return '';
+            const d = new Date(String(valeur).replace(' ', 'T'));
+            if (Number.isNaN(d.getTime())) return echapper(valeur);
+            return d.toLocaleString('fr-FR', {
+                weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+        }
 
-<script>
-function afficherAlerte(message, type) {
-    const el = document.getElementById('alerte');
-    el.className = 'alerte alerte-' + type;
-    el.textContent = message;
-    el.style.display = 'flex';
-    setTimeout(() => { el.style.display = 'none'; }, 3500);
-}
+        function badgeType(type) {
+            switch (String(type || '').toUpperCase()) {
+                case 'RESERVATION': return 'badge-attente';
+                case 'TRAJET': return 'badge-ouvert';
+                case 'PAIEMENT': return 'badge-confirme';
+                default: return 'badge-admin';
+            }
+        }
 
-function echapper(v) {
-    if (v == null) return '';
-    return String(v)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
+        function updateNotifIndicator(count) {
+            const indicator = document.getElementById('notif-indicator');
+            if (!indicator) return;
 
-function formaterDate(valeur) {
-    if (!valeur) return '';
-    const d = new Date(String(valeur).replace(' ', 'T'));
-    if (Number.isNaN(d.getTime())) return echapper(valeur);
-    return d.toLocaleString('fr-FR', {
-        weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric',
-        hour: '2-digit', minute: '2-digit'
-    });
-}
+            if (!count) {
+                indicator.style.display = 'none';
+                indicator.textContent = '';
+                return;
+            }
 
-function badgeType(type) {
-    switch (String(type || '').toUpperCase()) {
-        case 'RESERVATION': return 'badge-attente';
-        case 'TRAJET': return 'badge-ouvert';
-        case 'PAIEMENT': return 'badge-confirme';
-        default: return 'badge-admin';
-    }
-}
+            indicator.style.display = 'inline-flex';
+            indicator.textContent = count > 99 ? '99+' : String(count);
+        }
 
-function updateNotifIndicator(count) {
-    const indicator = document.getElementById('notif-indicator');
-    if (!indicator) return;
+        async function chargerSessionNavbar() {
+            try {
+                const reponse = await fetch('/session/me', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
 
-    if (!count) {
-        indicator.style.display = 'none';
-        indicator.textContent = '';
-        return;
-    }
+                if (!reponse.ok) return;
+                const data = await reponse.json();
+                if (!data.connecte) return;
 
-    indicator.style.display = 'inline-flex';
-    indicator.textContent = count > 99 ? '99+' : String(count);
-}
-
-async function chargerSessionNavbar() {
-    try {
-        const reponse = await fetch('/session/me', {
-            method: 'GET',
-            credentials: 'include',
-            headers: { 'Accept': 'application/json' }
-        });
-
-        if (!reponse.ok) return;
-        const data = await reponse.json();
-        if (!data.connecte) return;
-
-        const zoneActions = document.getElementById('navbar-actions');
-        const nomAffiche = [data.prenom, data.nom].filter(Boolean).join(' ').trim();
-        if (zoneActions) {
-            zoneActions.innerHTML = `
+                const zoneActions = document.getElementById('navbar-actions');
+                const nomAffiche = [data.prenom, data.nom].filter(Boolean).join(' ').trim();
+                if (zoneActions) {
+                    zoneActions.innerHTML = `
                 <span class="badge" style="background:rgba(34,197,94,0.16);color:#86efac;border:1px solid rgba(34,197,94,0.35);">${echapper(data.role)}</span>
                 <span class="texte-sm texte-secondaire">${echapper(nomAffiche || 'Utilisateur')}</span>
                 <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
             `;
-        }
+                }
 
-        const lienMesReservations = document.getElementById('nav-mes-reservations');
-        if (lienMesReservations) {
-            if (data.role === 'ADMIN') {
-                lienMesReservations.href = '/admin/users';
-                lienMesReservations.textContent = 'Admin users';
-            } else if (data.role === 'CHAUFFEUR') {
-                lienMesReservations.href = '/trajets/mes';
-                lienMesReservations.textContent = 'Mes trajets';
-            } else {
-                lienMesReservations.href = '/reservation/mes';
-                lienMesReservations.textContent = 'Mes reservations';
+                const lienMesReservations = document.getElementById('nav-mes-reservations');
+                if (lienMesReservations) {
+                    if (data.role === 'ADMIN') {
+                        lienMesReservations.href = '/admin/users';
+                        lienMesReservations.textContent = 'Admin users';
+                    } else if (data.role === 'CHAUFFEUR') {
+                        lienMesReservations.href = '/trajets/mes';
+                        lienMesReservations.textContent = 'Mes trajets';
+                    } else {
+                        lienMesReservations.href = '/reservation/mes';
+                        lienMesReservations.textContent = 'Mes reservations';
+                    }
+                }
+            } catch (e) {
+                // Ignore navbar update errors
             }
         }
-    } catch (e) {
-        // Ignore navbar update errors
-    }
-}
 
-async function chargerNotifications() {
-    const chargement = document.getElementById('chargement');
-    const liste = document.getElementById('liste');
-    const vide = document.getElementById('vide');
+        async function chargerNotifications() {
+            const chargement = document.getElementById('chargement');
+            const liste = document.getElementById('liste');
+            const vide = document.getElementById('vide');
 
-    chargement.style.display = 'flex';
-    liste.innerHTML = '';
-    vide.style.display = 'none';
+            chargement.style.display = 'flex';
+            liste.innerHTML = '';
+            vide.style.display = 'none';
 
-    try {
-        const reponse = await fetch('/notifications/mes?format=json', {
-            credentials: 'include',
-            headers: { 'Accept': 'application/json' }
-        });
+            try {
+                const reponse = await fetch('/notifications/mes?format=json', {
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
 
-        if (reponse.status === 401) {
-            window.location.href = '/login';
-            return;
-        }
-        if (!reponse.ok) {
-            throw new Error('Erreur serveur: ' + reponse.status);
-        }
+                if (reponse.status === 401) {
+                    window.location.href = '/login';
+                    return;
+                }
+                if (!reponse.ok) {
+                    throw new Error('Erreur serveur: ' + reponse.status);
+                }
 
-        const notifications = await reponse.json();
-        if (!notifications.length) {
-            vide.style.display = 'block';
-            return;
-        }
+                const notifications = await reponse.json();
+                if (!notifications.length) {
+                    vide.style.display = 'block';
+                    return;
+                }
 
-        let unreadCount = 0;
-        notifications.forEach((n) => {
-            const el = document.createElement('div');
-            const lu = Boolean(n.dateLecture);
-            if (!lu) unreadCount += 1;
-            el.className = `carte-trajet notification-item ${lu ? 'notification-read' : 'notification-unread'}`;
-            const statut = lu ? 'LU' : 'NOUVEAU';
-            const badgeClass = lu ? 'badge-termine' : 'badge-attente';
+                let unreadCount = 0;
+                notifications.forEach((n) => {
+                    const el = document.createElement('div');
+                    const lu = Boolean(n.dateLecture);
+                    if (!lu) unreadCount += 1;
+                    el.className = `carte-trajet notification-item ${lu ? 'notification-read' : 'notification-unread'}`;
+                    const statut = lu ? 'LU' : 'NOUVEAU';
+                    const badgeClass = lu ? 'badge-termine' : 'badge-attente';
 
-            el.innerHTML = `
+                    el.innerHTML = `
                 <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;">
                     <div>
                         <p class="notification-title">${echapper(n.titre)}</p>
@@ -218,109 +221,110 @@ async function chargerNotifications() {
                 </div>
             `;
 
-            const btnLu = el.querySelector('button[data-lu]');
-            if (btnLu) {
-                btnLu.addEventListener('click', async (e) => {
-                    await marquerLu(n.id);
-                    await chargerNotifications();
+                    const btnLu = el.querySelector('button[data-lu]');
+                    if (btnLu) {
+                        btnLu.addEventListener('click', async (e) => {
+                            await marquerLu(n.id);
+                            await chargerNotifications();
+                        });
+                    }
+
+                    const btnSupprimer = el.querySelector('button[data-supprimer]');
+                    if (btnSupprimer) {
+                        btnSupprimer.addEventListener('click', async (e) => {
+                            await supprimerNotification(n.id);
+                        });
+                    }
+
+                    liste.appendChild(el);
                 });
-            }
 
-            const btnSupprimer = el.querySelector('button[data-supprimer]');
-            if (btnSupprimer) {
-                btnSupprimer.addEventListener('click', async (e) => {
-                    await supprimerNotification(n.id);
+                updateNotifIndicator(unreadCount);
+
+            } catch (e) {
+                afficherAlerte('Erreur: ' + e.message, 'erreur');
+            } finally {
+                chargement.style.display = 'none';
+            }
+        }
+
+        async function supprimerNotification(id) {
+            if (!confirm('Supprimer cette notification ?')) return;
+
+            const payload = new URLSearchParams();
+            payload.set('id', String(id));
+
+            try {
+                const reponse = await fetch('/notifications/supprimer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                        'Accept': 'application/json'
+                    },
+                    body: payload.toString()
                 });
+
+                const data = await reponse.json();
+                if (!reponse.ok) {
+                    throw new Error(data.erreur || 'Erreur lors de la suppression.');
+                }
+
+                await chargerNotifications();
+            } catch (e) {
+                afficherAlerte('Erreur: ' + e.message, 'erreur');
             }
-
-            liste.appendChild(el);
-        });
-
-        updateNotifIndicator(unreadCount);
-
-    } catch (e) {
-        afficherAlerte('Erreur: ' + e.message, 'erreur');
-    } finally {
-        chargement.style.display = 'none';
-    }
-}
-
-async function supprimerNotification(id) {
-    if (!confirm('Supprimer cette notification ?')) return;
-
-    const payload = new URLSearchParams();
-    payload.set('id', String(id));
-
-    try {
-        const reponse = await fetch('/notifications/supprimer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                'Accept': 'application/json'
-            },
-            body: payload.toString()
-        });
-
-        const data = await reponse.json();
-        if (!reponse.ok) {
-            throw new Error(data.erreur || 'Erreur lors de la suppression.');
         }
 
-        await chargerNotifications();
-    } catch (e) {
-        afficherAlerte('Erreur: ' + e.message, 'erreur');
-    }
-}
+        async function marquerLu(id) {
+            const payload = new URLSearchParams();
+            payload.set('id', String(id));
 
-async function marquerLu(id) {
-    const payload = new URLSearchParams();
-    payload.set('id', String(id));
+            try {
+                const reponse = await fetch('/notifications/lu', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                        'Accept': 'application/json'
+                    },
+                    body: payload.toString()
+                });
 
-    try {
-        const reponse = await fetch('/notifications/lu', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                'Accept': 'application/json'
-            },
-            body: payload.toString()
-        });
-
-        if (!reponse.ok) {
-            const data = await reponse.json();
-            throw new Error(data.erreur || 'Erreur lors de la mise a jour.');
-        }
-    } catch (e) {
-        afficherAlerte('Erreur: ' + e.message, 'erreur');
-    }
-}
-
-async function marquerToutLu() {
-    try {
-        const reponse = await fetch('/notifications/lu-tout', {
-            method: 'POST',
-            headers: { 'Accept': 'application/json' }
-        });
-
-        if (!reponse.ok) {
-            const data = await reponse.json();
-            throw new Error(data.erreur || 'Erreur lors de la mise a jour.');
+                if (!reponse.ok) {
+                    const data = await reponse.json();
+                    throw new Error(data.erreur || 'Erreur lors de la mise a jour.');
+                }
+            } catch (e) {
+                afficherAlerte('Erreur: ' + e.message, 'erreur');
+            }
         }
 
-        await chargerNotifications();
-    } catch (e) {
-        afficherAlerte('Erreur: ' + e.message, 'erreur');
-    }
-}
+        async function marquerToutLu() {
+            try {
+                const reponse = await fetch('/notifications/lu-tout', {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json' }
+                });
 
-const btnToutLu = document.getElementById('btn-tout-lu');
-btnToutLu.addEventListener('click', marquerToutLu);
+                if (!reponse.ok) {
+                    const data = await reponse.json();
+                    throw new Error(data.erreur || 'Erreur lors de la mise a jour.');
+                }
 
-document.addEventListener('DOMContentLoaded', () => {
-    chargerSessionNavbar();
-    chargerNotifications();
-});
-</script>
+                await chargerNotifications();
+            } catch (e) {
+                afficherAlerte('Erreur: ' + e.message, 'erreur');
+            }
+        }
+
+        const btnToutLu = document.getElementById('btn-tout-lu');
+        btnToutLu.addEventListener('click', marquerToutLu);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            chargerSessionNavbar();
+            chargerNotifications();
+        });
+    </script>
 
 </body>
+
 </html>

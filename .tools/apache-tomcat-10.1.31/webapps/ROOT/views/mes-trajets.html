@@ -1,220 +1,223 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mes trajets - Same Trip</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
 
-<nav class="navbar" role="navigation" aria-label="Navigation principale">
-    <a href="/trajets" class="navbar-logo" id="nav-logo">
-        <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="24" r="24" fill="url(#gn)"/>
-            <path d="M14 28l6-10 4 6 3-4 7 8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="14" cy="29" r="2.5" fill="white"/>
-            <circle cx="34" cy="29" r="2.5" fill="white"/>
-            <defs>
-                <linearGradient id="gn" x1="0" y1="0" x2="48" y2="48">
-                    <stop offset="0%" stop-color="#7c3aed"/>
-                    <stop offset="100%" stop-color="#2563eb"/>
-                </linearGradient>
-            </defs>
-        </svg>
-        Same Trip
-    </a>
+    <nav class="navbar" role="navigation" aria-label="Navigation principale">
+        <a href="/trajets" class="navbar-logo" id="nav-logo">
+            <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="24" fill="url(#gn)" />
+                <path d="M14 28l6-10 4 6 3-4 7 8" stroke="white" stroke-width="2.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <circle cx="14" cy="29" r="2.5" fill="white" />
+                <circle cx="34" cy="29" r="2.5" fill="white" />
+                <defs>
+                    <linearGradient id="gn" x1="0" y1="0" x2="48" y2="48">
+                        <stop offset="0%" stop-color="#7c3aed" />
+                        <stop offset="100%" stop-color="#2563eb" />
+                    </linearGradient>
+                </defs>
+            </svg>
+            Same Trip
+        </a>
 
-    <ul class="navbar-liens">
-        <li><a href="/trajets" id="nav-trajets">Trajets</a></li>
-        <li><a href="/trajets/mes" id="nav-mes-reservations" class="actif">Mes trajets</a></li>
-        <li><a href="/notifications" id="nav-notifications" class="nav-notifications">Notifications
-            <span id="notif-indicator" class="nav-indicator" style="display:none;"></span>
-        </a></li>
-    </ul>
+        <ul class="navbar-liens">
+            <li><a href="/trajets" id="nav-trajets">Trajets</a></li>
+            <li><a href="/trajets/mes" id="nav-mes-reservations" class="actif">Mes trajets</a></li>
+            <li><a href="/notifications" id="nav-notifications" class="nav-notifications">Notifications
+                    <span id="notif-indicator" class="nav-indicator" style="display:none;"></span>
+                </a></li>
+        </ul>
 
-    <div class="navbar-actions" id="navbar-actions">
-        <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
-    </div>
-</nav>
-
-<main class="page-principale">
-    <div class="conteneur" style="padding-top:2rem;padding-bottom:4rem;">
-        <div class="titre-section">
-            <h1>Mes trajets (chauffeur)</h1>
-            <p class="texte-secondaire mt-1">Confirmez les reservations et annulez un trajet si besoin.</p>
+        <div class="navbar-actions" id="navbar-actions">
+            <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
         </div>
+    </nav>
 
-        <div id="alerte" class="alerte" style="display:none;"></div>
+    <main class="page-principale">
+        <div class="conteneur" style="padding-top:2rem;padding-bottom:4rem;">
+            <div class="titre-section">
+                <h1>Mes trajets (chauffeur)</h1>
+                <p class="texte-secondaire mt-1">Confirmez les reservations et annulez un trajet si besoin.</p>
+            </div>
 
-        <div id="chargement" class="chargement" style="display:flex;">
-            <div class="spinner"></div>
-            <span>Chargement de vos trajets...</span>
+            <div id="alerte" class="alerte" style="display:none;"></div>
+
+            <div id="chargement" class="chargement" style="display:flex;">
+                <div class="spinner"></div>
+                <span>Chargement de vos trajets...</span>
+            </div>
+
+            <div id="liste-trajets" class="trajets-grille"></div>
+
+            <p id="vide" style="display:none;text-align:center;padding:3rem;color:var(--texte-secondaire);">
+                Vous n'avez pas encore propose de trajet.
+            </p>
         </div>
+    </main>
 
-        <div id="liste-trajets" class="trajets-grille"></div>
+    <footer class="footer">
+        <p>© 2026 Same Trip</p>
+    </footer>
 
-        <p id="vide" style="display:none;text-align:center;padding:3rem;color:var(--texte-secondaire);">
-            Vous n'avez pas encore propose de trajet.
-        </p>
-    </div>
-</main>
+    <script>
+        let etatTrajets = [];
+        let etatReservations = [];
 
-<footer class="footer">
-    <p>© 2025 Same Trip</p>
-</footer>
-
-<script>
-let etatTrajets = [];
-let etatReservations = [];
-
-function echapper(v) {
-    if (v == null) return '';
-    return String(v)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
-
-function parserDate(v) {
-    if (!v) return null;
-    const d = new Date(String(v).replace(' ', 'T'));
-    return Number.isNaN(d.getTime()) ? null : d;
-}
-
-function formaterDate(v) {
-    const d = parserDate(v);
-    if (!d) return echapper(v || 'Date inconnue');
-    return d.toLocaleString('fr-FR', {
-        weekday: 'short',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-}
-
-async function chargerNotifIndicator() {
-    const indicator = document.getElementById('notif-indicator');
-    if (!indicator) return;
-
-    try {
-        const reponse = await fetch('/notifications/mes?format=json', {
-            credentials: 'include',
-            headers: { 'Accept': 'application/json' }
-        });
-
-        if (!reponse.ok) {
-            indicator.style.display = 'none';
-            return;
+        function echapper(v) {
+            if (v == null) return '';
+            return String(v)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
 
-        const notifications = await reponse.json();
-        const unread = notifications.filter((n) => !n.dateLecture).length;
-        if (!unread) {
-            indicator.style.display = 'none';
-            indicator.textContent = '';
-            return;
+        function parserDate(v) {
+            if (!v) return null;
+            const d = new Date(String(v).replace(' ', 'T'));
+            return Number.isNaN(d.getTime()) ? null : d;
         }
 
-        indicator.style.display = 'inline-flex';
-        indicator.textContent = unread > 99 ? '99+' : String(unread);
-    } catch (e) {
-        indicator.style.display = 'none';
-    }
-}
+        function formaterDate(v) {
+            const d = parserDate(v);
+            if (!d) return echapper(v || 'Date inconnue');
+            return d.toLocaleString('fr-FR', {
+                weekday: 'short',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
 
-async function chargerSessionNavbar() {
-    try {
-        const reponse = await fetch('/session/me', {
-            method: 'GET',
-            credentials: 'include',
-            headers: { 'Accept': 'application/json' }
-        });
+        async function chargerNotifIndicator() {
+            const indicator = document.getElementById('notif-indicator');
+            if (!indicator) return;
 
-        if (!reponse.ok) return;
-        const data = await reponse.json();
-        if (!data.connecte) return;
+            try {
+                const reponse = await fetch('/notifications/mes?format=json', {
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
 
-        const zoneActions = document.getElementById('navbar-actions');
-        const nomAffiche = [data.prenom, data.nom].filter(Boolean).join(' ').trim();
-        if (zoneActions) {
-            zoneActions.innerHTML = `
+                if (!reponse.ok) {
+                    indicator.style.display = 'none';
+                    return;
+                }
+
+                const notifications = await reponse.json();
+                const unread = notifications.filter((n) => !n.dateLecture).length;
+                if (!unread) {
+                    indicator.style.display = 'none';
+                    indicator.textContent = '';
+                    return;
+                }
+
+                indicator.style.display = 'inline-flex';
+                indicator.textContent = unread > 99 ? '99+' : String(unread);
+            } catch (e) {
+                indicator.style.display = 'none';
+            }
+        }
+
+        async function chargerSessionNavbar() {
+            try {
+                const reponse = await fetch('/session/me', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (!reponse.ok) return;
+                const data = await reponse.json();
+                if (!data.connecte) return;
+
+                const zoneActions = document.getElementById('navbar-actions');
+                const nomAffiche = [data.prenom, data.nom].filter(Boolean).join(' ').trim();
+                if (zoneActions) {
+                    zoneActions.innerHTML = `
                 <span class="badge" style="background:rgba(34,197,94,0.16);color:#86efac;border:1px solid rgba(34,197,94,0.35);">${echapper(data.role)}</span>
                 <span class="texte-sm texte-secondaire">${echapper(nomAffiche || 'Utilisateur')}</span>
                 <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
             `;
-        }
-    } catch (e) {
-        // Ignore navbar update errors
-    }
-}
-
-function afficherAlerte(message, type) {
-    const el = document.getElementById('alerte');
-    el.className = 'alerte alerte-' + type;
-    el.textContent = message;
-    el.style.display = 'flex';
-    setTimeout(() => { el.style.display = 'none'; }, 3500);
-}
-
-async function chargerDonnees() {
-    const chargement = document.getElementById('chargement');
-    const vide = document.getElementById('vide');
-    const liste = document.getElementById('liste-trajets');
-
-    chargement.style.display = 'flex';
-    vide.style.display = 'none';
-    liste.innerHTML = '';
-
-    try {
-        const [rTrajets, rReservations] = await Promise.all([
-            fetch('/trajets/mes?format=json', { headers: { 'Accept': 'application/json' }, cache: 'no-store' }),
-            fetch('/reservation/chauffeur?format=json', { headers: { 'Accept': 'application/json' }, cache: 'no-store' })
-        ]);
-
-        if (rTrajets.status === 401 || rTrajets.status === 403 || rReservations.status === 401 || rReservations.status === 403) {
-            window.location.href = '/login';
-            return;
+                }
+            } catch (e) {
+                // Ignore navbar update errors
+            }
         }
 
-        if (!rTrajets.ok || !rReservations.ok) {
-            throw new Error('Erreur serveur');
+        function afficherAlerte(message, type) {
+            const el = document.getElementById('alerte');
+            el.className = 'alerte alerte-' + type;
+            el.textContent = message;
+            el.style.display = 'flex';
+            setTimeout(() => { el.style.display = 'none'; }, 3500);
         }
-        etatTrajets = await rTrajets.json();
-        etatReservations = await rReservations.json();
 
-        afficherTrajets();
+        async function chargerDonnees() {
+            const chargement = document.getElementById('chargement');
+            const vide = document.getElementById('vide');
+            const liste = document.getElementById('liste-trajets');
 
-    } catch (e) {
-        afficherAlerte('Impossible de charger vos trajets.', 'erreur');
-    } finally {
-        chargement.style.display = 'none';
-    }
-}
+            chargement.style.display = 'flex';
+            vide.style.display = 'none';
+            liste.innerHTML = '';
 
-function afficherTrajets() {
-    const liste = document.getElementById('liste-trajets');
-    const vide = document.getElementById('vide');
+            try {
+                const [rTrajets, rReservations] = await Promise.all([
+                    fetch('/trajets/mes?format=json', { headers: { 'Accept': 'application/json' }, cache: 'no-store' }),
+                    fetch('/reservation/chauffeur?format=json', { headers: { 'Accept': 'application/json' }, cache: 'no-store' })
+                ]);
 
-    liste.innerHTML = '';
+                if (rTrajets.status === 401 || rTrajets.status === 403 || rReservations.status === 401 || rReservations.status === 403) {
+                    window.location.href = '/login';
+                    return;
+                }
 
-    if (!Array.isArray(etatTrajets) || etatTrajets.length === 0) {
-        vide.style.display = 'block';
-        return;
-    }
+                if (!rTrajets.ok || !rReservations.ok) {
+                    throw new Error('Erreur serveur');
+                }
+                etatTrajets = await rTrajets.json();
+                etatReservations = await rReservations.json();
 
-    etatTrajets.forEach((t) => {
-        const reservations = etatReservations.filter((r) => Number(r.trajetId) === Number(t.id));
-        const enAttente = reservations.filter((r) => r.statut === 'EN_ATTENTE');
+                afficherTrajets();
 
-        const carte = document.createElement('div');
-        carte.className = 'carte-trajet';
+            } catch (e) {
+                afficherAlerte('Impossible de charger vos trajets.', 'erreur');
+            } finally {
+                chargement.style.display = 'none';
+            }
+        }
 
-        carte.innerHTML = `
+        function afficherTrajets() {
+            const liste = document.getElementById('liste-trajets');
+            const vide = document.getElementById('vide');
+
+            liste.innerHTML = '';
+
+            if (!Array.isArray(etatTrajets) || etatTrajets.length === 0) {
+                vide.style.display = 'block';
+                return;
+            }
+
+            etatTrajets.forEach((t) => {
+                const reservations = etatReservations.filter((r) => Number(r.trajetId) === Number(t.id));
+                const enAttente = reservations.filter((r) => r.statut === 'EN_ATTENTE');
+
+                const carte = document.createElement('div');
+                carte.className = 'carte-trajet';
+
+                carte.innerHTML = `
             <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;">
                 <div>
                     <p class="semi-gras">${echapper(t.villeDepart)} -> ${echapper(t.villeArrivee)}</p>
@@ -235,34 +238,34 @@ function afficherTrajets() {
             </div>
         `;
 
-        liste.appendChild(carte);
-    });
+                liste.appendChild(carte);
+            });
 
-    liste.querySelectorAll('button[data-confirmer]').forEach((btn) => {
-        btn.addEventListener('click', async () => {
-            const id = Number(btn.getAttribute('data-confirmer'));
-            await confirmerReservation(id);
-        });
-    });
+            liste.querySelectorAll('button[data-confirmer]').forEach((btn) => {
+                btn.addEventListener('click', async () => {
+                    const id = Number(btn.getAttribute('data-confirmer'));
+                    await confirmerReservation(id);
+                });
+            });
 
-    liste.querySelectorAll('button[data-annuler-trajet]').forEach((btn) => {
-        btn.addEventListener('click', async () => {
-            const id = Number(btn.getAttribute('data-annuler-trajet'));
-            await annulerTrajet(id);
-        });
-    });
-}
+            liste.querySelectorAll('button[data-annuler-trajet]').forEach((btn) => {
+                btn.addEventListener('click', async () => {
+                    const id = Number(btn.getAttribute('data-annuler-trajet'));
+                    await annulerTrajet(id);
+                });
+            });
+        }
 
-function renderReservations(reservations) {
-    if (!reservations.length) {
-        return '<p class="texte-sm texte-secondaire">Aucune reservation pour ce trajet.</p>';
-    }
+        function renderReservations(reservations) {
+            if (!reservations.length) {
+                return '<p class="texte-sm texte-secondaire">Aucune reservation pour ce trajet.</p>';
+            }
 
-    return reservations.map((r) => {
-        const client = `${echapper(r.passagerPrenom || '')} ${echapper(r.passagerNom || '')}`.trim() || 'Passager';
-        const peutConfirmer = r.statut === 'EN_ATTENTE';
+            return reservations.map((r) => {
+                const client = `${echapper(r.passagerPrenom || '')} ${echapper(r.passagerNom || '')}`.trim() || 'Passager';
+                const peutConfirmer = r.statut === 'EN_ATTENTE';
 
-        return `
+                return `
             <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:0.6rem 0;border-bottom:1px dashed var(--bordure);">
                 <div>
                     <p class="texte-sm semi-gras">#${r.id} - ${client}</p>
@@ -271,72 +274,73 @@ function renderReservations(reservations) {
                 ${peutConfirmer ? `<button class="btn btn-primaire btn-sm" data-confirmer="${r.id}">Confirmer</button>` : ''}
             </div>
         `;
-    }).join('');
-}
-
-async function confirmerReservation(id) {
-    if (!id) return;
-
-    const payload = new URLSearchParams();
-    payload.set('reservationId', String(id));
-
-    try {
-        const reponse = await fetch('/reservation/confirmer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                'Accept': 'application/json'
-            },
-            body: payload.toString()
-        });
-
-        const data = await reponse.json();
-        if (reponse.ok) {
-            afficherAlerte('Reservation confirmee.', 'succes');
-            await chargerDonnees();
-        } else {
-            afficherAlerte(data.erreur || 'Erreur de confirmation.', 'erreur');
+            }).join('');
         }
-    } catch (e) {
-        afficherAlerte('Erreur reseau lors de la confirmation.', 'erreur');
-    }
-}
 
-async function annulerTrajet(trajetId) {
-    if (!trajetId) return;
-    if (!confirm('Annuler ce trajet ?')) return;
+        async function confirmerReservation(id) {
+            if (!id) return;
 
-    const payload = new URLSearchParams();
-    payload.set('trajetId', String(trajetId));
+            const payload = new URLSearchParams();
+            payload.set('reservationId', String(id));
 
-    try {
-        const reponse = await fetch('/trajets/annuler', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                'Accept': 'application/json'
-            },
-            body: payload.toString()
-        });
+            try {
+                const reponse = await fetch('/reservation/confirmer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                        'Accept': 'application/json'
+                    },
+                    body: payload.toString()
+                });
 
-        const data = await reponse.json();
-        if (reponse.ok) {
-            afficherAlerte('Trajet annule.', 'succes');
-            await chargerDonnees();
-        } else {
-            afficherAlerte(data.erreur || 'Erreur lors de l annulation du trajet.', 'erreur');
+                const data = await reponse.json();
+                if (reponse.ok) {
+                    afficherAlerte('Reservation confirmee.', 'succes');
+                    await chargerDonnees();
+                } else {
+                    afficherAlerte(data.erreur || 'Erreur de confirmation.', 'erreur');
+                }
+            } catch (e) {
+                afficherAlerte('Erreur reseau lors de la confirmation.', 'erreur');
+            }
         }
-    } catch (e) {
-        afficherAlerte('Erreur reseau lors de l annulation.', 'erreur');
-    }
-}
 
-document.addEventListener('DOMContentLoaded', () => {
-    chargerDonnees();
-    chargerNotifIndicator();
-    chargerSessionNavbar();
-});
-</script>
+        async function annulerTrajet(trajetId) {
+            if (!trajetId) return;
+            if (!confirm('Annuler ce trajet ?')) return;
+
+            const payload = new URLSearchParams();
+            payload.set('trajetId', String(trajetId));
+
+            try {
+                const reponse = await fetch('/trajets/annuler', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                        'Accept': 'application/json'
+                    },
+                    body: payload.toString()
+                });
+
+                const data = await reponse.json();
+                if (reponse.ok) {
+                    afficherAlerte('Trajet annule.', 'succes');
+                    await chargerDonnees();
+                } else {
+                    afficherAlerte(data.erreur || 'Erreur lors de l annulation du trajet.', 'erreur');
+                }
+            } catch (e) {
+                afficherAlerte('Erreur reseau lors de l annulation.', 'erreur');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            chargerDonnees();
+            chargerNotifIndicator();
+            chargerSessionNavbar();
+        });
+    </script>
 
 </body>
+
 </html>

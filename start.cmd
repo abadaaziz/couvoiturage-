@@ -15,6 +15,9 @@ set "MVN_CMD=%LOCALAPPDATA%\Programs\Apache\Maven\bin\mvn.cmd"
 if not exist "%MVN_CMD%" if defined M2_HOME set "MVN_CMD=%M2_HOME%\bin\mvn.cmd"
 if not exist "%MVN_CMD%" set "MVN_CMD=mvn"
 
+REM Remove an accidental UTF-8 BOM from Java sources before javac runs.
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$p='src\main\java\com\covoiturage\util\DatabaseInitializer.java';if(Test-Path $p){$r=(Resolve-Path $p).Path;$t=[IO.File]::ReadAllText($r);$enc=New-Object Text.UTF8Encoding($false);[IO.File]::WriteAllText($r,$t.TrimStart([char]0xFEFF),$enc)}"
+
 call "%MVN_CMD%" clean package -DskipTests || goto :eof
 
 copy /Y target\covoiturage.war .tools\apache-tomcat-10.1.31\webapps\ROOT.war >nul

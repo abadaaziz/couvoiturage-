@@ -1,58 +1,125 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mes reservations - Same Trip</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
 
-<nav class="navbar" role="navigation" aria-label="Navigation principale">
-    <a href="/trajets" class="navbar-logo" id="nav-logo">
-        <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="24" r="24" fill="url(#gn)"/>
-            <path d="M14 28l6-10 4 6 3-4 7 8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="14" cy="29" r="2.5" fill="white"/>
-            <circle cx="34" cy="29" r="2.5" fill="white"/>
-            <defs>
-                <linearGradient id="gn" x1="0" y1="0" x2="48" y2="48">
-                    <stop offset="0%" stop-color="#7c3aed"/>
-                    <stop offset="100%" stop-color="#2563eb"/>
-                </linearGradient>
-            </defs>
-        </svg>
-        Same Trip
-    </a>
+    <nav class="navbar" role="navigation" aria-label="Navigation principale">
+        <a href="/trajets" class="navbar-logo" id="nav-logo">
+            <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="24" fill="url(#gn)" />
+                <path d="M14 28l6-10 4 6 3-4 7 8" stroke="white" stroke-width="2.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <circle cx="14" cy="29" r="2.5" fill="white" />
+                <circle cx="34" cy="29" r="2.5" fill="white" />
+                <defs>
+                    <linearGradient id="gn" x1="0" y1="0" x2="48" y2="48">
+                        <stop offset="0%" stop-color="#7c3aed" />
+                        <stop offset="100%" stop-color="#2563eb" />
+                    </linearGradient>
+                </defs>
+            </svg>
+            Same Trip
+        </a>
 
-    <ul class="navbar-liens">
-        <li><a href="/trajets" id="nav-trajets">Trajets</a></li>
-        <li><a href="/reservation/mes" id="nav-mes-reservations" class="actif">Mes reservations</a></li>
-        <li><a href="/notifications" id="nav-notifications" class="nav-notifications">Notifications
-            <span id="notif-indicator" class="nav-indicator" style="display:none;"></span>
-        </a></li>
-    </ul>
+        <ul class="navbar-liens">
+            <li><a href="/trajets" id="nav-trajets">Trajets</a></li>
+            <li><a href="/reservation/mes" id="nav-mes-reservations" class="actif">Mes reservations</a></li>
+            <li><a href="/notifications" id="nav-notifications" class="nav-notifications">Notifications
+                    <span id="notif-indicator" class="nav-indicator" style="display:none;"></span>
+                </a></li>
+        </ul>
 
-    <div class="navbar-actions" id="navbar-actions">
-        <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
-    </div>
-</nav>
-
-<main class="page-principale">
-    <div class="conteneur" style="padding-top:2rem;padding-bottom:4rem;">
-        <div class="titre-section">
-            <h1>Mes reservations</h1>
-            <p class="texte-secondaire mt-1">Suivez et annulez vos reservations</p>
+        <div class="navbar-actions" id="navbar-actions">
+            <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
         </div>
+    </nav>
 
-        <div class="card" style="margin-bottom:1.5rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
-                <div>
-                    <p class="semi-gras">Notez Same Trip</p>
-                    <p class="texte-xs texte-secondaire">Votre avis compte pour ameliorer l'app.</p>
+    <main class="page-principale">
+        <div class="conteneur" style="padding-top:2rem;padding-bottom:4rem;">
+            <div class="titre-section">
+                <h1>Mes reservations</h1>
+                <p class="texte-secondaire mt-1">Suivez et annulez vos reservations</p>
+            </div>
+
+            <div class="card" style="margin-bottom:1.5rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
+                    <div>
+                        <p class="semi-gras">Notez Same Trip</p>
+                        <p class="texte-xs texte-secondaire">Votre avis compte pour ameliorer l'app.</p>
+                    </div>
+                    <div style="display:flex;gap:0.5rem;align-items:center;">
+                        <select id="app-note" class="form-controle" style="max-width:120px;">
+                            <option value="">Note</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                        <button id="btn-app-note" class="btn btn-primaire btn-sm">Envoyer</button>
+                    </div>
                 </div>
-                <div style="display:flex;gap:0.5rem;align-items:center;">
-                    <select id="app-note" class="form-controle" style="max-width:120px;">
+            </div>
+
+            <div id="alerte" class="alerte" style="display:none;"></div>
+
+            <div id="chargement" class="chargement" style="display:flex;">
+                <div class="spinner"></div>
+                <span>Chargement de vos reservations...</span>
+            </div>
+
+            <div id="liste" class="trajets-grille"></div>
+
+            <p id="vide" style="display:none;text-align:center;padding:3rem;color:var(--texte-secondaire);">
+                Vous n'avez pas encore de reservation.
+            </p>
+        </div>
+    </main>
+
+    <div id="modal-profil" style="display:none;position:fixed;inset:0;z-index:2200;
+     background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);
+     align-items:center;justify-content:center;padding:1rem;">
+        <div class="card" style="max-width:520px;width:100%;max-height:90vh;overflow-y:auto;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <h2 style="font-size:1.2rem;">Profil chauffeur</h2>
+                <button id="btn-fermer-modal-profil"
+                    style="background:none;border:none;color:var(--texte-secondaire);font-size:1.5rem;cursor:pointer;">×</button>
+            </div>
+
+            <div id="profil-erreur" class="alerte alerte-erreur" style="display:none;"></div>
+
+            <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem;">
+                <div class="avatar" id="profil-avatar" style="width:44px;height:44px;font-size:1rem;"></div>
+                <div>
+                    <p class="semi-gras" id="profil-nom"></p>
+                    <p class="texte-xs texte-secondaire" id="profil-note"></p>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+                <div class="form-groupe" style="margin-bottom:0;">
+                    <label>Telephone</label>
+                    <div class="form-controle" id="profil-telephone" style="display:flex;align-items:center;"></div>
+                </div>
+                <div class="form-groupe" style="margin-bottom:0;">
+                    <label>Email</label>
+                    <div class="form-controle" id="profil-email" style="display:flex;align-items:center;"></div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:1rem;">
+                <p class="semi-gras" style="margin-bottom:0.5rem;">Noter ce chauffeur</p>
+                <p class="texte-xs texte-secondaire" id="profil-info-notation" style="margin-bottom:0.75rem;"></p>
+                <div id="profil-notation-zone" style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+                    <select id="profil-reservation" class="form-controle" style="max-width:200px;"></select>
+                    <select id="profil-note-select" class="form-controle" style="max-width:120px;">
                         <option value="">Note</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -60,123 +127,60 @@
                         <option value="4">4</option>
                         <option value="5">5</option>
                     </select>
-                    <button id="btn-app-note" class="btn btn-primaire btn-sm">Envoyer</button>
+                    <button id="profil-noter" class="btn btn-secondaire btn-sm">Envoyer</button>
                 </div>
             </div>
         </div>
-
-        <div id="alerte" class="alerte" style="display:none;"></div>
-
-        <div id="chargement" class="chargement" style="display:flex;">
-            <div class="spinner"></div>
-            <span>Chargement de vos reservations...</span>
-        </div>
-
-        <div id="liste" class="trajets-grille"></div>
-
-        <p id="vide" style="display:none;text-align:center;padding:3rem;color:var(--texte-secondaire);">
-            Vous n'avez pas encore de reservation.
-        </p>
     </div>
-</main>
 
-<div id="modal-profil" style="display:none;position:fixed;inset:0;z-index:2200;
-     background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);
-     align-items:center;justify-content:center;padding:1rem;">
-    <div class="card" style="max-width:520px;width:100%;max-height:90vh;overflow-y:auto;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-            <h2 style="font-size:1.2rem;">Profil chauffeur</h2>
-            <button id="btn-fermer-modal-profil" style="background:none;border:none;color:var(--texte-secondaire);font-size:1.5rem;cursor:pointer;">×</button>
-        </div>
+    <footer class="footer">
+        <p>© 2026 Same Trip</p>
+    </footer>
 
-        <div id="profil-erreur" class="alerte alerte-erreur" style="display:none;"></div>
+    <script>
+        async function chargerReservations() {
+            const chargement = document.getElementById('chargement');
+            const liste = document.getElementById('liste');
+            const vide = document.getElementById('vide');
+            chargement.style.display = 'flex';
+            liste.innerHTML = '';
+            vide.style.display = 'none';
 
-        <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem;">
-            <div class="avatar" id="profil-avatar" style="width:44px;height:44px;font-size:1rem;"></div>
-            <div>
-                <p class="semi-gras" id="profil-nom"></p>
-                <p class="texte-xs texte-secondaire" id="profil-note"></p>
-            </div>
-        </div>
+            try {
+                const reponse = await fetch('/reservation/mes?format=json', {
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
-            <div class="form-groupe" style="margin-bottom:0;">
-                <label>Telephone</label>
-                <div class="form-controle" id="profil-telephone" style="display:flex;align-items:center;"></div>
-            </div>
-            <div class="form-groupe" style="margin-bottom:0;">
-                <label>Email</label>
-                <div class="form-controle" id="profil-email" style="display:flex;align-items:center;"></div>
-            </div>
-        </div>
+                if (reponse.status === 401) {
+                    window.location.href = '/login';
+                    return;
+                }
+                if (!reponse.ok) {
+                    throw new Error('Erreur serveur: ' + reponse.status);
+                }
 
-        <div class="card" style="margin-top:1rem;">
-            <p class="semi-gras" style="margin-bottom:0.5rem;">Noter ce chauffeur</p>
-            <p class="texte-xs texte-secondaire" id="profil-info-notation" style="margin-bottom:0.75rem;"></p>
-            <div id="profil-notation-zone" style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
-                <select id="profil-reservation" class="form-controle" style="max-width:200px;"></select>
-                <select id="profil-note-select" class="form-controle" style="max-width:120px;">
-                    <option value="">Note</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-                <button id="profil-noter" class="btn btn-secondaire btn-sm">Envoyer</button>
-            </div>
-        </div>
-    </div>
-</div>
+                const contentType = reponse.headers.get('Content-Type') || '';
+                if (!contentType.includes('application/json')) {
+                    throw new Error('Reponse inattendue (pas du JSON).');
+                }
 
-<footer class="footer">
-    <p>© 2025 Same Trip</p>
-</footer>
+                const reservations = await reponse.json();
+                if (!reservations.length) {
+                    vide.style.display = 'block';
+                    return;
+                }
 
-<script>
-async function chargerReservations() {
-    const chargement = document.getElementById('chargement');
-    const liste = document.getElementById('liste');
-    const vide = document.getElementById('vide');
-    chargement.style.display = 'flex';
-    liste.innerHTML = '';
-    vide.style.display = 'none';
+                reservations.forEach((r) => {
+                    const el = document.createElement('div');
+                    el.className = 'carte-trajet';
+                    const statut = r.statut || '';
+                    const annulable = statut !== 'ANNULEE' && statut !== 'REMBOURSEE';
+                    const dateDepart = new Date(String(r.dateHeureDepart).replace(' ', 'T'));
+                    const supprimable = !Number.isNaN(dateDepart.getTime()) && dateDepart < new Date();
+                    const notePassager = r.notePassager;
 
-    try {
-        const reponse = await fetch('/reservation/mes?format=json', {
-            credentials: 'include',
-            headers: { 'Accept': 'application/json' }
-        });
-
-        if (reponse.status === 401) {
-            window.location.href = '/login';
-            return;
-        }
-        if (!reponse.ok) {
-            throw new Error('Erreur serveur: ' + reponse.status);
-        }
-
-        const contentType = reponse.headers.get('Content-Type') || '';
-        if (!contentType.includes('application/json')) {
-            throw new Error('Reponse inattendue (pas du JSON).');
-        }
-
-        const reservations = await reponse.json();
-        if (!reservations.length) {
-            vide.style.display = 'block';
-            return;
-        }
-
-        reservations.forEach((r) => {
-            const el = document.createElement('div');
-            el.className = 'carte-trajet';
-            const statut = r.statut || '';
-            const annulable = statut !== 'ANNULEE' && statut !== 'REMBOURSEE';
-            const dateDepart = new Date(String(r.dateHeureDepart).replace(' ', 'T'));
-            const supprimable = !Number.isNaN(dateDepart.getTime()) && dateDepart < new Date();
-            const notePassager = r.notePassager;
-
-            el.innerHTML = `
+                    el.innerHTML = `
                 <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;">
                     <div>
                         <p class="semi-gras">${echapper(r.villeDepart)} -> ${echapper(r.villeArrivee)}</p>
@@ -219,357 +223,358 @@ async function chargerReservations() {
                 ` : ''}
             `;
 
-            const boutonAnnuler = el.querySelector('button[data-id]');
-            if (boutonAnnuler) {
-                boutonAnnuler.addEventListener('click', () => annulerReservation(r.id));
-            }
+                    const boutonAnnuler = el.querySelector('button[data-id]');
+                    if (boutonAnnuler) {
+                        boutonAnnuler.addEventListener('click', () => annulerReservation(r.id));
+                    }
 
-            const btnSupprimer = el.querySelector('button[data-supprimer]');
-            if (btnSupprimer) {
-                btnSupprimer.addEventListener('click', async (e) => {
-                    await supprimerReservation(r.id);
+                    const btnSupprimer = el.querySelector('button[data-supprimer]');
+                    if (btnSupprimer) {
+                        btnSupprimer.addEventListener('click', async (e) => {
+                            await supprimerReservation(r.id);
+                        });
+                    }
+
+                    const btnNoter = el.querySelector('button[data-noter]');
+                    if (btnNoter) {
+                        btnNoter.addEventListener('click', async () => {
+                            const select = el.querySelector(`select[data-note-reservation="${r.id}"]`);
+                            const note = select ? Number(select.value || '0') : 0;
+                            await noterChauffeur(r.id, note);
+                        });
+                    }
+
+                    const btnProfil = el.querySelector('button[data-profil]');
+                    if (btnProfil) {
+                        btnProfil.addEventListener('click', () => ouvrirProfilChauffeur(r));
+                    }
+
+                    liste.appendChild(el);
+                });
+
+
+            } catch (e) {
+                afficherAlerte('Erreur: ' + e.message, 'erreur');
+                console.error('Reservation load error:', e);
+            } finally {
+                chargement.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnAppNote = document.getElementById('btn-app-note');
+            if (btnAppNote) {
+                btnAppNote.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await noterApp();
                 });
             }
 
-            const btnNoter = el.querySelector('button[data-noter]');
-            if (btnNoter) {
-                btnNoter.addEventListener('click', async () => {
-                    const select = el.querySelector(`select[data-note-reservation="${r.id}"]`);
-                    const note = select ? Number(select.value || '0') : 0;
-                    await noterChauffeur(r.id, note);
-                });
-            }
-
-            const btnProfil = el.querySelector('button[data-profil]');
-            if (btnProfil) {
-                btnProfil.addEventListener('click', () => ouvrirProfilChauffeur(r));
-            }
-
-            liste.appendChild(el);
+            configurerModalProfil();
         });
 
+        function configurerModalProfil() {
+            const modal = document.getElementById('modal-profil');
+            const btnFermer = document.getElementById('btn-fermer-modal-profil');
+            const btnNoter = document.getElementById('profil-noter');
 
-    } catch (e) {
-        afficherAlerte('Erreur: ' + e.message, 'erreur');
-        console.error('Reservation load error:', e);
-    } finally {
-        chargement.style.display = 'none';
-    }
-}
+            if (!modal || !btnFermer || !btnNoter) return;
 
-document.addEventListener('DOMContentLoaded', () => {
-    const btnAppNote = document.getElementById('btn-app-note');
-    if (btnAppNote) {
-        btnAppNote.addEventListener('click', async (e) => {
-            e.preventDefault();
-            await noterApp();
-        });
-    }
+            const fermer = () => {
+                modal.style.display = 'none';
+                const err = document.getElementById('profil-erreur');
+                if (err) err.style.display = 'none';
+            };
 
-    configurerModalProfil();
-});
-
-function configurerModalProfil() {
-    const modal = document.getElementById('modal-profil');
-    const btnFermer = document.getElementById('btn-fermer-modal-profil');
-    const btnNoter = document.getElementById('profil-noter');
-
-    if (!modal || !btnFermer || !btnNoter) return;
-
-    const fermer = () => {
-        modal.style.display = 'none';
-        const err = document.getElementById('profil-erreur');
-        if (err) err.style.display = 'none';
-    };
-
-    btnFermer.addEventListener('click', fermer);
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) fermer();
-    });
-
-    btnNoter.addEventListener('click', async () => {
-        const reservationId = document.getElementById('profil-reservation').value;
-        const note = Number(document.getElementById('profil-note-select').value || '0');
-        if (!reservationId) {
-            afficherProfilErreur('Choisissez une reservation.');
-            return;
-        }
-        if (!note || note < 1 || note > 5) {
-            afficherProfilErreur('Choisissez une note entre 1 et 5.');
-            return;
-        }
-
-        try {
-            const reponse = await fetch('/reservation/noter', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                    'Accept': 'application/json'
-                },
-                body: new URLSearchParams({
-                    reservationId: String(reservationId),
-                    note: String(note)
-                }).toString()
+            btnFermer.addEventListener('click', fermer);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) fermer();
             });
 
-            const data = await reponse.json();
-            if (reponse.ok) {
-                afficherAlerte(data.message || 'Merci pour votre note.', 'succes');
-                fermer();
-                await chargerReservations();
-            } else {
-                afficherProfilErreur(data.erreur || 'Erreur lors de la notation.');
+            btnNoter.addEventListener('click', async () => {
+                const reservationId = document.getElementById('profil-reservation').value;
+                const note = Number(document.getElementById('profil-note-select').value || '0');
+                if (!reservationId) {
+                    afficherProfilErreur('Choisissez une reservation.');
+                    return;
+                }
+                if (!note || note < 1 || note > 5) {
+                    afficherProfilErreur('Choisissez une note entre 1 et 5.');
+                    return;
+                }
+
+                try {
+                    const reponse = await fetch('/reservation/noter', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                            'Accept': 'application/json'
+                        },
+                        body: new URLSearchParams({
+                            reservationId: String(reservationId),
+                            note: String(note)
+                        }).toString()
+                    });
+
+                    const data = await reponse.json();
+                    if (reponse.ok) {
+                        afficherAlerte(data.message || 'Merci pour votre note.', 'succes');
+                        fermer();
+                        await chargerReservations();
+                    } else {
+                        afficherProfilErreur(data.erreur || 'Erreur lors de la notation.');
+                    }
+                } catch (e) {
+                    afficherProfilErreur('Erreur reseau.');
+                }
+            });
+        }
+
+        function afficherProfilErreur(message) {
+            const err = document.getElementById('profil-erreur');
+            if (!err) return;
+            err.textContent = message;
+            err.style.display = 'flex';
+        }
+
+        function ouvrirProfilChauffeur(reservation) {
+            const modal = document.getElementById('modal-profil');
+            const nom = document.getElementById('profil-nom');
+            const note = document.getElementById('profil-note');
+            const tel = document.getElementById('profil-telephone');
+            const email = document.getElementById('profil-email');
+            const avatar = document.getElementById('profil-avatar');
+            const info = document.getElementById('profil-info-notation');
+            const selectRes = document.getElementById('profil-reservation');
+            const selectNote = document.getElementById('profil-note-select');
+            const btnNoter = document.getElementById('profil-noter');
+
+            const chauffeur = reservation && reservation.chauffeur ? reservation.chauffeur : {};
+            const initiales = (chauffeur.prenom?.[0] || '') + (chauffeur.nom?.[0] || '');
+
+            if (nom) nom.textContent = `${chauffeur.prenom || ''} ${chauffeur.nom || ''}`.trim() || 'Chauffeur';
+            if (note) note.textContent = chauffeur.note ? `Note: ${Number(chauffeur.note).toFixed(1)} / 5` : 'Nouveau chauffeur';
+            if (tel) tel.textContent = chauffeur.telephone || '—';
+            if (email) email.textContent = chauffeur.email || '—';
+            if (avatar) avatar.textContent = initiales.toUpperCase();
+            if (info) info.textContent = reservation.statut === 'CONFIRMEE'
+                ? 'Choisissez une note pour ce chauffeur.'
+                : 'La notation est disponible apres confirmation de la reservation.';
+
+            if (selectRes) {
+                selectRes.innerHTML = '';
+                const option = document.createElement('option');
+                option.value = String(reservation.id);
+                option.textContent = `#${reservation.id} • ${reservation.villeDepart} → ${reservation.villeArrivee}`;
+                selectRes.appendChild(option);
+                selectRes.disabled = true;
             }
-        } catch (e) {
-            afficherProfilErreur('Erreur reseau.');
+            if (selectNote) selectNote.disabled = false;
+            if (btnNoter) btnNoter.disabled = !(reservation.statut === 'CONFIRMEE' && !reservation.notePassager);
+            if (info && reservation.statut !== 'CONFIRMEE') {
+                info.textContent = 'La notation est disponible apres confirmation de la reservation.';
+            }
+
+            if (modal) modal.style.display = 'flex';
         }
-    });
-}
 
-function afficherProfilErreur(message) {
-    const err = document.getElementById('profil-erreur');
-    if (!err) return;
-    err.textContent = message;
-    err.style.display = 'flex';
-}
+        async function noterChauffeur(reservationId, note) {
+            if (!note || note < 1 || note > 5) {
+                afficherAlerte('Veuillez choisir une note entre 1 et 5.', 'erreur');
+                return;
+            }
 
-function ouvrirProfilChauffeur(reservation) {
-    const modal = document.getElementById('modal-profil');
-    const nom = document.getElementById('profil-nom');
-    const note = document.getElementById('profil-note');
-    const tel = document.getElementById('profil-telephone');
-    const email = document.getElementById('profil-email');
-    const avatar = document.getElementById('profil-avatar');
-    const info = document.getElementById('profil-info-notation');
-    const selectRes = document.getElementById('profil-reservation');
-    const selectNote = document.getElementById('profil-note-select');
-    const btnNoter = document.getElementById('profil-noter');
+            try {
+                const reponse = await fetch('/reservation/noter', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                        'Accept': 'application/json'
+                    },
+                    body: new URLSearchParams({
+                        reservationId: String(reservationId),
+                        note: String(note)
+                    }).toString()
+                });
 
-    const chauffeur = reservation && reservation.chauffeur ? reservation.chauffeur : {};
-    const initiales = (chauffeur.prenom?.[0] || '') + (chauffeur.nom?.[0] || '');
-
-    if (nom) nom.textContent = `${chauffeur.prenom || ''} ${chauffeur.nom || ''}`.trim() || 'Chauffeur';
-    if (note) note.textContent = chauffeur.note ? `Note: ${Number(chauffeur.note).toFixed(1)} / 5` : 'Nouveau chauffeur';
-    if (tel) tel.textContent = chauffeur.telephone || '—';
-    if (email) email.textContent = chauffeur.email || '—';
-    if (avatar) avatar.textContent = initiales.toUpperCase();
-    if (info) info.textContent = reservation.statut === 'CONFIRMEE'
-        ? 'Choisissez une note pour ce chauffeur.'
-        : 'La notation est disponible apres confirmation de la reservation.';
-
-    if (selectRes) {
-        selectRes.innerHTML = '';
-        const option = document.createElement('option');
-        option.value = String(reservation.id);
-        option.textContent = `#${reservation.id} • ${reservation.villeDepart} → ${reservation.villeArrivee}`;
-        selectRes.appendChild(option);
-        selectRes.disabled = true;
-    }
-    if (selectNote) selectNote.disabled = false;
-    if (btnNoter) btnNoter.disabled = !(reservation.statut === 'CONFIRMEE' && !reservation.notePassager);
-    if (info && reservation.statut !== 'CONFIRMEE') {
-        info.textContent = 'La notation est disponible apres confirmation de la reservation.';
-    }
-
-    if (modal) modal.style.display = 'flex';
-}
-
-async function noterChauffeur(reservationId, note) {
-    if (!note || note < 1 || note > 5) {
-        afficherAlerte('Veuillez choisir une note entre 1 et 5.', 'erreur');
-        return;
-    }
-
-    try {
-        const reponse = await fetch('/reservation/noter', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                'Accept': 'application/json'
-            },
-            body: new URLSearchParams({
-                reservationId: String(reservationId),
-                note: String(note)
-            }).toString()
-        });
-
-        const data = await reponse.json();
-        if (reponse.ok) {
-            afficherAlerte(data.message || 'Merci pour votre note.', 'succes');
-            await chargerReservations();
-        } else {
-            afficherAlerte(data.erreur || 'Erreur lors de la notation.', 'erreur');
+                const data = await reponse.json();
+                if (reponse.ok) {
+                    afficherAlerte(data.message || 'Merci pour votre note.', 'succes');
+                    await chargerReservations();
+                } else {
+                    afficherAlerte(data.erreur || 'Erreur lors de la notation.', 'erreur');
+                }
+            } catch (e) {
+                afficherAlerte('Erreur reseau.', 'erreur');
+            }
         }
-    } catch (e) {
-        afficherAlerte('Erreur reseau.', 'erreur');
-    }
-}
 
-async function noterApp() {
-    const select = document.getElementById('app-note');
-    const note = Number(select.value || '0');
-    if (!note || note < 1 || note > 5) {
-        afficherAlerte('Veuillez choisir une note entre 1 et 5.', 'erreur');
-        return;
-    }
+        async function noterApp() {
+            const select = document.getElementById('app-note');
+            const note = Number(select.value || '0');
+            if (!note || note < 1 || note > 5) {
+                afficherAlerte('Veuillez choisir une note entre 1 et 5.', 'erreur');
+                return;
+            }
 
-    try {
-        const reponse = await fetch('/app/notation', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                'Accept': 'application/json'
-            },
-            body: new URLSearchParams({ note: String(note) }).toString()
-        });
-        const data = await reponse.json();
+            try {
+                const reponse = await fetch('/app/notation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                        'Accept': 'application/json'
+                    },
+                    body: new URLSearchParams({ note: String(note) }).toString()
+                });
+                const data = await reponse.json();
 
-        if (reponse.ok) {
-            afficherAlerte(data.message || 'Merci pour votre note.', 'succes');
-        } else {
-            afficherAlerte(data.erreur || 'Erreur lors de la notation.', 'erreur');
+                if (reponse.ok) {
+                    afficherAlerte(data.message || 'Merci pour votre note.', 'succes');
+                } else {
+                    afficherAlerte(data.erreur || 'Erreur lors de la notation.', 'erreur');
+                }
+            } catch (e) {
+                afficherAlerte('Erreur reseau.', 'erreur');
+            }
         }
-    } catch (e) {
-        afficherAlerte('Erreur reseau.', 'erreur');
-    }
-}
 
-async function annulerReservation(id) {
-    if (!confirm('Annuler cette reservation ?')) return;
+        async function annulerReservation(id) {
+            if (!confirm('Annuler cette reservation ?')) return;
 
-    try {
-        const reponse = await fetch('/reservation/annuler', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                'Accept': 'application/json'
-            },
-            body: new URLSearchParams({ reservationId: String(id) }).toString()
-        });
-        const data = await reponse.json();
+            try {
+                const reponse = await fetch('/reservation/annuler', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                        'Accept': 'application/json'
+                    },
+                    body: new URLSearchParams({ reservationId: String(id) }).toString()
+                });
+                const data = await reponse.json();
 
-        if (reponse.ok) {
-            afficherAlerte(data.message || 'Reservation annulee.', 'succes');
-            await chargerReservations();
-        } else {
-            afficherAlerte(data.erreur || 'Erreur lors de l annulation.', 'erreur');
+                if (reponse.ok) {
+                    afficherAlerte(data.message || 'Reservation annulee.', 'succes');
+                    await chargerReservations();
+                } else {
+                    afficherAlerte(data.erreur || 'Erreur lors de l annulation.', 'erreur');
+                }
+            } catch (e) {
+                afficherAlerte('Erreur reseau.', 'erreur');
+            }
         }
-    } catch (e) {
-        afficherAlerte('Erreur reseau.', 'erreur');
-    }
-}
 
-async function supprimerReservation(id) {
-    if (!confirm('Supprimer cette reservation ?')) return;
+        async function supprimerReservation(id) {
+            if (!confirm('Supprimer cette reservation ?')) return;
 
-    try {
-        const reponse = await fetch('/reservation/supprimer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                'Accept': 'application/json'
-            },
-            body: new URLSearchParams({ reservationId: String(id) }).toString()
-        });
-        const data = await reponse.json();
+            try {
+                const reponse = await fetch('/reservation/supprimer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                        'Accept': 'application/json'
+                    },
+                    body: new URLSearchParams({ reservationId: String(id) }).toString()
+                });
+                const data = await reponse.json();
 
-        if (reponse.ok) {
-            afficherAlerte('Reservation supprimee.', 'succes');
-            await chargerReservations();
-        } else {
-            afficherAlerte(data.erreur || 'Erreur lors de la suppression.', 'erreur');
+                if (reponse.ok) {
+                    afficherAlerte('Reservation supprimee.', 'succes');
+                    await chargerReservations();
+                } else {
+                    afficherAlerte(data.erreur || 'Erreur lors de la suppression.', 'erreur');
+                }
+            } catch (e) {
+                afficherAlerte('Erreur reseau.', 'erreur');
+            }
         }
-    } catch (e) {
-        afficherAlerte('Erreur reseau.', 'erreur');
-    }
-}
 
-function afficherAlerte(message, type) {
-    const el = document.getElementById('alerte');
-    el.className = 'alerte alerte-' + type;
-    el.textContent = message;
-    el.style.display = 'flex';
-    setTimeout(() => {
-        el.style.display = 'none';
-    }, 3500);
-}
+        function afficherAlerte(message, type) {
+            const el = document.getElementById('alerte');
+            el.className = 'alerte alerte-' + type;
+            el.textContent = message;
+            el.style.display = 'flex';
+            setTimeout(() => {
+                el.style.display = 'none';
+            }, 3500);
+        }
 
-function echapper(v) {
-    if (v == null) return '';
-    return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
+        function echapper(v) {
+            if (v == null) return '';
+            return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
 
-async function chargerSessionNavbar() {
-    try {
-        const reponse = await fetch('/session/me', {
-            method: 'GET',
-            credentials: 'include',
-            headers: { 'Accept': 'application/json' }
-        });
+        async function chargerSessionNavbar() {
+            try {
+                const reponse = await fetch('/session/me', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
 
-        if (!reponse.ok) return;
-        const data = await reponse.json();
-        if (!data.connecte) return;
+                if (!reponse.ok) return;
+                const data = await reponse.json();
+                if (!data.connecte) return;
 
-        const zoneActions = document.getElementById('navbar-actions');
-        const nomAffiche = [data.prenom, data.nom].filter(Boolean).join(' ').trim();
-        if (zoneActions) {
-            zoneActions.innerHTML = `
+                const zoneActions = document.getElementById('navbar-actions');
+                const nomAffiche = [data.prenom, data.nom].filter(Boolean).join(' ').trim();
+                if (zoneActions) {
+                    zoneActions.innerHTML = `
                 <span class="badge" style="background:rgba(34,197,94,0.16);color:#86efac;border:1px solid rgba(34,197,94,0.35);">${echapper(data.role)}</span>
                 <span class="texte-sm texte-secondaire">${echapper(nomAffiche || 'Utilisateur')}</span>
                 <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
             `;
-        }
+                }
 
-        if (data.role === 'ADMIN') {
-            const lienMesReservations = document.querySelector('.navbar-liens a.actif');
-            if (lienMesReservations) {
-                lienMesReservations.href = '/admin/users';
-                lienMesReservations.textContent = 'Admin users';
+                if (data.role === 'ADMIN') {
+                    const lienMesReservations = document.querySelector('.navbar-liens a.actif');
+                    if (lienMesReservations) {
+                        lienMesReservations.href = '/admin/users';
+                        lienMesReservations.textContent = 'Admin users';
+                    }
+                }
+            } catch (e) {
+                // Ignore navbar update errors
             }
         }
-    } catch (e) {
-        // Ignore navbar update errors
-    }
-}
 
-async function chargerNotifIndicator() {
-    const indicator = document.getElementById('notif-indicator');
-    if (!indicator) return;
+        async function chargerNotifIndicator() {
+            const indicator = document.getElementById('notif-indicator');
+            if (!indicator) return;
 
-    try {
-        const reponse = await fetch('/notifications/mes?format=json', {
-            credentials: 'include',
-            headers: { 'Accept': 'application/json' }
+            try {
+                const reponse = await fetch('/notifications/mes?format=json', {
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (!reponse.ok) {
+                    indicator.style.display = 'none';
+                    return;
+                }
+
+                const notifications = await reponse.json();
+                const unread = notifications.filter((n) => !n.dateLecture).length;
+                if (!unread) {
+                    indicator.style.display = 'none';
+                    indicator.textContent = '';
+                    return;
+                }
+
+                indicator.style.display = 'inline-flex';
+                indicator.textContent = unread > 99 ? '99+' : String(unread);
+            } catch (e) {
+                indicator.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            chargerReservations();
+            chargerNotifIndicator();
+            chargerSessionNavbar();
         });
 
-        if (!reponse.ok) {
-            indicator.style.display = 'none';
-            return;
-        }
-
-        const notifications = await reponse.json();
-        const unread = notifications.filter((n) => !n.dateLecture).length;
-        if (!unread) {
-            indicator.style.display = 'none';
-            indicator.textContent = '';
-            return;
-        }
-
-        indicator.style.display = 'inline-flex';
-        indicator.textContent = unread > 99 ? '99+' : String(unread);
-    } catch (e) {
-        indicator.style.display = 'none';
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    chargerReservations();
-    chargerNotifIndicator();
-    chargerSessionNavbar();
-});
-
-</script>
+    </script>
 
 </body>
+
 </html>

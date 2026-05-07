@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,321 +8,327 @@
     <title>Trajets disponibles — Same Trip</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
 
-<!-- ── Navigation ─────────────────────────────────────────────── -->
-<nav class="navbar" role="navigation" aria-label="Navigation principale">
-    <a href="/trajets" class="navbar-logo" id="nav-logo">
-        <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="24" r="24" fill="url(#gn)"/>
-            <path d="M14 28l6-10 4 6 3-4 7 8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="14" cy="29" r="2.5" fill="white"/>
-            <circle cx="34" cy="29" r="2.5" fill="white"/>
-            <defs>
-                <linearGradient id="gn" x1="0" y1="0" x2="48" y2="48">
-                    <stop offset="0%" stop-color="#7c3aed"/>
-                    <stop offset="100%" stop-color="#2563eb"/>
-                </linearGradient>
-            </defs>
-        </svg>
-        Same Trip
-    </a>
+    <!-- ── Navigation ─────────────────────────────────────────────── -->
+    <nav class="navbar" role="navigation" aria-label="Navigation principale">
+        <a href="/trajets" class="navbar-logo" id="nav-logo">
+            <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="24" fill="url(#gn)" />
+                <path d="M14 28l6-10 4 6 3-4 7 8" stroke="white" stroke-width="2.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <circle cx="14" cy="29" r="2.5" fill="white" />
+                <circle cx="34" cy="29" r="2.5" fill="white" />
+                <defs>
+                    <linearGradient id="gn" x1="0" y1="0" x2="48" y2="48">
+                        <stop offset="0%" stop-color="#7c3aed" />
+                        <stop offset="100%" stop-color="#2563eb" />
+                    </linearGradient>
+                </defs>
+            </svg>
+            Same Trip
+        </a>
 
-    <ul class="navbar-liens">
-        <li><a href="/trajets" id="nav-trajets" class="actif">Trajets</a></li>
-        <li><a href="/reservation/mes" id="nav-mes-reservations">Mes réservations</a></li>
-        <li><a href="/notifications" id="nav-notifications" class="nav-notifications">Notifications
-            <span id="notif-indicator" class="nav-indicator" style="display:none;"></span>
-        </a></li>
-    </ul>
+        <ul class="navbar-liens">
+            <li><a href="/trajets" id="nav-trajets" class="actif">Trajets</a></li>
+            <li><a href="/reservation/mes" id="nav-mes-reservations">Mes réservations</a></li>
+            <li><a href="/notifications" id="nav-notifications" class="nav-notifications">Notifications
+                    <span id="notif-indicator" class="nav-indicator" style="display:none;"></span>
+                </a></li>
+        </ul>
 
-    <div class="navbar-actions" id="navbar-actions">
-        <!-- Injecté dynamiquement selon la session -->
-        <a href="/login" id="nav-login" class="btn btn-secondaire btn-sm">Se connecter</a>
-        <a href="/inscription" id="nav-inscription" class="btn btn-primaire btn-sm">S'inscrire</a>
-    </div>
-</nav>
-
-<!-- ── Contenu principal ───────────────────────────────────────── -->
-<main class="page-principale">
-    <div class="conteneur" style="padding-top:2rem;padding-bottom:4rem;">
-
-        <!-- En-tête de section -->
-        <div class="titre-section animation-entree">
-            <h1>Trouver un trajet 🗺️</h1>
-            <p class="texte-secondaire mt-1">Voyagez malin, voyagez ensemble</p>
+        <div class="navbar-actions" id="navbar-actions">
+            <!-- Injecté dynamiquement selon la session -->
+            <a href="/login" id="nav-login" class="btn btn-secondaire btn-sm">Se connecter</a>
+            <a href="/inscription" id="nav-inscription" class="btn btn-primaire btn-sm">S'inscrire</a>
         </div>
+    </nav>
 
-        <!-- ── Barre de recherche ──────────────────────────────── -->
-        <div class="recherche-conteneur animation-entree delai-1">
-            <form id="form-recherche" style="display:contents;">
-                <div class="recherche-grille">
-                    <div class="form-groupe" style="margin-bottom:0;">
-                        <label for="rech-depart">Départ</label>
-                           <input type="text" id="rech-depart" name="depart"
-                               class="form-controle" placeholder="Ex : Tunis">
-                    </div>
-                    <div class="form-groupe" style="margin-bottom:0;">
-                        <label for="rech-arrivee">Arrivée</label>
-                           <input type="text" id="rech-arrivee" name="arrivee"
-                               class="form-controle" placeholder="Ex : Sfax">
-                    </div>
-                    <div class="form-groupe" style="margin-bottom:0;">
-                        <label for="rech-date">Date</label>
-                        <input type="date" id="rech-date" name="date" class="form-controle">
-                    </div>
-                    <div class="form-groupe" style="margin-bottom:0;">
-                        <label for="rech-places">Places</label>
-                        <select id="rech-places" name="places" class="form-controle">
-                            <option value="1">1 place</option>
-                            <option value="2">2 places</option>
-                            <option value="3">3 places</option>
-                            <option value="4">4 places</option>
-                            <option value="5">5 places</option>
-                            <option value="6">6 places</option>
-                            <option value="7">7 places</option>
-                            <option value="8">8 places</option>
-                        </select>
-                    </div>
-                    <div style="display:flex;gap:0.5rem;align-items:flex-end;">
-                        <button type="submit" id="btn-rechercher" class="btn btn-primaire">
-                            🔍 Chercher
-                        </button>
-                        <button type="button" id="btn-reset" class="btn btn-secondaire">✕</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+    <!-- ── Contenu principal ───────────────────────────────────────── -->
+    <main class="page-principale">
+        <div class="conteneur" style="padding-top:2rem;padding-bottom:4rem;">
 
-        <!-- ── Bouton proposer trajet (affiché si chauffeur) ──── -->
-        <div id="zone-chauffeur" style="display:none;margin-bottom:1.5rem;">
-            <button id="btn-proposer" class="btn btn-succes">
-                + Proposer un trajet
-            </button>
-        </div>
-
-        <!-- ── Résultats ───────────────────────────────────────── -->
-        <div id="zone-resultats">
-            <div class="chargement" id="chargement">
-                <div class="spinner"></div>
-                <span>Chargement des trajets...</span>
+            <!-- En-tête de section -->
+            <div class="titre-section animation-entree">
+                <h1>Trouver un trajet 🗺️</h1>
+                <p class="texte-secondaire mt-1">Voyagez malin, voyagez ensemble</p>
             </div>
-            <div class="trajets-grille" id="liste-trajets"></div>
-            <p id="aucun-trajet" style="display:none;text-align:center;padding:3rem;color:var(--texte-secondaire);">
-                😔 Aucun trajet trouvé pour ces critères. Essayez d'autres dates ou villes.
-            </p>
+
+            <!-- ── Barre de recherche ──────────────────────────────── -->
+            <div class="recherche-conteneur animation-entree delai-1">
+                <form id="form-recherche" style="display:contents;">
+                    <div class="recherche-grille">
+                        <div class="form-groupe" style="margin-bottom:0;">
+                            <label for="rech-depart">Départ</label>
+                            <input type="text" id="rech-depart" name="depart" class="form-controle"
+                                placeholder="Ex : Tunis">
+                        </div>
+                        <div class="form-groupe" style="margin-bottom:0;">
+                            <label for="rech-arrivee">Arrivée</label>
+                            <input type="text" id="rech-arrivee" name="arrivee" class="form-controle"
+                                placeholder="Ex : Sfax">
+                        </div>
+                        <div class="form-groupe" style="margin-bottom:0;">
+                            <label for="rech-date">Date</label>
+                            <input type="date" id="rech-date" name="date" class="form-controle">
+                        </div>
+                        <div class="form-groupe" style="margin-bottom:0;">
+                            <label for="rech-places">Places</label>
+                            <select id="rech-places" name="places" class="form-controle">
+                                <option value="1">1 place</option>
+                                <option value="2">2 places</option>
+                                <option value="3">3 places</option>
+                                <option value="4">4 places</option>
+                                <option value="5">5 places</option>
+                                <option value="6">6 places</option>
+                                <option value="7">7 places</option>
+                                <option value="8">8 places</option>
+                            </select>
+                        </div>
+                        <div style="display:flex;gap:0.5rem;align-items:flex-end;">
+                            <button type="submit" id="btn-rechercher" class="btn btn-primaire">
+                                🔍 Chercher
+                            </button>
+                            <button type="button" id="btn-reset" class="btn btn-secondaire">✕</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ── Bouton proposer trajet (affiché si chauffeur) ──── -->
+            <div id="zone-chauffeur" style="display:none;margin-bottom:1.5rem;">
+                <button id="btn-proposer" class="btn btn-succes">
+                    + Proposer un trajet
+                </button>
+            </div>
+
+            <!-- ── Résultats ───────────────────────────────────────── -->
+            <div id="zone-resultats">
+                <div class="chargement" id="chargement">
+                    <div class="spinner"></div>
+                    <span>Chargement des trajets...</span>
+                </div>
+                <div class="trajets-grille" id="liste-trajets"></div>
+                <p id="aucun-trajet" style="display:none;text-align:center;padding:3rem;color:var(--texte-secondaire);">
+                    😔 Aucun trajet trouvé pour ces critères. Essayez d'autres dates ou villes.
+                </p>
+            </div>
+
         </div>
+    </main>
 
-    </div>
-</main>
-
-<!-- ── Modal : Nouveau trajet ──────────────────────────────────── -->
-<div id="modal-trajet" style="display:none;position:fixed;inset:0;z-index:2000;
+    <!-- ── Modal : Nouveau trajet ──────────────────────────────────── -->
+    <div id="modal-trajet" style="display:none;position:fixed;inset:0;z-index:2000;
      background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);
      display:none;align-items:center;justify-content:center;padding:1rem;">
-    <div class="card" style="max-width:500px;width:100%;max-height:90vh;overflow-y:auto;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
-            <h2 style="font-size:1.25rem;">🚗 Proposer un trajet</h2>
-            <button id="btn-fermer-modal" style="background:none;border:none;color:var(--texte-secondaire);font-size:1.5rem;cursor:pointer;">×</button>
+        <div class="card" style="max-width:500px;width:100%;max-height:90vh;overflow-y:auto;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+                <h2 style="font-size:1.25rem;">🚗 Proposer un trajet</h2>
+                <button id="btn-fermer-modal"
+                    style="background:none;border:none;color:var(--texte-secondaire);font-size:1.5rem;cursor:pointer;">×</button>
+            </div>
+
+            <div id="modal-erreur" class="alerte alerte-erreur" style="display:none;"></div>
+            <div id="modal-succes" class="alerte alerte-succes" style="display:none;"></div>
+
+            <form id="form-nouveau-trajet">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div class="form-groupe">
+                        <label for="nv-depart">Ville de départ *</label>
+                        <input type="text" id="nv-depart" class="form-controle" placeholder="Tunis" required>
+                    </div>
+                    <div class="form-groupe">
+                        <label for="nv-arrivee">Ville d'arrivée *</label>
+                        <input type="text" id="nv-arrivee" class="form-controle" placeholder="Sousse" required>
+                    </div>
+                </div>
+                <div class="form-groupe">
+                    <label for="nv-date">Date et heure de départ *</label>
+                    <input type="datetime-local" id="nv-date" class="form-controle" required>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div class="form-groupe">
+                        <label for="nv-places">Nombre de places *</label>
+                        <select id="nv-places" class="form-controle" required>
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                        </select>
+                    </div>
+                    <div class="form-groupe">
+                        <label for="nv-prix">Prix / place (DT) *</label>
+                        <input type="number" id="nv-prix" class="form-controle" placeholder="15" min="0" max="500"
+                            step="0.5" required>
+                    </div>
+                </div>
+                <div class="form-groupe">
+                    <label for="nv-vehicule">Description du véhicule</label>
+                    <input type="text" id="nv-vehicule" class="form-controle"
+                        placeholder="Ex : Peugeot 308 grise — 123 TN 4567">
+                </div>
+                <button type="submit" id="btn-soumettre-trajet" class="btn btn-primaire w-full">
+                    Publier le trajet
+                </button>
+            </form>
         </div>
+    </div>
 
-        <div id="modal-erreur" class="alerte alerte-erreur" style="display:none;"></div>
-        <div id="modal-succes" class="alerte alerte-succes" style="display:none;"></div>
+    <!-- ── Modal : Réserver un trajet ───────────────────────────── -->
+    <div id="modal-reservation" style="display:none;position:fixed;inset:0;z-index:2100;
+     background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);
+     align-items:center;justify-content:center;padding:1rem;">
+        <div class="card" style="max-width:460px;width:100%;max-height:90vh;overflow-y:auto;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <h2 style="font-size:1.2rem;">🎟 Réserver ce trajet</h2>
+                <button id="btn-fermer-modal-reservation"
+                    style="background:none;border:none;color:var(--texte-secondaire);font-size:1.5rem;cursor:pointer;">×</button>
+            </div>
 
-        <form id="form-nouveau-trajet">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div id="reservation-erreur" class="alerte alerte-erreur" style="display:none;"></div>
+
+            <p id="reservation-trajet-resume" class="texte-secondaire" style="margin-bottom:1rem;"></p>
+
+            <form id="form-reservation">
                 <div class="form-groupe">
-                    <label for="nv-depart">Ville de départ *</label>
-                    <input type="text" id="nv-depart" class="form-controle" placeholder="Tunis" required>
+                    <label for="reservation-places">Nombre de places</label>
+                    <select id="reservation-places" class="form-controle" required></select>
                 </div>
+
                 <div class="form-groupe">
-                    <label for="nv-arrivee">Ville d'arrivée *</label>
-                    <input type="text" id="nv-arrivee" class="form-controle" placeholder="Sousse" required>
-                </div>
-            </div>
-            <div class="form-groupe">
-                <label for="nv-date">Date et heure de départ *</label>
-                <input type="datetime-local" id="nv-date" class="form-controle" required>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-                <div class="form-groupe">
-                    <label for="nv-places">Nombre de places *</label>
-                    <select id="nv-places" class="form-controle" required>
-                        <option value="1">1</option>
-                        <option value="2" selected>2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
+                    <label for="reservation-methode">Mode de paiement</label>
+                    <select id="reservation-methode" class="form-controle" required>
+                        <option value="CARTE_BANCAIRE">Carte bancaire</option>
+                        <option value="PAYPAL">PayPal</option>
+                        <option value="VIREMENT">Virement</option>
                     </select>
                 </div>
-                <div class="form-groupe">
-                    <label for="nv-prix">Prix / place (DT) *</label>
-                    <input type="number" id="nv-prix" class="form-controle"
-                           placeholder="15" min="0" max="500" step="0.5" required>
+
+                <p id="reservation-montant" class="texte-secondaire" style="margin-bottom:1rem;"></p>
+
+                <button type="submit" id="btn-confirmer-reservation" class="btn btn-primaire w-full">
+                    Confirmer la réservation
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ── Modal : Profil chauffeur ───────────────────────────── -->
+    <div id="modal-profil" style="display:none;position:fixed;inset:0;z-index:2200;
+     background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);
+     align-items:center;justify-content:center;padding:1rem;">
+        <div class="card" style="max-width:520px;width:100%;max-height:90vh;overflow-y:auto;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <h2 style="font-size:1.2rem;">Profil chauffeur</h2>
+                <button id="btn-fermer-modal-profil"
+                    style="background:none;border:none;color:var(--texte-secondaire);font-size:1.5rem;cursor:pointer;">×</button>
+            </div>
+
+            <div id="profil-erreur" class="alerte alerte-erreur" style="display:none;"></div>
+
+            <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem;">
+                <div class="avatar" id="profil-avatar" style="width:44px;height:44px;font-size:1rem;"></div>
+                <div>
+                    <p class="semi-gras" id="profil-nom"></p>
+                    <p class="texte-xs texte-secondaire" id="profil-note"></p>
                 </div>
             </div>
-            <div class="form-groupe">
-                <label for="nv-vehicule">Description du véhicule</label>
-                          <input type="text" id="nv-vehicule" class="form-controle"
-                              placeholder="Ex : Peugeot 308 grise — 123 TN 4567">
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+                <div class="form-groupe" style="margin-bottom:0;">
+                    <label>Telephone</label>
+                    <div class="form-controle" id="profil-telephone" style="display:flex;align-items:center;"></div>
+                </div>
+                <div class="form-groupe" style="margin-bottom:0;">
+                    <label>Email</label>
+                    <div class="form-controle" id="profil-email" style="display:flex;align-items:center;"></div>
+                </div>
             </div>
-            <button type="submit" id="btn-soumettre-trajet" class="btn btn-primaire w-full">
-                Publier le trajet
-            </button>
-        </form>
+
+        </div>
     </div>
-</div>
 
-<!-- ── Modal : Réserver un trajet ───────────────────────────── -->
-<div id="modal-reservation" style="display:none;position:fixed;inset:0;z-index:2100;
-     background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);
-     align-items:center;justify-content:center;padding:1rem;">
-    <div class="card" style="max-width:460px;width:100%;max-height:90vh;overflow-y:auto;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-            <h2 style="font-size:1.2rem;">🎟 Réserver ce trajet</h2>
-            <button id="btn-fermer-modal-reservation" style="background:none;border:none;color:var(--texte-secondaire);font-size:1.5rem;cursor:pointer;">×</button>
-        </div>
+    <!-- ── Pied de page ────────────────────────────────────────────── -->
+    <footer class="footer">
+        <p>© 2026 Same Trip — Voyagez ensemble, voyagez malin 🌍</p>
+    </footer>
 
-        <div id="reservation-erreur" class="alerte alerte-erreur" style="display:none;"></div>
+    <script src="/js/trajets.js?v=20260506-dt"></script>
+    <script>
+        function echapper(v) {
+            if (v == null) return '';
+            return String(v)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
 
-        <p id="reservation-trajet-resume" class="texte-secondaire" style="margin-bottom:1rem;"></p>
+        async function chargerSessionNavbar() {
+            try {
+                const reponse = await fetch('/session/me', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
 
-        <form id="form-reservation">
-            <div class="form-groupe">
-                <label for="reservation-places">Nombre de places</label>
-                <select id="reservation-places" class="form-controle" required></select>
-            </div>
+                if (!reponse.ok) return;
+                const data = await reponse.json();
+                if (!data.connecte) return;
 
-            <div class="form-groupe">
-                <label for="reservation-methode">Mode de paiement</label>
-                <select id="reservation-methode" class="form-controle" required>
-                    <option value="CARTE_BANCAIRE">Carte bancaire</option>
-                    <option value="PAYPAL">PayPal</option>
-                    <option value="VIREMENT">Virement</option>
-                </select>
-            </div>
-
-            <p id="reservation-montant" class="texte-secondaire" style="margin-bottom:1rem;"></p>
-
-            <button type="submit" id="btn-confirmer-reservation" class="btn btn-primaire w-full">
-                Confirmer la réservation
-            </button>
-        </form>
-    </div>
-</div>
-
-<!-- ── Modal : Profil chauffeur ───────────────────────────── -->
-<div id="modal-profil" style="display:none;position:fixed;inset:0;z-index:2200;
-     background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);
-     align-items:center;justify-content:center;padding:1rem;">
-    <div class="card" style="max-width:520px;width:100%;max-height:90vh;overflow-y:auto;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-            <h2 style="font-size:1.2rem;">Profil chauffeur</h2>
-            <button id="btn-fermer-modal-profil" style="background:none;border:none;color:var(--texte-secondaire);font-size:1.5rem;cursor:pointer;">×</button>
-        </div>
-
-        <div id="profil-erreur" class="alerte alerte-erreur" style="display:none;"></div>
-
-        <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem;">
-            <div class="avatar" id="profil-avatar" style="width:44px;height:44px;font-size:1rem;"></div>
-            <div>
-                <p class="semi-gras" id="profil-nom"></p>
-                <p class="texte-xs texte-secondaire" id="profil-note"></p>
-            </div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
-            <div class="form-groupe" style="margin-bottom:0;">
-                <label>Telephone</label>
-                <div class="form-controle" id="profil-telephone" style="display:flex;align-items:center;"></div>
-            </div>
-            <div class="form-groupe" style="margin-bottom:0;">
-                <label>Email</label>
-                <div class="form-controle" id="profil-email" style="display:flex;align-items:center;"></div>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-<!-- ── Pied de page ────────────────────────────────────────────── -->
-<footer class="footer">
-    <p>© 2025 Same Trip — Voyagez ensemble, voyagez malin 🌍</p>
-</footer>
-
-<script src="/js/trajets.js?v=20260506-dt"></script>
-<script>
-function echapper(v) {
-    if (v == null) return '';
-    return String(v)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
-
-async function chargerSessionNavbar() {
-    try {
-        const reponse = await fetch('/session/me', {
-            method: 'GET',
-            credentials: 'include',
-            headers: { 'Accept': 'application/json' }
-        });
-
-        if (!reponse.ok) return;
-        const data = await reponse.json();
-        if (!data.connecte) return;
-
-        const zoneActions = document.getElementById('navbar-actions');
-        const nomAffiche = [data.prenom, data.nom].filter(Boolean).join(' ').trim();
-        if (zoneActions) {
-            zoneActions.innerHTML = `
+                const zoneActions = document.getElementById('navbar-actions');
+                const nomAffiche = [data.prenom, data.nom].filter(Boolean).join(' ').trim();
+                if (zoneActions) {
+                    zoneActions.innerHTML = `
                 <span class="badge" style="background:rgba(34,197,94,0.16);color:#86efac;border:1px solid rgba(34,197,94,0.35);">${echapper(data.role || '')}</span>
                 <span class="texte-sm texte-secondaire">${echapper(nomAffiche || 'Utilisateur')}</span>
                 <a href="/logout" class="btn btn-secondaire btn-sm">Deconnexion</a>
             `;
-        }
-    } catch (e) {
-        // Ignore navbar update errors
-    }
-}
-
-async function chargerNotifIndicator() {
-    const indicator = document.getElementById('notif-indicator');
-    if (!indicator) return;
-
-    try {
-        const reponse = await fetch('/notifications/mes?format=json', {
-            credentials: 'include',
-            headers: { 'Accept': 'application/json' }
-        });
-
-        if (!reponse.ok) {
-            indicator.style.display = 'none';
-            return;
+                }
+            } catch (e) {
+                // Ignore navbar update errors
+            }
         }
 
-        const notifications = await reponse.json();
-        const unread = notifications.filter((n) => !n.dateLecture).length;
-        if (!unread) {
-            indicator.style.display = 'none';
-            indicator.textContent = '';
-            return;
+        async function chargerNotifIndicator() {
+            const indicator = document.getElementById('notif-indicator');
+            if (!indicator) return;
+
+            try {
+                const reponse = await fetch('/notifications/mes?format=json', {
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (!reponse.ok) {
+                    indicator.style.display = 'none';
+                    return;
+                }
+
+                const notifications = await reponse.json();
+                const unread = notifications.filter((n) => !n.dateLecture).length;
+                if (!unread) {
+                    indicator.style.display = 'none';
+                    indicator.textContent = '';
+                    return;
+                }
+
+                indicator.style.display = 'inline-flex';
+                indicator.textContent = unread > 99 ? '99+' : String(unread);
+            } catch (e) {
+                indicator.style.display = 'none';
+            }
         }
 
-        indicator.style.display = 'inline-flex';
-        indicator.textContent = unread > 99 ? '99+' : String(unread);
-    } catch (e) {
-        indicator.style.display = 'none';
-    }
-}
-
-document.addEventListener('DOMContentLoaded', chargerNotifIndicator);
-document.addEventListener('DOMContentLoaded', chargerSessionNavbar);
-</script>
+        document.addEventListener('DOMContentLoaded', chargerNotifIndicator);
+        document.addEventListener('DOMContentLoaded', chargerSessionNavbar);
+    </script>
 </body>
+
 </html>
