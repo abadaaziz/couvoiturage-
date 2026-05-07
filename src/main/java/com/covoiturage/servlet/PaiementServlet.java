@@ -17,13 +17,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Optional;
 
-/**
- * Servlet gérant le traitement des paiements.
- *
- * <ul>
- *   <li>POST /paiement → traitement du paiement d'une réservation</li>
- * </ul>
- */
+
 @WebServlet("/paiement")
 public class PaiementServlet extends HttpServlet {
 
@@ -38,12 +32,9 @@ public class PaiementServlet extends HttpServlet {
         this.reservationService = new ReservationService();
     }
 
-    // ── POST /paiement ────────────────────────────────────────────────────────
 
-    /**
-     * Traite le paiement d'une réservation.
-     * Paramètres attendus : reservationId, methodePaiement
-     */
+
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -67,9 +58,9 @@ public class PaiementServlet extends HttpServlet {
         try {
             int reservationId = Integer.parseInt(reservationIdStr);
 
-            // Récupération de la réservation
-            // Note : en production, utiliser un ReservationDAO directement
-            // Ici, on délègue à une méthode du service
+
+
+
             Optional<Reservation> opt = reservationService
                 .listerReservationsPassager(utilisateur.getId())
                 .stream()
@@ -84,19 +75,19 @@ public class PaiementServlet extends HttpServlet {
 
             Reservation reservation = opt.get();
 
-            // Vérification que la réservation appartient bien à l'utilisateur connecté
+
             if (reservation.getPassager().getId() != utilisateur.getId()) {
                 envoyerErreurJson(response, HttpServletResponse.SC_FORBIDDEN,
                     "Vous n'êtes pas autorisé à payer cette réservation.");
                 return;
             }
 
-            // Méthode de paiement
+
             MethodePaiement methode = methodeStr != null
                 ? MethodePaiement.valueOf(methodeStr.toUpperCase())
                 : MethodePaiement.CARTE_BANCAIRE;
 
-            // Traitement du paiement (autorisation + capture)
+
             String reference = paiementService.payer(
                 reservation, reservation.getMontantTotal(), methode
             );
@@ -121,9 +112,9 @@ public class PaiementServlet extends HttpServlet {
         }
     }
 
-    // ── GET /paiement ─────────────────────────────────────────────────────────
 
-    /** Affiche la page de paiement */
+
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -139,7 +130,7 @@ public class PaiementServlet extends HttpServlet {
         request.getRequestDispatcher("/views/paiement.html").forward(request, response);
     }
 
-    // ── Méthodes privées ──────────────────────────────────────────────────────
+
 
     private void envoyerErreurJson(HttpServletResponse response, int statut, String message)
             throws IOException {

@@ -1,9 +1,4 @@
-/**
- * custom-select.js
- * Remplace chaque <select class="form-controle"> par un menu déroulant
- * entièrement stylisable. Le <select> natif reste caché et synchronisé
- * (select.value continue de fonctionner pour toute la logique existante).
- */
+
 (function () {
     'use strict';
 
@@ -32,11 +27,11 @@
         if (select.dataset.csInit === '1') return;
         select.dataset.csInit = '1';
 
-        /* ── Wrapper ────────────────────────────────────────────── */
+        
         const wrapper = document.createElement('div');
         wrapper.className = 'cs-wrapper';
 
-        // Préserver les styles inline (ex. max-width:120px)
+
         if (select.style.maxWidth) wrapper.style.maxWidth = select.style.maxWidth;
         if (select.style.width)    wrapper.style.width    = select.style.width;
 
@@ -47,7 +42,7 @@
         select.setAttribute('aria-hidden', 'true');
         wrapper.appendChild(select);
 
-        /* ── Bouton déclencheur ─────────────────────────────────── */
+        
         const trigger = document.createElement('button');
         trigger.className = 'cs-trigger';
         trigger.type = 'button';
@@ -57,7 +52,7 @@
         trigger.setAttribute('tabindex', '0');
         wrapper.appendChild(trigger);
 
-        /* ── Panneau des options ─────────────────────────────────── */
+        
         const panel = document.createElement('div');
         panel.className = 'cs-panel';
         panel.setAttribute('role', 'listbox');
@@ -65,7 +60,7 @@
 
         let isOpen = false;
 
-        /* ── Rendu des options ───────────────────────────────────── */
+        
         function choisirIndex(index) {
             const opt = select.options[index];
             if (!opt || opt.disabled) return;
@@ -111,7 +106,7 @@
             trigger.disabled = select.disabled;
             trigger.setAttribute('aria-disabled', String(select.disabled));
             trigger.setAttribute('tabindex', select.disabled ? '-1' : '0');
-            // Mettre à jour la classe selected dans le panel
+
             panel.querySelectorAll('.cs-option').forEach((item) => {
                 const selected = Number(item.dataset.idx) === select.selectedIndex;
                 item.classList.toggle('cs-option--selected', selected);
@@ -119,7 +114,7 @@
             });
         }
 
-        /* ── Ouverture / fermeture ────────────────────────────────── */
+        
         function open() {
             if (select.disabled) return;
             if (isOpen) return;
@@ -128,7 +123,7 @@
             wrapper.classList.add('cs-open');
             trigger.setAttribute('aria-expanded', 'true');
             renderOptions();
-            // Ouvrir vers le haut si pas de place en bas
+
             const rect = wrapper.getBoundingClientRect();
             const spaceBelow = window.innerHeight - rect.bottom;
             if (spaceBelow < 210) {
@@ -147,7 +142,7 @@
             trigger.setAttribute('aria-expanded', 'false');
         }
 
-        /* ── Événements ──────────────────────────────────────────── */
+        
         trigger.addEventListener('click', (e) => {
             e.stopPropagation();
             if (select.disabled) return;
@@ -204,18 +199,18 @@
 
         select.addEventListener('change', syncTrigger);
 
-        // Observer: re-sync si les <option> changent dynamiquement
+
         new MutationObserver(() => {
             renderOptions();
             syncTrigger();
         }).observe(select, { childList: true, subtree: true, attributes: true });
 
-        // Init initiale
+
         renderOptions();
         syncTrigger();
     }
 
-    /** Initialise tous les select.form-controle dans un conteneur donné */
+    
     function initAll(root) {
         (root || document).querySelectorAll('select.form-controle:not([data-cs-init])').forEach(initCustomSelect);
     }
@@ -235,7 +230,7 @@
         }
     }
 
-    // Auto-init au chargement de la page, puis une passe courte pour les scripts diffÃ©rÃ©s
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', start);
     } else {
@@ -244,7 +239,7 @@
     window.addEventListener('load', start);
     setTimeout(start, 0);
 
-    // Exposition globale pour les selects créés dynamiquement
+
     window.initCustomSelects  = initAll;
     window.initCustomSelect   = initCustomSelect;
     window.syncCustomSelect   = function (select) {

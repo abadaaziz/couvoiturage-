@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * DAO pour l'entité {@link Paiement}. JDBC pur.
- */
+
 public class PaiementDAO {
 
     private static final String SQL_INSERT =
@@ -33,7 +31,7 @@ public class PaiementDAO {
         "UPDATE paiements SET statut=?, date_capture=?, date_remboursement=?, " +
         "montant_rembourse=?, message_erreur=? WHERE id=?";
 
-    // ── Méthodes CRUD ─────────────────────────────────────────────────────────
+
 
     public Paiement inserer(Paiement paiement) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -93,9 +91,7 @@ public class PaiementDAO {
         return Optional.empty();
     }
 
-    /**
-     * Met à jour le statut et les dates associées d'un paiement.
-     */
+    
     public void mettreAJourStatut(Paiement paiement) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_STATUT)) {
@@ -112,13 +108,13 @@ public class PaiementDAO {
         }
     }
 
-    // ── Mapping ───────────────────────────────────────────────────────────────
+
 
     private Paiement mapperResultSet(ResultSet rs) throws SQLException {
         Paiement p = new Paiement();
         p.setId(rs.getInt("id"));
 
-        // Association minimale à la réservation (hydratation par l'id uniquement)
+
         Reservation reservation = new Reservation();
         reservation.setId(rs.getInt("reservation_id"));
         p.setReservation(reservation);

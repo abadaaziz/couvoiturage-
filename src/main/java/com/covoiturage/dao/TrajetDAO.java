@@ -15,9 +15,7 @@ import com.covoiturage.model.Trajet;
 import com.covoiturage.model.Trajet.StatutTrajet;
 import com.covoiturage.util.DatabaseConnection;
 
-/**
- * DAO pour l'entité {@link Trajet}. JDBC pur, aucun ORM.
- */
+
 public class TrajetDAO {
 
     private static final String SQL_INSERT =
@@ -60,11 +58,9 @@ public class TrajetDAO {
     private static final String SQL_UPDATE_PLACES =
         "UPDATE trajets SET places_disponibles=?, statut=? WHERE id=?";
 
-    // ── Méthodes CRUD ─────────────────────────────────────────────────────────
 
-    /**
-     * Insère un trajet en base et retourne l'objet avec l'id généré.
-     */
+
+    
     public Trajet inserer(Trajet trajet) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
@@ -89,9 +85,7 @@ public class TrajetDAO {
         return trajet;
     }
 
-    /**
-     * Recherche un trajet par son id.
-     */
+    
     public Optional<Trajet> trouverParId(int id) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_SELECT_BY_ID)) {
@@ -104,9 +98,7 @@ public class TrajetDAO {
         return Optional.empty();
     }
 
-    /**
-     * Retourne tous les trajets ouverts et futurs.
-     */
+    
     public List<Trajet> trouverDisponibles() throws SQLException {
         List<Trajet> liste = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -118,14 +110,7 @@ public class TrajetDAO {
         return liste;
     }
 
-    /**
-     * Recherche des trajets avec filtres (ville départ, arrivée, date, places min).
-     *
-     * @param villeDepart  Ville de départ (partielle, ex: "Par" → "Paris")
-     * @param villeArrivee Ville d'arrivée
-     * @param date         Date du trajet (format "yyyy-MM-dd")
-     * @param placesMin    Nombre minimum de places requises
-     */
+    
     public List<Trajet> rechercher(String villeDepart, String villeArrivee,
                                     String date, int placesMin) throws SQLException {
         List<Trajet> liste = new ArrayList<>();
@@ -144,12 +129,7 @@ public class TrajetDAO {
         return liste;
     }
 
-    /**
-     * Recherche flexible avec filtres optionnels.
-     * - depart/arrivee: LIKE si renseigne
-     * - date: egalite sur la date si renseignee (yyyy-MM-dd)
-     * - placesMin: filtre si non nul
-     */
+    
     public List<Trajet> rechercherFlexible(String villeDepart, String villeArrivee,
                                            String date, Integer placesMin) throws SQLException {
         List<Trajet> liste = new ArrayList<>();
@@ -190,9 +170,7 @@ public class TrajetDAO {
         return liste;
     }
 
-    /**
-     * Retourne tous les trajets proposés par un chauffeur donné.
-     */
+    
     public List<Trajet> trouverParChauffeur(int chauffeurId) throws SQLException {
         List<Trajet> liste = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -206,9 +184,7 @@ public class TrajetDAO {
         return liste;
     }
 
-    /**
-     * Met à jour le statut d'un trajet (ANNULE, TERMINE, etc.).
-     */
+    
     public void mettreAJourStatut(int trajetId, StatutTrajet statut) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_STATUT)) {
@@ -219,13 +195,7 @@ public class TrajetDAO {
         }
     }
 
-    /**
-     * Met à jour le nombre de places disponibles et le statut en une seule requête atomique.
-     *
-     * @param trajetId          Identifiant du trajet
-     * @param placesDisponibles Nouveau nombre de places disponibles
-     * @param statut            Nouveau statut calculé
-     */
+    
     public void mettreAJourPlaces(int trajetId, int placesDisponibles, StatutTrajet statut)
             throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -238,7 +208,7 @@ public class TrajetDAO {
         }
     }
 
-    // ── Mapping ResultSet → Trajet ────────────────────────────────────────────
+
 
     private Trajet mapperResultSet(ResultSet rs) throws SQLException {
         Trajet t = new Trajet();
@@ -253,7 +223,7 @@ public class TrajetDAO {
         t.setDescriptionVehicule(rs.getString("description_vehicule"));
         t.setDateCreation(rs.getTimestamp("date_creation").toLocalDateTime());
 
-        // Hydratation minimale du chauffeur (sans récursion)
+
         Chauffeur chauffeur = new Chauffeur();
         chauffeur.setId(rs.getInt("chauffeur_id"));
         chauffeur.setNom(rs.getString("nom"));

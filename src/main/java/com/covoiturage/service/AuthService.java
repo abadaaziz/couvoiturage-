@@ -16,15 +16,10 @@ import com.covoiturage.model.Utilisateur;
 import com.covoiturage.model.Utilisateur.StatutCompte;
 import com.covoiturage.util.PasswordUtils;
 
-/**
- * Service d'authentification et de gestion des comptes.
- * <p>
- * Responsabilité unique (SRP) : tout ce qui concerne l'identité utilisateur.
- * </p>
- */
+
 public class AuthService {
 
-    /** Taille minimale du mot de passe */
+    
     private static final int LONGUEUR_MIN_MDP = 8;
     private static final int MAX_TENTATIVES_CONNEXION = 5;
 
@@ -34,55 +29,37 @@ public class AuthService {
         this.utilisateurDAO = new UtilisateurDAO();
     }
 
-    /** Constructeur pour injection de dépendance (tests unitaires) */
+    
     public AuthService(UtilisateurDAO utilisateurDAO) {
         this.utilisateurDAO = utilisateurDAO;
     }
 
-    // ── Méthodes publiques ────────────────────────────────────────────────────
 
-    /**
-     * Crée un nouveau compte utilisateur.
-     * <ol>
-     *   <li>Vérifie que l'email n'est pas déjà utilisé</li>
-     *   <li>Valide la robustesse du mot de passe</li>
-     *   <li>Hache le mot de passe avant persistance</li>
-     *   <li>Enregistre le compte avec statut EN_ATTENTE_VALIDATION</li>
-     * </ol>
-     *
-     * @param nom           Nom de famille
-     * @param prenom        Prénom
-     * @param email         Adresse email (doit être unique)
-     * @param motDePasse    Mot de passe en clair (sera haché)
-     * @param telephone     Numéro de téléphone
-    * @param role          Rôle choisi (PASSAGER ou CHAUFFEUR)
-     * @return Utilisateur créé avec son id généré
-     * @throws IllegalArgumentException si les données sont invalides
-     * @throws RuntimeException si l'email est déjà pris ou erreur SQL
-     */
+
+    
     public Utilisateur creerCompte(String nom, String prenom, String email,
                                    String motDePasse, String telephone, String role) {
-        // ── Validations ──────────────────────────────────────────────────────
+
         validerEmail(email);
         validerMotDePasse(motDePasse);
         validerNomPrenom(nom, prenom);
 
         try {
-            // Vérification unicité de l'email
+
             if (utilisateurDAO.emailExiste(email)) {
                 throw new IllegalArgumentException(
                     "Un compte avec l'adresse email '" + email + "' existe déjà.");
             }
 
-            // Hachage du mot de passe (ne jamais stocker en clair)
+
             String hashMdp = PasswordUtils.hacher(motDePasse);
 
-            // Création de l'entité avec le bon type métier
-            Utilisateur utilisateur = creerUtilisateurSelonRole(nom, prenom, email, hashMdp, telephone, role);
-            utilisateur.setStatutCompte(StatutCompte.ACTIF); // activation directe pour la démo
-            // En production : StatutCompte.EN_ATTENTE_VALIDATION + envoi email confirmation
 
-            // Persistance
+            Utilisateur utilisateur = creerUtilisateurSelonRole(nom, prenom, email, hashMdp, telephone, role);
+            utilisateur.setStatutCompte(StatutCompte.ACTIF);
+
+
+
             return utilisateurDAO.inserer(utilisateur);
 
         } catch (SQLException e) {
@@ -90,19 +67,11 @@ public class AuthService {
         }
     }
 
-    /**
-     * Authentifie un utilisateur par email et mot de passe.
-     *
-     * @param email      Adresse email
-     * @param motDePasse Mot de passe en clair saisi
-     * @return Utilisateur authentifié
-     * @throws AuthenticationException   si les identifiants sont incorrects ou le compte invalide
-     * @throws UtilisateurSuspenduException si le compte est suspendu/bloqué
-     */
+    
     public Utilisateur authentifier(String email, String motDePasse)
             throws AuthenticationException, UtilisateurSuspenduException {
         try {
-            // Recherche par email
+
             Optional<Utilisateur> optUtilisateur = utilisateurDAO.trouverParEmail(email);
             if (optUtilisateur.isEmpty()) {
                 throw new AuthenticationException(Raison.EMAIL_INCONNU,
@@ -111,7 +80,7 @@ public class AuthService {
 
             Utilisateur utilisateur = optUtilisateur.get();
 
-            // Vérification du statut du compte
+
             if (utilisateur.getStatutCompte() == StatutCompte.BLOQUE) {
                 throw new AuthenticationException(Raison.COMPTE_BLOQUE,
                     "Votre compte a été définitivement bloqué. Contactez l'administration.");
@@ -124,7 +93,7 @@ public class AuthService {
                     "Votre compte n'a pas encore été validé. Vérifiez votre email.");
             }
 
-            // Vérification du mot de passe
+
             if (!PasswordUtils.verifier(motDePasse, utilisateur.getMotDePasseHash())) {
                 int tentatives = utilisateurDAO.incrementerTentativesConnexionEchouees(utilisateur.getId());
                 int tentativesRestantes = MAX_TENTATIVES_CONNEXION - tentatives;
@@ -138,7 +107,7 @@ public class AuthService {
                     " tentative(s) avant suspension.");
             }
 
-            // Mise à jour de la dernière connexion
+
             LocalDateTime maintenant = LocalDateTime.now();
             utilisateur.setDerniereConnexion(maintenant);
             utilisateurDAO.mettreAJourDerniereConnexion(utilisateur.getId(), maintenant);
@@ -152,24 +121,13 @@ public class AuthService {
         }
     }
 
-    /**
-     * Invalide la session de l'utilisateur.
-     * La gestion effective de la session HTTP est faite dans le servlet.
-     *
-     * @param utilisateurId Identifiant de l'utilisateur à déconnecter
-     */
+    
     public void deconnecter(int utilisateurId) {
-        // Ici on pourrait invalider un token ou logguer la déconnexion
+
         System.out.println("[AuthService] Déconnexion de l'utilisateur #" + utilisateurId);
     }
 
-    /**
-     * Suspend temporairement un compte utilisateur.
-     *
-     * @param utilisateurId Identifiant de l'utilisateur à suspendre
-     * @param adminId       Identifiant de l'administrateur qui effectue l'action
-     * @throws RuntimeException si l'utilisateur n'existe pas ou erreur SQL
-     */
+    
     public void suspendreCompte(int utilisateurId, int adminId) {
         try {
             Optional<Utilisateur> opt = utilisateurDAO.trouverParId(utilisateurId);
@@ -184,12 +142,7 @@ public class AuthService {
         }
     }
 
-    /**
-     * Bloque définitivement un compte utilisateur (action admin irréversible).
-     *
-     * @param utilisateurId Identifiant de l'utilisateur à bloquer
-     * @param adminId       Identifiant de l'administrateur
-     */
+    
     public void bloquerUtilisateur(int utilisateurId, int adminId) {
         try {
             Optional<Utilisateur> opt = utilisateurDAO.trouverParId(utilisateurId);
@@ -204,12 +157,7 @@ public class AuthService {
         }
     }
 
-    /**
-     * Réactive un compte suspendu ou bloqué.
-     *
-     * @param utilisateurId Identifiant de l'utilisateur à réactiver
-     * @param adminId       Identifiant de l'administrateur
-     */
+    
     public void reactiverCompte(int utilisateurId, int adminId) {
         try {
             Optional<Utilisateur> opt = utilisateurDAO.trouverParId(utilisateurId);
@@ -225,9 +173,7 @@ public class AuthService {
         }
     }
 
-    /**
-     * Retourne la liste de tous les utilisateurs (usage admin uniquement).
-     */
+    
     public List<Utilisateur> listerTousLesUtilisateurs() {
         try {
             return utilisateurDAO.trouverTous();
@@ -236,9 +182,7 @@ public class AuthService {
         }
     }
 
-    /**
-     * Retourne la liste des utilisateurs bloqués (usage admin uniquement).
-     */
+    
     public List<Utilisateur> listerUtilisateursBloques() {
         try {
             return utilisateurDAO.trouverParStatut(StatutCompte.BLOQUE);
@@ -247,9 +191,7 @@ public class AuthService {
         }
     }
 
-    /**
-     * Recherche un utilisateur par son id.
-     */
+    
     public Optional<Utilisateur> trouverParId(int id) {
         try {
             return utilisateurDAO.trouverParId(id);
@@ -258,7 +200,7 @@ public class AuthService {
         }
     }
 
-    // ── Validations privées ───────────────────────────────────────────────────
+
 
     private void validerEmail(String email) {
         if (email == null || !email.matches("^[\\w._%+\\-]+@[\\w.\\-]+\\.[a-zA-Z]{2,}$")) {

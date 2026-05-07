@@ -15,9 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/**
- * Servlet pour les notifications in-app.
- */
+
 @WebServlet(urlPatterns = {
     "/notifications", "/notifications/mes", "/notifications/lu", "/notifications/lu-tout",
     "/notifications/supprimer"

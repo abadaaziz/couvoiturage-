@@ -1,8 +1,6 @@
 package com.covoiturage.exception;
 
-/**
- * Lancée lorsqu'un trajet n'a plus de places disponibles.
- */
+
 public class TrajetCompletException extends Exception {
 
     private final int trajetId;

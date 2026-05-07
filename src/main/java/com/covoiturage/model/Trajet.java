@@ -6,27 +6,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Entité représentant un trajet de covoiturage proposé par un chauffeur.
- * <p>
- * Règle métier clé : dès que la dernière place disponible est réservée,
- * le statut passe automatiquement à {@link StatutTrajet#COMPLET}.
- * </p>
- */
+
 public class Trajet implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // ── Énumération du statut ─────────────────────────────────────────────────
+
 
     public enum StatutTrajet {
-        OUVERT,    // places disponibles
-        COMPLET,   // plus de place
-        ANNULE,    // annulé par le chauffeur
-        TERMINE    // trajet effectué
+        OUVERT,
+        COMPLET,
+        ANNULE,
+        TERMINE
     }
 
-    // ── Champs privés ─────────────────────────────────────────────────────────
+
 
     private int    id;
     private String villeDepart;
@@ -34,26 +28,18 @@ public class Trajet implements Serializable {
     private LocalDateTime dateHeureDepart;
     private int           placesTotal;
     private int           placesDisponibles;
-    private double        prixParPlace;     // en dinars tunisiens
+    private double        prixParPlace;
     private StatutTrajet  statut;
     private Chauffeur     chauffeur;
     private String        descriptionVehicule;
     private LocalDateTime dateCreation;
 
-    /** Liste des réservations liées à ce trajet (copie défensive à chaque accès) */
+    
     private final List<Reservation> reservations = new ArrayList<>();
 
-    // ── Constructeur complet ──────────────────────────────────────────────────
 
-    /**
-     * @param villeDepart        Ville de départ
-     * @param villeArrivee       Ville d'arrivée
-     * @param dateHeureDepart    Date et heure du départ
-     * @param placesTotal        Nombre total de places proposées
-     * @param prixParPlace       Prix par place en dinars tunisiens
-     * @param chauffeur          Chauffeur qui propose le trajet
-     * @param descriptionVehicule Description du véhicule (marque, couleur, immat.)
-     */
+
+    
     public Trajet(String villeDepart, String villeArrivee,
                   LocalDateTime dateHeureDepart, int placesTotal,
                   double prixParPlace, Chauffeur chauffeur,
@@ -69,7 +55,7 @@ public class Trajet implements Serializable {
         this.villeArrivee         = Objects.requireNonNull(villeArrivee, "La ville d'arrivée est obligatoire");
         this.dateHeureDepart      = Objects.requireNonNull(dateHeureDepart, "La date de départ est obligatoire");
         this.placesTotal          = placesTotal;
-        this.placesDisponibles    = placesTotal;  // toutes les places disponibles au départ
+        this.placesDisponibles    = placesTotal;
         this.prixParPlace         = prixParPlace;
         this.chauffeur            = Objects.requireNonNull(chauffeur, "Le chauffeur est obligatoire");
         this.descriptionVehicule  = descriptionVehicule;
@@ -77,22 +63,15 @@ public class Trajet implements Serializable {
         this.dateCreation         = LocalDateTime.now();
     }
 
-    /** Constructeur par défaut pour JDBC */
+    
     public Trajet() {
         this.statut        = StatutTrajet.OUVERT;
         this.dateCreation  = LocalDateTime.now();
     }
 
-    // ── Méthodes métier ───────────────────────────────────────────────────────
 
-    /**
-     * Réserve une place sur ce trajet et met à jour le statut automatiquement.
-     * <p>
-     * Règle : si {@code placesDisponibles} tombe à 0, le statut passe à COMPLET.
-     * </p>
-     *
-     * @throws IllegalStateException si le trajet n'est pas OUVERT ou s'il est déjà complet
-     */
+
+    
     public void reserverPlace() {
         if (this.statut != StatutTrajet.OUVERT) {
             throw new IllegalStateException(
@@ -103,18 +82,13 @@ public class Trajet implements Serializable {
         }
         this.placesDisponibles--;
 
-        // ── Règle métier : passage automatique à COMPLET ──────────────────────
+
         if (this.placesDisponibles == 0) {
             this.statut = StatutTrajet.COMPLET;
         }
     }
 
-    /**
-     * Libère une place (suite à une annulation de réservation).
-     * Si le trajet était COMPLET, il repasse à OUVERT.
-     *
-     * @throws IllegalStateException si le trajet est ANNULE ou TERMINE
-     */
+    
     public void libererPlace() {
         if (this.statut == StatutTrajet.ANNULE || this.statut == StatutTrajet.TERMINE) {
             throw new IllegalStateException(
@@ -125,48 +99,36 @@ public class Trajet implements Serializable {
         }
         this.placesDisponibles++;
 
-        // Repasse à OUVERT si le trajet était COMPLET
+
         if (this.statut == StatutTrajet.COMPLET) {
             this.statut = StatutTrajet.OUVERT;
         }
     }
 
-    /**
-     * Calcule le nombre de passagers ayant effectivement confirmé leur réservation.
-     *
-     * @return Nombre de réservations confirmées
-     */
+    
     public int getNombreReservationsConfirmees() {
         return (int) reservations.stream()
             .filter(r -> r.getStatut() == Reservation.StatutReservation.CONFIRMEE)
             .count();
     }
 
-    /**
-     * Indique si le chauffeur peut annuler ce trajet sans pénalité.
-     * Il peut annuler sans pénalité uniquement s'il n'y a aucune réservation confirmée.
-     */
+    
     public boolean peutAnnulerSansPenalite() {
         return getNombreReservationsConfirmees() == 0;
     }
 
-    /**
-     * Ajoute une réservation à la liste interne du trajet.
-     */
+    
     public void ajouterReservation(Reservation reservation) {
         Objects.requireNonNull(reservation, "La réservation ne peut pas être null");
         this.reservations.add(reservation);
     }
 
-    /**
-     * Retourne le nombre de minutes restantes avant le départ.
-     * Valeur négative si le départ est déjà passé.
-     */
+    
     public long minutesAvantDepart() {
         return java.time.Duration.between(LocalDateTime.now(), this.dateHeureDepart).toMinutes();
     }
 
-    // ── Getters / Setters ─────────────────────────────────────────────────────
+
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -219,12 +181,12 @@ public class Trajet implements Serializable {
     public LocalDateTime getDateCreation() { return dateCreation; }
     public void setDateCreation(LocalDateTime dateCreation) { this.dateCreation = dateCreation; }
 
-    /** Retourne une copie défensive de la liste des réservations */
+    
     public List<Reservation> getReservations() {
         return new ArrayList<>(this.reservations);
     }
 
-    // ── equals / hashCode / toString ─────────────────────────────────────────
+
 
     @Override
     public boolean equals(Object o) {

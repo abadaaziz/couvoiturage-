@@ -12,9 +12,7 @@ import java.util.List;
 import com.covoiturage.model.Notification;
 import com.covoiturage.util.DatabaseConnection;
 
-/**
- * DAO pour les notifications in-app.
- */
+
 public class NotificationDAO {
 
     private static final String SQL_INSERT =

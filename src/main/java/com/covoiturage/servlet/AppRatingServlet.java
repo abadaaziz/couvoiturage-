@@ -13,9 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/**
- * Enregistre une note pour l'application.
- */
+
 @WebServlet(urlPatterns = {"/app/notation"})
 public class AppRatingServlet extends HttpServlet {
 

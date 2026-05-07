@@ -4,43 +4,32 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-/**
- * Entité représentant un utilisateur de la plateforme de covoiturage.
- * Classe mère partagée par les profils métier.
- */
+
 public abstract class Utilisateur implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /** Statut du compte */
+    
     public enum StatutCompte {
         ACTIF, SUSPENDU, BLOQUE, EN_ATTENTE_VALIDATION
     }
 
-    // ── Champs privés ─────────────────────────────────────────────────────────
+
 
     private int    id;
     private String nom;
     private String prenom;
     private String email;
-    private String motDePasseHash;   // toujours stocké hashé — jamais en clair
+    private String motDePasseHash;
     private String telephone;
     private StatutCompte  statutCompte;
     private LocalDateTime dateInscription;
     private LocalDateTime derniereConnexion;
     private int tentativesConnexionEchouees;
 
-    // ── Constructeur complet ──────────────────────────────────────────────────
 
-    /**
-     * Constructeur principal utilisé lors de la création d'un compte.
-     *
-     * @param nom           Nom de famille
-     * @param prenom        Prénom
-     * @param email         Adresse email (identifiant unique)
-     * @param motDePasseHash Hash bcrypt du mot de passe
-     * @param telephone     Numéro de téléphone (pour SMS)
-     */
+
+    
     public Utilisateur(String nom, String prenom, String email,
                        String motDePasseHash, String telephone) {
         this.nom            = Objects.requireNonNull(nom,     "Le nom ne peut pas être null");
@@ -52,23 +41,21 @@ public abstract class Utilisateur implements Serializable {
         this.dateInscription = LocalDateTime.now();
     }
 
-    /** Constructeur par défaut nécessaire pour JDBC (ResultSet → objet) */
+    
     public Utilisateur() {
         this.statutCompte    = StatutCompte.EN_ATTENTE_VALIDATION;
         this.dateInscription = LocalDateTime.now();
     }
 
-    /**
-     * Vérifie si le compte est actif (non suspendu ni bloqué).
-     */
+    
     public boolean estActif() {
         return StatutCompte.ACTIF.equals(this.statutCompte);
     }
 
-    /** Rôle métier porté par la sous-classe concrète. */
+    
     public abstract String getRole();
 
-    // ── Getters / Setters ─────────────────────────────────────────────────────
+
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -110,7 +97,7 @@ public abstract class Utilisateur implements Serializable {
         this.tentativesConnexionEchouees = Math.max(0, tentativesConnexionEchouees);
     }
 
-    // ── equals / hashCode / toString ─────────────────────────────────────────
+
 
     @Override
     public boolean equals(Object o) {

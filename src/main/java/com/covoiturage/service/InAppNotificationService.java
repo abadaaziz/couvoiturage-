@@ -6,9 +6,7 @@ import java.util.List;
 import com.covoiturage.dao.NotificationDAO;
 import com.covoiturage.model.Notification;
 
-/**
- * Service pour les notifications in-app (stockage en base).
- */
+
 public class InAppNotificationService {
 
     private final NotificationDAO notificationDAO;

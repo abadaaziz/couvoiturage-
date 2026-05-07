@@ -1,9 +1,6 @@
 package com.covoiturage.exception;
 
-/**
- * Lancée lorsqu'un utilisateur suspendu tente d'effectuer une action réservée
- * aux comptes actifs (créer une réservation, proposer un trajet, etc.).
- */
+
 public class UtilisateurSuspenduException extends Exception {
 
     private final String email;

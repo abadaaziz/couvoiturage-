@@ -18,13 +18,7 @@ import com.covoiturage.model.Trajet;
 import com.covoiturage.model.Trajet.StatutTrajet;
 import com.covoiturage.model.Utilisateur;
 
-/**
- * Service de gestion des réservations.
- * <p>
- * Responsabilité unique (SRP) : tout ce qui concerne la réservation de places.
- * Délègue le paiement à {@link PaiementService} et les notifications à {@link NotificationService}.
- * </p>
- */
+
 public class ReservationService {
 
     private final ReservationDAO      reservationDAO;
@@ -41,7 +35,7 @@ public class ReservationService {
         this.inAppNotificationService = new InAppNotificationService();
     }
 
-    /** Constructeur pour injection de dépendances */
+    
     public ReservationService(ReservationDAO reservationDAO, TrajetService trajetService,
                                PaiementService paiementService, NotificationService notificationService,
                                InAppNotificationService inAppNotificationService) {
@@ -52,45 +46,27 @@ public class ReservationService {
         this.inAppNotificationService = inAppNotificationService;
     }
 
-    /** Constructeur pour injection de dependances sans notifications in-app */
+    
     public ReservationService(ReservationDAO reservationDAO, TrajetService trajetService,
                                PaiementService paiementService, NotificationService notificationService) {
         this(reservationDAO, trajetService, paiementService, notificationService,
             new InAppNotificationService());
     }
 
-    // ── Méthodes publiques ────────────────────────────────────────────────────
 
-    /**
-     * Crée une réservation pour un passager sur un trajet donné.
-     * <ol>
-     *   <li>Vérifie la disponibilité du trajet</li>
-     *   <li>Autorise le paiement immédiatement (fonds bloqués)</li>
-     *   <li>Réserve la(les) place(s) sur le trajet</li>
-     *   <li>Notifie le passager et le chauffeur</li>
-     * </ol>
-     *
-     * @param passager      Utilisateur réservant la place
-     * @param trajetId      Identifiant du trajet
-     * @param nombrePlaces  Nombre de places souhaitées (minimum 1)
-     * @param methode       Méthode de paiement choisie
-     * @return Réservation créée avec statut EN_ATTENTE
-     * @throws TrajetCompletException       si le trajet est complet
-     * @throws ReservationInvalideException si les données sont invalides
-     * @throws PaiementEcheException        si l'autorisation du paiement échoue
-     * @throws UtilisateurSuspenduException si le compte passager est suspendu
-     */
+
+    
     public Reservation creerReservation(Utilisateur passager, int trajetId,
                                          int nombrePlaces, MethodePaiement methode)
             throws TrajetCompletException, ReservationInvalideException,
                    PaiementEcheException, UtilisateurSuspenduException {
 
-        // ── Vérification du compte passager ──────────────────────────────────
+
         if (!passager.estActif()) {
             throw new UtilisateurSuspenduException(passager.getEmail());
         }
 
-        // ── Validation du trajet ──────────────────────────────────────────────
+
         Optional<Trajet> optTrajet = trajetService.trouverParId(trajetId);
         if (optTrajet.isEmpty()) {
             throw new ReservationInvalideException("Trajet #" + trajetId + " introuvable.");
@@ -120,28 +96,28 @@ public class ReservationService {
         }
 
         try {
-            // ── Calcul du montant ─────────────────────────────────────────────
+
             double montant = trajet.getPrixParPlace() * nombrePlaces;
 
-            // ── Création de l'entité réservation ──────────────────────────────
+
                                             Reservation reservation = new Reservation(trajet, (Passager) passager, nombrePlaces);
 
-            // La réservation doit exister en base avant d'insérer un paiement
-            // (contrainte FK paiements.reservation_id -> reservations.id).
+
+
             reservationDAO.inserer(reservation);
 
-            // ── Autorisation du paiement (fonds bloqués) ─────────────────────
-            // La capture interviendra à la confirmation par le chauffeur
+
+
             String referenceTransaction = paiementService.autoriser(reservation, montant, methode);
             reservation.setReferenceTransaction(referenceTransaction);
             reservationDAO.mettreAJourReferenceTransaction(reservation.getId(), referenceTransaction);
 
-            // ── Mise à jour des places disponibles sur le trajet ──────────────
+
             for (int i = 0; i < nombrePlaces; i++) {
                 trajetService.ajouterPassager(trajetId);
             }
 
-            // ── Notifications ─────────────────────────────────────────────────
+
             notificationService.notifierEmail(
                 passager.getEmail(),
                 "Confirmation de votre demande de réservation",
@@ -181,15 +157,7 @@ public class ReservationService {
         }
     }
 
-    /**
-     * Confirme une réservation (action du chauffeur).
-     * Déclenche la capture du paiement.
-     *
-     * @param reservationId Identifiant de la réservation
-     * @param chauffeurId   Identifiant du chauffeur confirmant
-     * @throws ReservationInvalideException si la réservation n'existe pas ou est invalide
-     * @throws PaiementEcheException        si la capture du paiement échoue
-     */
+    
     public void confirmerReservation(int reservationId, int chauffeurId)
             throws ReservationInvalideException, PaiementEcheException {
         try {
@@ -199,7 +167,7 @@ public class ReservationService {
             }
             Reservation reservation = opt.get();
 
-            // Vérification que c'est bien le chauffeur du trajet
+
             if (reservation.getTrajet().getChauffeur().getId() != chauffeurId) {
                 throw new ReservationInvalideException(
                     "Seul le chauffeur du trajet peut confirmer cette réservation.");
@@ -210,14 +178,14 @@ public class ReservationService {
                     reservation.getStatut());
             }
 
-            // ── Capture du paiement (débit réel) ─────────────────────────────
+
             paiementService.capturer(reservation.getReferenceTransaction());
 
-            // ── Mise à jour statut réservation ────────────────────────────────
+
             reservation.confirmer();
             reservationDAO.confirmer(reservationId);
 
-            // ── Notification passager ─────────────────────────────────────────
+
             notificationService.notifierEmail(
                 reservation.getPassager().getEmail(),
                 "Réservation confirmée !",
@@ -244,13 +212,7 @@ public class ReservationService {
         }
     }
 
-    /**
-     * Annule une réservation (action du passager).
-     * Calcule et initie le remboursement selon les règles métier.
-     *
-     * @param reservationId Identifiant de la réservation
-     * @param passagerId    Identifiant du passager annulant
-     */
+    
     public double annulerReservation(int reservationId, int passagerId)
             throws ReservationInvalideException, PaiementEcheException {
         try {
@@ -260,7 +222,7 @@ public class ReservationService {
             }
             Reservation reservation = opt.get();
 
-            // Vérification que c'est bien le passager concerné
+
             if (reservation.getPassager().getId() != passagerId) {
                 throw new ReservationInvalideException(
                     "Vous n'êtes pas autorisé à annuler cette réservation.");
@@ -271,7 +233,7 @@ public class ReservationService {
                     "Cette réservation est déjà annulée ou remboursée.");
             }
 
-            // ── Calcul du remboursement ────────────────────────────────────────
+
             double montantARemb;
             java.time.LocalDateTime depart = reservation.getTrajet().getDateHeureDepart();
             if (depart != null) {
@@ -285,19 +247,19 @@ public class ReservationService {
                 montantARemb = reservation.getMontantTotal() * 0.50;
             }
 
-            // ── Annulation de la réservation ──────────────────────────────────
+
             reservation.annuler();
             reservationDAO.mettreAJourStatutAnnulation(reservation);
 
-            // ── Libération des places sur le trajet ───────────────────────────
+
             for (int i = 0; i < reservation.getNombrePlaces(); i++) {
                 trajetService.retirerPassager(reservation.getTrajet().getId());
             }
 
-            // ── Remboursement ─────────────────────────────────────────────────
+
             rembourserReservation(reservationId, montantARemb, reservation.getReferenceTransaction());
 
-            // ── Notification ──────────────────────────────────────────────────
+
             boolean remboursementTotal = montantARemb >= reservation.getMontantTotal();
             notificationService.notifierEmail(
                 reservation.getPassager().getEmail(),
@@ -328,19 +290,13 @@ public class ReservationService {
         }
     }
 
-    /**
-     * Effectue le remboursement associé à une réservation annulée.
-     *
-     * @param reservationId      Identifiant de la réservation
-     * @param montantARembourser Montant à rembourser
-     * @param referenceTransaction Référence de la transaction originale
-     */
+    
     public void rembourserReservation(int reservationId, double montantARembourser,
                                        String referenceTransaction) throws PaiementEcheException {
         try {
             paiementService.rembourser(referenceTransaction, montantARembourser);
 
-            // Mise à jour du statut de la réservation
+
             Optional<Reservation> opt = reservationDAO.trouverParId(reservationId);
             if (opt.isPresent()) {
                 Reservation r = opt.get();
@@ -353,9 +309,7 @@ public class ReservationService {
         }
     }
 
-    /**
-     * Retourne les réservations d'un passager.
-     */
+    
     public List<Reservation> listerReservationsPassager(int passagerId) {
         try {
             return reservationDAO.trouverParPassager(passagerId);
@@ -364,9 +318,7 @@ public class ReservationService {
         }
     }
 
-    /**
-     * Retourne les réservations d'un trajet.
-     */
+    
     public List<Reservation> listerReservationsTrajet(int trajetId) {
         try {
             return reservationDAO.trouverParTrajet(trajetId);
@@ -375,9 +327,7 @@ public class ReservationService {
         }
     }
 
-    /**
-     * Retourne les réservations de tous les trajets d'un chauffeur.
-     */
+    
     public List<Reservation> listerReservationsChauffeur(int chauffeurId) {
         try {
             return reservationDAO.trouverParChauffeur(chauffeurId);
@@ -386,9 +336,7 @@ public class ReservationService {
         }
     }
 
-    /**
-     * Liste les reservations eligibles a la notation pour un chauffeur donne.
-     */
+    
     public List<Reservation> listerEligiblesNotation(int passagerId, int chauffeurId) {
         try {
             return reservationDAO.trouverEligiblesNotation(passagerId, chauffeurId);
@@ -397,9 +345,7 @@ public class ReservationService {
         }
     }
 
-    /**
-     * Supprime une reservation du passager uniquement si le trajet est passe.
-     */
+    
     public void supprimerReservationSiTerminee(int reservationId, int passagerId)
             throws ReservationInvalideException {
         try {
@@ -427,9 +373,7 @@ public class ReservationService {
         }
     }
 
-    /**
-     * Permet a un passager de noter le chauffeur apres un trajet confirme.
-     */
+    
     public void noterChauffeur(int reservationId, int passagerId, int note)
             throws ReservationInvalideException {
         if (note < 1 || note > 5) {
@@ -453,10 +397,10 @@ public class ReservationService {
                 throw new ReservationInvalideException("Vous avez deja note ce chauffeur.");
             }
 
-            // Enregistrer la note sur la reservation
+
             reservationDAO.mettreAJourNotePassager(reservationId, note);
 
-            // Mettre a jour la note moyenne du chauffeur
+
             int chauffeurId = reservation.getTrajet().getChauffeur().getId();
             Optional<Utilisateur> optChauffeur = new com.covoiturage.dao.UtilisateurDAO().trouverParId(chauffeurId);
             if (optChauffeur.isEmpty()) {

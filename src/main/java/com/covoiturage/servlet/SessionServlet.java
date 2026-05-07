@@ -11,9 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/**
- * Expose un endpoint JSON minimal pour connaitre l'utilisateur connecté.
- */
+
 @WebServlet("/session/me")
 public class SessionServlet extends HttpServlet {
 

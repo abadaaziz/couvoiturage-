@@ -4,9 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-/**
- * Notification interne (in-app) pour un utilisateur.
- */
+
 public class Notification implements Serializable {
 
     private static final long serialVersionUID = 1L;

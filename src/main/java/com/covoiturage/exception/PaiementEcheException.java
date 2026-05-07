@@ -1,8 +1,6 @@
 package com.covoiturage.exception;
 
-/**
- * Lancée lorsqu'un paiement échoue ou qu'une opération financière est impossible.
- */
+
 public class PaiementEcheException extends Exception {
 
     private final String referenceTransaction;

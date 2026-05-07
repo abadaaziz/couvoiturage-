@@ -23,20 +23,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/**
- * Servlet gérant les réservations de places.
- *
- * <ul>
- *   <li>POST /reservation/creer   → créer une réservation</li>
- *   <li>POST /reservation/annuler → annuler une réservation</li>
- *   <li>GET  /reservation/mes       → lister les réservations du passager connecté</li>
- *   <li>GET  /reservation/chauffeur → lister les réservations liées aux trajets du chauffeur connecté</li>
- *   <li>GET  /reservation/eligibles → lister les reservations eligibles a la notation</li>
- *   <li>POST /reservation/confirmer → confirmer une réservation (chauffeur)</li>
- *   <li>POST /reservation/supprimer → supprimer une réservation passée (passager)</li>
- *   <li>POST /reservation/noter → noter le chauffeur (passager)</li>
- * </ul>
- */
+
 @WebServlet(urlPatterns = {
     "/reservation/creer", "/reservation/annuler", "/reservation/mes",
     "/reservation/chauffeur", "/reservation/confirmer", "/reservation/supprimer",
@@ -54,9 +41,9 @@ public class ReservationServlet extends HttpServlet {
         this.reservationService = new ReservationService();
     }
 
-    // ── GET ───────────────────────────────────────────────────────────────────
 
-    /** Retourne les réservations de l'utilisateur connecté */
+
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -106,7 +93,7 @@ public class ReservationServlet extends HttpServlet {
         }
     }
 
-    // ── POST ──────────────────────────────────────────────────────────────────
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -125,12 +112,9 @@ public class ReservationServlet extends HttpServlet {
         }
     }
 
-    // ── Méthodes privées ──────────────────────────────────────────────────────
 
-    /**
-     * Crée une nouvelle réservation pour l'utilisateur connecté.
-     * Paramètres attendus : trajetId, nombrePlaces, methodePaiement
-     */
+
+    
     private void traiterCreation(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
@@ -185,10 +169,7 @@ public class ReservationServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Annule une réservation existante.
-     * Paramètre attendu : reservationId
-     */
+    
     private void traiterAnnulation(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
@@ -261,10 +242,7 @@ public class ReservationServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Supprime une reservation si le trajet est passe.
-     * Parametre attendu : reservationId
-     */
+    
     private void traiterSuppression(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
@@ -295,9 +273,7 @@ public class ReservationServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Liste des reservations eligibles a la notation pour un chauffeur.
-     */
+    
     private void traiterEligiblesNotation(HttpServletRequest request, HttpServletResponse response)
                                           throws IOException {
         Utilisateur passager = getUtilisateurConnecte(request);
@@ -327,10 +303,7 @@ public class ReservationServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Notation du chauffeur par le passager.
-     * Parametres attendus : reservationId, note
-     */
+    
     private void traiterNotation(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
@@ -389,7 +362,7 @@ public class ReservationServlet extends HttpServlet {
         response.getWriter().print(reservationListToJson(reservations));
     }
 
-    // ── Sérialisation JSON manuelle ───────────────────────────────────────────
+
 
     private String reservationListToJson(List<Reservation> reservations) {
         StringBuilder sb = new StringBuilder("[");
@@ -486,7 +459,7 @@ public class ReservationServlet extends HttpServlet {
     private Utilisateur getChauffeurConnecte(HttpServletRequest request) {
         Utilisateur u = getUtilisateurConnecte(request);
         if (u == null) return null;
-        // Vérification par type réel — Chauffeur ou Admin peuvent confirmer des réservations
+
         if (!(u instanceof Chauffeur) && !(u instanceof Admin)) return null;
         return u;
     }

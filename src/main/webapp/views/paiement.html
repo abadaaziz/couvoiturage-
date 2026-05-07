@@ -99,7 +99,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Récupère le reservationId depuis l'URL ou les attributs de la page
+
     const params = new URLSearchParams(window.location.search);
     const reservationId = params.get('reservationId') || '';
     document.getElementById('reservationId').value = reservationId;
@@ -108,20 +108,20 @@ document.addEventListener('DOMContentLoaded', () => {
         chargerRecapitulatif(reservationId);
     }
 
-    // Formatage automatique du numéro de carte
+
     document.getElementById('num-carte').addEventListener('input', function() {
         let val = this.value.replace(/\D/g, '').substring(0, 16);
         this.value = val.replace(/(.{4})/g, '$1 ').trim();
     });
 
-    // Formatage de l'expiration
+
     document.getElementById('expiration').addEventListener('input', function() {
         let val = this.value.replace(/\D/g, '').substring(0, 4);
         if (val.length >= 2) val = val.substring(0, 2) + '/' + val.substring(2);
         this.value = val;
     });
 
-    // Affichage conditionnel des champs
+
     const selectMethode = document.getElementById('methodePaiement');
     const champsCarte = document.getElementById('champs-carte');
     const champsPaypal = document.getElementById('champs-paypal');
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     selectMethode.addEventListener('change', basculerChamps);
     basculerChamps();
 
-    // Soumission
+
     document.getElementById('form-paiement').addEventListener('submit', async (e) => {
         e.preventDefault();
         await traiterPaiement();

@@ -8,12 +8,7 @@ import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
 
-/**
- * Initialise automatiquement le schéma de la base H2 au démarrage de
- * l'application.
- * Aucune action manuelle n'est requise : les tables sont créées si elles
- * n'existent pas.
- */
+
 @WebListener
 public class DatabaseInitializer implements ServletContextListener {
 
@@ -23,7 +18,7 @@ public class DatabaseInitializer implements ServletContextListener {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
                 Statement stmt = conn.createStatement()) {
 
-            // ── Table utilisateurs ──────────────────────────────────────────
+
             stmt.execute("""
                         CREATE TABLE IF NOT EXISTS utilisateurs (
                             id                   INT          AUTO_INCREMENT PRIMARY KEY,
@@ -46,7 +41,7 @@ public class DatabaseInitializer implements ServletContextListener {
                         ADD COLUMN IF NOT EXISTS tentatives_connexion_echouees INT NOT NULL DEFAULT 0
                     """);
 
-            // ── Table trajets ───────────────────────────────────────────────
+
             stmt.execute("""
                         CREATE TABLE IF NOT EXISTS trajets (
                             id                   INT          AUTO_INCREMENT PRIMARY KEY,
@@ -64,7 +59,7 @@ public class DatabaseInitializer implements ServletContextListener {
                         )
                     """);
 
-            // ── Table reservations ──────────────────────────────────────────
+
             stmt.execute("""
                         CREATE TABLE IF NOT EXISTS reservations (
                             id                    INT    AUTO_INCREMENT PRIMARY KEY,
@@ -86,10 +81,10 @@ public class DatabaseInitializer implements ServletContextListener {
             try {
                 stmt.execute("ALTER TABLE reservations ADD COLUMN IF NOT EXISTS note_passager INT");
             } catch (SQLException e) {
-                // Ignore if not supported
+
             }
 
-            // ── Table paiements ─────────────────────────────────────────────
+
             stmt.execute("""
                         CREATE TABLE IF NOT EXISTS paiements (
                             id                   INT    AUTO_INCREMENT PRIMARY KEY,
@@ -107,7 +102,7 @@ public class DatabaseInitializer implements ServletContextListener {
                         )
                     """);
 
-            // ── Table notifications ────────────────────────────────────────
+
             stmt.execute(
                     """
                                 CREATE TABLE IF NOT EXISTS notifications (
@@ -122,7 +117,7 @@ public class DatabaseInitializer implements ServletContextListener {
                                 )
                             """);
 
-            // ── Table notes application ───────────────────────────────────
+
             stmt.execute("""
                         CREATE TABLE IF NOT EXISTS app_ratings (
                             id             INT AUTO_INCREMENT PRIMARY KEY,
@@ -134,9 +129,9 @@ public class DatabaseInitializer implements ServletContextListener {
                         )
                     """);
 
-            // ── Compte admin par défaut ─────────────────────────────────────
-            // Email: admin@covoitapp.com | Mot de passe: admin123
-            // Hash SHA-256 (legacy) de "admin123"
+
+
+
             stmt.execute("""
                         MERGE INTO utilisateurs (nom, prenom, email, mot_de_passe_hash, telephone, role, statut_compte)
                         KEY (email)
@@ -145,7 +140,7 @@ public class DatabaseInitializer implements ServletContextListener {
                                 '0600000000', 'ADMIN', 'ACTIF')
                     """);
 
-            // Nettoyage des anciens comptes de demo Jean/Sophie sans creer de trajets.
+
             supprimerUtilisateursDemoJeanEtSophie(stmt);
 
             System.out.println("[DatabaseInitializer] Base de données prête ✓");
@@ -156,9 +151,7 @@ public class DatabaseInitializer implements ServletContextListener {
         }
     }
 
-    /**
-     * Supprime les comptes de demo Jean/Sophie et toutes leurs donnees liees.
-     */
+    
     private void supprimerUtilisateursDemoJeanEtSophie(Statement stmt) throws SQLException {
         stmt.execute("""
                     DELETE FROM paiements WHERE reservation_id IN (

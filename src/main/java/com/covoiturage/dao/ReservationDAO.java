@@ -17,9 +17,7 @@ import com.covoiturage.model.Reservation.StatutReservation;
 import com.covoiturage.model.Trajet;
 import com.covoiturage.util.DatabaseConnection;
 
-/**
- * DAO pour l'entité {@link Reservation}. JDBC pur.
- */
+
 public class ReservationDAO {
 
     private static final String SQL_INSERT =
@@ -102,7 +100,7 @@ public class ReservationDAO {
         "AND (r.note_passager IS NULL) " +
         "ORDER BY t.date_heure_depart DESC";
 
-    // ── Méthodes CRUD ─────────────────────────────────────────────────────────
+
 
     public Reservation inserer(Reservation reservation) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -175,9 +173,7 @@ public class ReservationDAO {
         return liste;
     }
 
-    /**
-     * Met à jour le statut d'une réservation suite à une annulation.
-     */
+    
     public void mettreAJourStatutAnnulation(Reservation reservation) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_STATUT)) {
@@ -191,9 +187,7 @@ public class ReservationDAO {
         }
     }
 
-    /**
-     * Confirme une réservation (passage à CONFIRMEE).
-     */
+    
     public void confirmer(int reservationId) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_CONFIRMATION)) {
@@ -203,9 +197,7 @@ public class ReservationDAO {
         }
     }
 
-    /**
-     * Met à jour la référence de transaction liée à une réservation.
-     */
+    
     public void mettreAJourReferenceTransaction(int reservationId, String referenceTransaction)
             throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -217,9 +209,7 @@ public class ReservationDAO {
         }
     }
 
-    /**
-     * Enregistre la note du passager pour une reservation.
-     */
+    
     public void mettreAJourNotePassager(int reservationId, int note) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_NOTE_PASSAGER)) {
@@ -230,9 +220,7 @@ public class ReservationDAO {
         }
     }
 
-    /**
-     * Compte le nombre de réservations actives sur un trajet.
-     */
+    
     public int compterReservationsActives(int trajetId) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_COUNT_ACTIVES_BY_TRAJET)) {
@@ -244,15 +232,12 @@ public class ReservationDAO {
         }
     }
 
-    /**
-     * Supprime une reservation du passager uniquement si le trajet est passe.
-     * Supprime d'abord les paiements associés (contrainte FK) puis la réservation.
-     */
+    
     public boolean supprimerReservationPasse(int reservationId, int passagerId) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection()) {
             conn.setAutoCommit(false);
             try {
-                // 1. Vérifier que la réservation appartient au passager ET que le trajet est passé
+
                 boolean eligible = false;
                 try (PreparedStatement check = conn.prepareStatement(
                         "SELECT COUNT(*) FROM reservations r " +
@@ -269,14 +254,14 @@ public class ReservationDAO {
                     return false;
                 }
 
-                // 2. Supprimer les paiements liés (lève la contrainte FK)
+
                 try (PreparedStatement delPay = conn.prepareStatement(
                         "DELETE FROM paiements WHERE reservation_id = ?")) {
                     delPay.setInt(1, reservationId);
                     delPay.executeUpdate();
                 }
 
-                // 3. Supprimer la réservation
+
                 try (PreparedStatement delRes = conn.prepareStatement(
                         "DELETE FROM reservations WHERE id = ? AND passager_id = ?")) {
                     delRes.setInt(1, reservationId);
@@ -294,9 +279,7 @@ public class ReservationDAO {
         }
     }
 
-    /**
-     * Liste des reservations eligibles a la notation pour un chauffeur.
-     */
+    
     public List<Reservation> trouverEligiblesNotation(int passagerId, int chauffeurId) throws SQLException {
         List<Reservation> liste = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -320,13 +303,13 @@ public class ReservationDAO {
         return liste;
     }
 
-    // ── Mapping ───────────────────────────────────────────────────────────────
+
 
     private Reservation mapperResultSet(ResultSet rs) throws SQLException {
         Reservation r = new Reservation();
         r.setId(rs.getInt("id"));
 
-        // Trajet (hydratation partielle)
+
         Trajet trajet = new Trajet();
         trajet.setId(rs.getInt("trajet_id"));
         trajet.setVilleDepart(rs.getString("ville_depart"));
@@ -343,7 +326,7 @@ public class ReservationDAO {
         trajet.setChauffeur(chauffeur);
         r.setTrajet(trajet);
 
-        // Passager (hydratation partielle)
+
         Passager passager = new Passager();
         passager.setId(rs.getInt("passager_id"));
         passager.setNom(rs.getString("passager_nom"));

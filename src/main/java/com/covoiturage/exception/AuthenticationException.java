@@ -1,9 +1,6 @@
 package com.covoiturage.exception;
 
-/**
- * Lancée lorsqu'une tentative d'authentification échoue
- * (email inconnu, mot de passe incorrect, compte non validé, etc.).
- */
+
 public class AuthenticationException extends Exception {
 
     public enum Raison {

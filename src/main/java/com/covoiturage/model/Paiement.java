@@ -4,29 +4,19 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-/**
- * Entité représentant une transaction de paiement.
- * <p>
- * Règles métier :
- * <ul>
- *   <li>AUTORISATION : fonds bloqués immédiatement lors de la réservation</li>
- *   <li>CAPTURE : montant débité réellement lors de la confirmation du chauffeur</li>
- *   <li>REMBOURSEMENT : restitution partielle ou totale</li>
- * </ul>
- * </p>
- */
+
 public class Paiement implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // ── Énumérations ──────────────────────────────────────────────────────────
+
 
     public enum StatutPaiement {
-        AUTORISE,     // fonds bloqués, en attente de confirmation
-        CAPTURE,      // paiement effectivement débité
-        REMBOURSE,    // remboursé (partiel ou total)
-        ECHOUE,       // paiement refusé
-        ANNULE        // autorisation annulée (avant capture)
+        AUTORISE,
+        CAPTURE,
+        REMBOURSE,
+        ECHOUE,
+        ANNULE
     }
 
     public enum MethodePaiement {
@@ -35,7 +25,7 @@ public class Paiement implements Serializable {
         VIREMENT
     }
 
-    // ── Champs privés ─────────────────────────────────────────────────────────
+
 
     private int              id;
     private Reservation      reservation;
@@ -43,20 +33,15 @@ public class Paiement implements Serializable {
     private double           montantRembourse;
     private StatutPaiement   statut;
     private MethodePaiement  methode;
-    private String           referenceExterne;   // référence chez le prestataire (ex: Stripe)
+    private String           referenceExterne;
     private LocalDateTime    dateAutorisation;
     private LocalDateTime    dateCapture;
     private LocalDateTime    dateRemboursement;
     private String           messageErreur;
 
-    // ── Constructeur ──────────────────────────────────────────────────────────
 
-    /**
-     * @param reservation      Réservation associée à ce paiement
-     * @param montant          Montant à payer en dinars tunisiens
-     * @param methode          Méthode de paiement choisie
-     * @param referenceExterne Référence retournée par le prestataire de paiement
-     */
+
+    
     public Paiement(Reservation reservation, double montant,
                     MethodePaiement methode, String referenceExterne) {
         if (montant <= 0) {
@@ -71,16 +56,12 @@ public class Paiement implements Serializable {
         this.montantRembourse = 0.0;
     }
 
-    /** Constructeur par défaut pour JDBC */
+    
     public Paiement() { }
 
-    // ── Méthodes métier ───────────────────────────────────────────────────────
 
-    /**
-     * Capture le paiement (débit réel suite à l'acceptation du chauffeur).
-     *
-     * @throws IllegalStateException si le statut n'est pas AUTORISE
-     */
+
+    
     public void capturer() {
         if (this.statut != StatutPaiement.AUTORISE) {
             throw new IllegalStateException(
@@ -90,13 +71,7 @@ public class Paiement implements Serializable {
         this.dateCapture = LocalDateTime.now();
     }
 
-    /**
-     * Effectue un remboursement (partiel ou total).
-     *
-     * @param montantARembourser Montant à rembourser (doit être ≤ montant capturé)
-     * @throws IllegalArgumentException si le montant est invalide
-     * @throws IllegalStateException    si le paiement n'est pas capturé
-     */
+    
     public void rembourser(double montantARembourser) {
         if (this.statut != StatutPaiement.CAPTURE && this.statut != StatutPaiement.AUTORISE) {
             throw new IllegalStateException(
@@ -112,11 +87,7 @@ public class Paiement implements Serializable {
         this.dateRemboursement   = LocalDateTime.now();
     }
 
-    /**
-     * Annule l'autorisation (avant capture uniquement).
-     *
-     * @throws IllegalStateException si le paiement a déjà été capturé
-     */
+    
     public void annulerAutorisation() {
         if (this.statut != StatutPaiement.AUTORISE) {
             throw new IllegalStateException(
@@ -125,15 +96,13 @@ public class Paiement implements Serializable {
         this.statut = StatutPaiement.ANNULE;
     }
 
-    /**
-     * Marque le paiement comme échoué avec un message d'erreur.
-     */
+    
     public void marquerCommeEchoue(String messageErreur) {
         this.statut        = StatutPaiement.ECHOUE;
         this.messageErreur = messageErreur;
     }
 
-    // ── Getters / Setters ─────────────────────────────────────────────────────
+
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -178,7 +147,7 @@ public class Paiement implements Serializable {
     public String getMessageErreur() { return messageErreur; }
     public void setMessageErreur(String messageErreur) { this.messageErreur = messageErreur; }
 
-    // ── equals / hashCode / toString ─────────────────────────────────────────
+
 
     @Override
     public boolean equals(Object o) {

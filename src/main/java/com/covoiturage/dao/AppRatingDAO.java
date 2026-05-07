@@ -6,9 +6,7 @@ import java.sql.SQLException;
 
 import com.covoiturage.util.DatabaseConnection;
 
-/**
- * DAO pour les notes de l'application.
- */
+
 public class AppRatingDAO {
 
     private static final String SQL_UPDATE =

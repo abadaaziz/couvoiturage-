@@ -19,13 +19,10 @@ import com.covoiturage.model.Utilisateur.StatutCompte;
 import com.covoiturage.util.DatabaseConnection;
 import java.sql.Types;
 
-/**
- * DAO (Data Access Object) pour l'entité {@link Utilisateur}.
- * Toutes les requêtes utilisent des PreparedStatement pour prévenir les injections SQL.
- */
+
 public class UtilisateurDAO {
 
-    // ── Requêtes SQL ──────────────────────────────────────────────────────────
+
 
     private static final String SQL_INSERT =
         "INSERT INTO utilisateurs (nom, prenom, email, mot_de_passe_hash, telephone, role, statut_compte, note_moyenne, nombre_avis, date_inscription, tentatives_connexion_echouees) " +
@@ -68,15 +65,9 @@ public class UtilisateurDAO {
     private static final String SQL_EXISTS_EMAIL =
         "SELECT COUNT(*) FROM utilisateurs WHERE email=?";
 
-    // ── Méthodes CRUD ─────────────────────────────────────────────────────────
 
-    /**
-     * Insère un nouvel utilisateur en base et met à jour son id généré.
-     *
-     * @param utilisateur Utilisateur à persister (id ignoré en entrée)
-     * @return Utilisateur avec l'id généré par la base
-     * @throws SQLException en cas d'erreur base de données
-     */
+
+    
     public Utilisateur inserer(Utilisateur utilisateur) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
@@ -84,7 +75,7 @@ public class UtilisateurDAO {
             remplirStatement(ps, utilisateur);
             ps.executeUpdate();
 
-            // Récupération de l'id auto-généré
+
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     utilisateur.setId(rs.getInt(1));
@@ -94,12 +85,7 @@ public class UtilisateurDAO {
         return utilisateur;
     }
 
-    /**
-     * Recherche un utilisateur par son identifiant technique.
-     *
-     * @param id Identifiant de l'utilisateur
-     * @return Optional vide si non trouvé
-     */
+    
     public Optional<Utilisateur> trouverParId(int id) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_SELECT_BY_ID)) {
@@ -114,12 +100,7 @@ public class UtilisateurDAO {
         return Optional.empty();
     }
 
-    /**
-     * Recherche un utilisateur par son adresse email (identifiant métier unique).
-     *
-     * @param email Adresse email
-     * @return Optional vide si non trouvé
-     */
+    
     public Optional<Utilisateur> trouverParEmail(String email) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_SELECT_BY_EMAIL)) {
@@ -134,9 +115,7 @@ public class UtilisateurDAO {
         return Optional.empty();
     }
 
-    /**
-     * Retourne tous les utilisateurs (usage admin).
-     */
+    
     public List<Utilisateur> trouverTous() throws SQLException {
         List<Utilisateur> liste = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -150,9 +129,7 @@ public class UtilisateurDAO {
         return liste;
     }
 
-    /**
-     * Retourne tous les utilisateurs d'un statut donné.
-     */
+    
     public List<Utilisateur> trouverParStatut(StatutCompte statut) throws SQLException {
         List<Utilisateur> liste = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -168,12 +145,7 @@ public class UtilisateurDAO {
         return liste;
     }
 
-    /**
-     * Met à jour toutes les informations d'un utilisateur existant.
-     *
-     * @param utilisateur Utilisateur avec les nouvelles valeurs (id requis)
-     * @throws SQLException en cas d'erreur base de données
-     */
+    
     public void mettreAJour(Utilisateur utilisateur) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
@@ -184,7 +156,7 @@ public class UtilisateurDAO {
             ps.setString(4, utilisateur.getTelephone());
             ps.setString(5, utilisateur.getRole());
             ps.setString(6, utilisateur.getStatutCompte().name());
-            // note_moyenne et nombre_avis : seulement pertinents pour le chauffeur
+
             if (utilisateur instanceof Chauffeur c) {
                 ps.setDouble(7, c.getNoteMoyenne());
                 ps.setInt(8, c.getNombreAvis());
@@ -200,9 +172,7 @@ public class UtilisateurDAO {
         }
     }
 
-    /**
-     * Met à jour uniquement le statut du compte (suspension, blocage, etc.).
-     */
+    
     public void mettreAJourStatut(int utilisateurId, StatutCompte statut) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_STATUT)) {
@@ -213,9 +183,7 @@ public class UtilisateurDAO {
         }
     }
 
-    /**
-     * Met à jour la date de dernière connexion.
-     */
+    
     public void mettreAJourDerniereConnexion(int utilisateurId, LocalDateTime dateConnexion)
             throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -227,9 +195,7 @@ public class UtilisateurDAO {
         }
     }
 
-    /**
-     * Incrémente le compteur d'échecs de connexion et retourne sa nouvelle valeur.
-     */
+    
     public int incrementerTentativesConnexionEchouees(int utilisateurId) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement(SQL_INCREMENT_TENTATIVES_CONNEXION)) {
@@ -249,9 +215,7 @@ public class UtilisateurDAO {
         throw new SQLException("Utilisateur #" + utilisateurId + " introuvable.");
     }
 
-    /**
-     * Réinitialise le compteur d'échecs de connexion après un succès ou une réactivation.
-     */
+    
     public void reinitialiserTentativesConnexionEchouees(int utilisateurId) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_RESET_TENTATIVES_CONNEXION)) {
@@ -261,9 +225,7 @@ public class UtilisateurDAO {
         }
     }
 
-    /**
-     * Supprime un utilisateur de la base de données.
-     */
+    
     public void supprimer(int id) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_DELETE)) {
@@ -273,9 +235,7 @@ public class UtilisateurDAO {
         }
     }
 
-    /**
-     * Vérifie si un email est déjà enregistré en base.
-     */
+    
     public boolean emailExiste(String email) throws SQLException {
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_EXISTS_EMAIL)) {
@@ -287,11 +247,9 @@ public class UtilisateurDAO {
         }
     }
 
-    // ── Méthodes privées ──────────────────────────────────────────────────────
 
-    /**
-     * Renseigne les paramètres du PreparedStatement d'insertion.
-     */
+
+    
     private void remplirStatement(PreparedStatement ps, Utilisateur u) throws SQLException {
         ps.setString(1, u.getNom());
         ps.setString(2, u.getPrenom());
@@ -300,7 +258,7 @@ public class UtilisateurDAO {
         ps.setString(5, u.getTelephone());
         ps.setString(6, u.getRole());
         ps.setString(7, u.getStatutCompte().name());
-        // note_moyenne et nombre_avis : seulement pour le chauffeur
+
         if (u instanceof Chauffeur c) {
             ps.setDouble(8, c.getNoteMoyenne());
             ps.setInt(9, c.getNombreAvis());
@@ -313,9 +271,7 @@ public class UtilisateurDAO {
         ps.setInt(11, u.getTentativesConnexionEchouees());
     }
 
-    /**
-     * Mappe un ResultSet vers un objet {@link Utilisateur}.
-     */
+    
     private Utilisateur mapperResultSet(ResultSet rs) throws SQLException {
         Utilisateur u = creerInstanceSelonRole(rs.getString("role"));
         u.setId(rs.getInt("id"));
@@ -325,7 +281,7 @@ public class UtilisateurDAO {
         u.setMotDePasseHash(rs.getString("mot_de_passe_hash"));
         u.setTelephone(rs.getString("telephone"));
         u.setStatutCompte(StatutCompte.valueOf(rs.getString("statut_compte")));
-        // noteMoyenne et nombreAvis ne concernent que les chauffeurs
+
         if (u instanceof Chauffeur c) {
             c.setNoteMoyenne(rs.getDouble("note_moyenne"));
             c.setNombreAvis(rs.getInt("nombre_avis"));

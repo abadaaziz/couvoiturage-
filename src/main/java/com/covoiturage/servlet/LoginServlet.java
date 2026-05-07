@@ -17,37 +17,26 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/**
- * Servlet gérant la connexion et la déconnexion des utilisateurs.
- *
- * <ul>
- *   <li>POST /login  → authentification</li>
- *   <li>POST /logout → déconnexion</li>
- * </ul>
- */
+
 @WebServlet(urlPatterns = {"/login", "/logout"})
 public class LoginServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    /** Attribut de session contenant l'utilisateur connecté */
+    
     public static final String SESSION_UTILISATEUR = "utilisateurConnecte";
 
     private AuthService authService;
 
     @Override
     public void init() throws ServletException {
-        // Initialisation du service (peut être injecté via un ServletContext listener)
+
         this.authService = new AuthService();
     }
 
-    // ── POST /login ───────────────────────────────────────────────────────────
 
-    /**
-     * Traite la soumission du formulaire de connexion.
-     * En cas de succès, crée une session et redirige vers le tableau de bord.
-     * En cas d'échec, redirige vers le formulaire avec un message d'erreur.
-     */
+
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -55,19 +44,17 @@ public class LoginServlet extends HttpServlet {
         String chemin = request.getServletPath();
 
         if ("/logout".equals(chemin)) {
-            // ── Déconnexion ───────────────────────────────────────────────────
+
             traiterDeconnexion(request, response);
         } else {
-            // ── Connexion ─────────────────────────────────────────────────────
+
             traiterConnexion(request, response);
         }
     }
 
-    // ── GET /login ────────────────────────────────────────────────────────────
 
-    /**
-     * Affiche la page de connexion (vue HTML).
-     */
+
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -75,21 +62,21 @@ public class LoginServlet extends HttpServlet {
         String chemin = request.getServletPath();
 
         if ("/logout".equals(chemin)) {
-            // GET /logout → déconnexion directe puis redirection
+
             traiterDeconnexion(request, response);
         } else {
-            // Vérification si l'utilisateur est déjà connecté
+
             HttpSession session = request.getSession(false);
             if (session != null && session.getAttribute(SESSION_UTILISATEUR) != null) {
                 response.sendRedirect(request.getContextPath() + "/trajets");
                 return;
             }
-            // Affichage de la vue login
+
             request.getRequestDispatcher("/views/login.html").forward(request, response);
         }
     }
 
-    // ── Méthodes privées ──────────────────────────────────────────────────────
+
 
         private void traiterConnexion(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -97,7 +84,7 @@ public class LoginServlet extends HttpServlet {
         String email      = request.getParameter("email");
         String motDePasse = request.getParameter("motDePasse");
 
-        // ── Validation basique des paramètres ─────────────────────────────────
+
         if (estNullOuVide(email) || estNullOuVide(motDePasse)) {
             redirigerAvecMessage(request, response, "erreur",
                 "Veuillez renseigner votre email et votre mot de passe.");
@@ -105,15 +92,15 @@ public class LoginServlet extends HttpServlet {
         }
 
         try {
-            // ── Authentification ──────────────────────────────────────────────
+
             Utilisateur utilisateur = authService.authentifier(email.trim(), motDePasse);
 
-            // ── Création de la session ────────────────────────────────────────
+
             HttpSession session = request.getSession(true);
             session.setAttribute(SESSION_UTILISATEUR, utilisateur);
-            session.setMaxInactiveInterval(30 * 60); // 30 minutes
+            session.setMaxInactiveInterval(30 * 60);
 
-            // Redirection selon le type réel de l'utilisateur
+
             if (utilisateur instanceof Admin) {
                 response.sendRedirect(request.getContextPath() + "/admin/users");
             } else {
@@ -137,7 +124,7 @@ public class LoginServlet extends HttpServlet {
 
         HttpSession session = request.getSession(false);
         if (session != null) {
-            // Récupération de l'id avant invalidation (pour le log)
+
             Utilisateur utilisateur = (Utilisateur) session.getAttribute(SESSION_UTILISATEUR);
             if (utilisateur != null) {
                 authService.deconnecter(utilisateur.getId());
@@ -145,7 +132,7 @@ public class LoginServlet extends HttpServlet {
             session.invalidate();
         }
 
-        // Redirection vers la page de connexion
+
         redirigerAvecMessage(request, response, "succes", "Vous avez ete deconnecte.");
     }
 

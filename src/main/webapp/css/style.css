@@ -1,54 +1,51 @@
-/* ============================================================
-   Same Trip — Feuille de style principale
-   Design : Dark mode, glassmorphism, gradients violets/bleus
-   ============================================================ */
 
-/* ── Importation de la police Google Fonts ─────────────────── */
+
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-/* ── Variables CSS (Design tokens) ─────────────────────────── */
+
 :root {
-    /* Palette principale */
-    --couleur-primaire:      #7c3aed;     /* violet */
+    
+    --couleur-primaire:      #7c3aed;     
     --couleur-primaire-clair: #9f67fa;
     --couleur-primaire-sombre: #5b21b6;
-    --couleur-secondaire:    #2563eb;     /* bleu */
-    --couleur-accent:        #06b6d4;     /* cyan */
-    --couleur-succes:        #10b981;     /* vert */
-    --couleur-avertissement: #f59e0b;     /* orange */
-    --couleur-danger:        #ef4444;     /* rouge */
+    --couleur-secondaire:    #2563eb;     
+    --couleur-accent:        #06b6d4;     
+    --couleur-succes:        #10b981;     
+    --couleur-avertissement: #f59e0b;     
+    --couleur-danger:        #ef4444;     
 
-    /* Fond sombre */
+    
     --bg-principal:          #0a0b0f;
     --bg-surface:            #111218;
     --bg-card:               rgba(255,255,255,0.05);
     --bg-card-hover:         rgba(255,255,255,0.08);
     --bg-input:              rgba(255,255,255,0.06);
 
-    /* Texte */
+    
     --texte-primaire:        #f8fafc;
     --texte-secondaire:      #94a3b8;
     --texte-tertiaire:       #64748b;
     --texte-inverse:         #0a0b0f;
 
-    /* Bordures */
+    
     --bordure:               rgba(255,255,255,0.08);
     --bordure-focus:         var(--couleur-primaire);
 
-    /* Gradients */
+    
     --gradient-hero:  linear-gradient(135deg, #7c3aed 0%, #2563eb 50%, #06b6d4 100%);
     --gradient-card:  linear-gradient(135deg, rgba(124,58,237,0.1), rgba(37,99,235,0.1));
     --gradient-bouton: linear-gradient(135deg, #7c3aed, #2563eb);
 
-    /* Ombres */
+    
     --ombre-card:   0 8px 32px rgba(0,0,0,0.4);
     --ombre-bouton: 0 4px 20px rgba(124,58,237,0.4);
     --ombre-input:  0 0 0 2px rgba(124,58,237,0.3);
 
-    /* Transitions */
+    
     --transition:   all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
-    /* Rayons */
+    
     --rayon-sm:   0.5rem;
     --rayon-md:   0.75rem;
     --rayon-lg:   1rem;
@@ -56,7 +53,7 @@
     --rayon-full: 9999px;
 }
 
-/* ── Reset & Base ───────────────────────────────────────────── */
+
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -77,7 +74,7 @@ body {
     overflow-x: hidden;
 }
 
-/* ── Typographie ─────────────────────────────────────────────── */
+
 h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
     line-height: 1.2;
@@ -95,7 +92,7 @@ a {
 }
 a:hover { color: var(--couleur-accent); }
 
-/* ── Navigation ─────────────────────────────────────────────── */
+
 .navbar {
     position: fixed;
     top: 0;
@@ -159,7 +156,7 @@ a:hover { color: var(--couleur-accent); }
     align-items: center;
 }
 
-/* ── Boutons ─────────────────────────────────────────────────── */
+
 .btn {
     display: inline-flex;
     align-items: center;
@@ -236,7 +233,7 @@ a:hover { color: var(--couleur-accent); }
     transform: none;
 }
 
-/* ── Formulaires ─────────────────────────────────────────────── */
+
 .form-groupe {
     display: flex;
     flex-direction: column;
@@ -283,7 +280,7 @@ select.form-controle {
     padding-right: 2.5rem;
 }
 
-/* ── Cartes (Cards) ──────────────────────────────────────────── */
+
 .card {
     background: var(--bg-card);
     border: 1px solid var(--bordure);
@@ -308,7 +305,7 @@ select.form-controle {
     margin-bottom: 1rem;
 }
 
-/* ── Badges de statut ────────────────────────────────────────── */
+
 .badge {
     display: inline-flex;
     align-items: center;
@@ -329,7 +326,7 @@ select.form-controle {
 .badge-attente   { background: rgba(124,58,237,0.15);  color: var(--couleur-primaire-clair); border: 1px solid rgba(124,58,237,0.3); }
 .badge-admin     { background: var(--gradient-hero);   color: white; }
 
-/* ── Notifications UI ──────────────────────────────────────── */
+
 .nav-notifications {
     position: relative;
     display: inline-flex;
@@ -367,12 +364,12 @@ select.form-controle {
     font-weight: 800;
 }
 
-/* ── Notifications (liste) ─────────────────────────────────── */
+
 .notification-list {
     grid-template-columns: 1fr;
 }
 
-/* ── Alertes / Messages ──────────────────────────────────────── */
+
 .alerte {
     padding: 1rem 1.25rem;
     border-radius: var(--rayon-md);
@@ -390,7 +387,7 @@ select.form-controle {
 .alerte-info    { background: rgba(37,99,235,0.1);   border-color: var(--couleur-secondaire);    color: #93c5fd; }
 .alerte-warning { background: rgba(245,158,11,0.1);  border-color: var(--couleur-avertissement); color: #fcd34d; }
 
-/* ── Section hero ────────────────────────────────────────────── */
+
 .hero {
     min-height: 100vh;
     display: flex;
@@ -454,7 +451,7 @@ select.form-controle {
     flex-wrap: wrap;
 }
 
-/* ── Barre de recherche ──────────────────────────────────────── */
+
 .recherche-conteneur {
     background: var(--bg-card);
     border: 1px solid var(--bordure);
@@ -471,7 +468,7 @@ select.form-controle {
     align-items: end;
 }
 
-/* ── Grille de trajets ───────────────────────────────────────── */
+
 .trajets-grille {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -589,7 +586,7 @@ select.form-controle {
     font-size: 0.8rem;
 }
 
-/* ── Conteneur de page ───────────────────────────────────────── */
+
 .conteneur {
     max-width: 1280px;
     margin: 0 auto;
@@ -601,7 +598,7 @@ select.form-controle {
     min-height: 100vh;
 }
 
-/* ── Formulaire centré (login / inscription) ─────────────────── */
+
 .page-auth {
     min-height: 100vh;
     display: flex;
@@ -672,7 +669,7 @@ select.form-controle {
     margin-bottom: 2rem;
 }
 
-/* ── Tableau admin ───────────────────────────────────────────── */
+
 .tableau-conteneur {
     overflow-x: auto;
     border-radius: var(--rayon-lg);
@@ -712,7 +709,7 @@ tr:last-child td { border-bottom: none; }
 
 tr:hover td { background: rgba(255,255,255,0.02); }
 
-/* ── Loader / Spinner ────────────────────────────────────────── */
+
 .spinner {
     width: 32px;
     height: 32px;
@@ -735,7 +732,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     color: var(--texte-secondaire);
 }
 
-/* ── Pied de page ────────────────────────────────────────────── */
+
 .footer {
     background: var(--bg-surface);
     border-top: 1px solid var(--bordure);
@@ -746,7 +743,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     margin-top: auto;
 }
 
-/* ── Utilitaires ─────────────────────────────────────────────── */
+
 .flex           { display: flex; }
 .flex-col       { flex-direction: column; }
 .items-center   { align-items: center; }
@@ -768,7 +765,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .titre-section  { margin-bottom: 2rem; }
 .divider        { border: none; border-top: 1px solid var(--bordure); margin: 1.5rem 0; }
 
-/* ── Responsive ──────────────────────────────────────────────── */
+
 @media (max-width: 768px) {
     .navbar { padding: 0.75rem 1rem; }
     .navbar-liens { display: none; }
@@ -780,7 +777,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     .carte-auth { padding: 1.75rem; }
 }
 
-/* ── Animations d'entrée ─────────────────────────────────────── */
+
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -794,7 +791,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .animation-entree { animation: fadeInUp 0.5s ease forwards; }
 .animation-fade   { animation: fadeIn 0.4s ease forwards; }
 
-/* Délais d'animation en cascade */
+
 .delai-1 { animation-delay: 0.1s; }
 .delai-2 { animation-delay: 0.2s; }
 .delai-3 { animation-delay: 0.3s; }

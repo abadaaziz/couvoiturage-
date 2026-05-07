@@ -21,9 +21,7 @@ import com.covoiturage.model.Trajet;
 import com.covoiturage.model.Trajet.StatutTrajet;
 import com.covoiturage.model.Utilisateur;
 
-/**
- * Service de gestion des trajets de covoiturage.
- */
+
 public class TrajetService {
 
     private final TrajetDAO trajetDAO;
@@ -66,7 +64,7 @@ public class TrajetService {
         if (!chauffeur.estActif()) {
             throw new UtilisateurSuspenduException(chauffeur.getEmail());
         }
-        // Vérification par type réel — plus robuste qu'une comparaison de chaînes
+
         if (!(chauffeur instanceof Chauffeur) && !(chauffeur instanceof Admin)) {
             throw new IllegalArgumentException(
                 "Seul un chauffeur peut proposer un trajet. Type reçu : "
@@ -184,12 +182,7 @@ public class TrajetService {
         }
     }
 
-    /**
-     * Annule un trajet par le chauffeur.
-     *
-     * Les reservations confirmees sont remboursees a 120% du montant paye.
-     * Les 20% supplementaires sont retournes comme penalite chauffeur.
-     */
+    
     public double annulerTrajetChauffeur(int trajetId, int chauffeurId)
             throws ReservationInvalideException {
         try {

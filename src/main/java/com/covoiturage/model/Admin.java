@@ -1,8 +1,6 @@
 package com.covoiturage.model;
 
-/**
- * Sous-classe de Utilisateur représentant un administrateur.
- */
+
 public class Admin extends Utilisateur {
 
     private static final long serialVersionUID = 1L;

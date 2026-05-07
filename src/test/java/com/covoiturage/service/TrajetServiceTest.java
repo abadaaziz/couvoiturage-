@@ -117,7 +117,7 @@ class TrajetServiceTest {
 
         @Override
         public void mettreAJourStatutAnnulation(Reservation reservation) {
-            // The service mutates the reservation object directly; no-op for this fake DAO.
+
         }
     }
 
@@ -136,14 +136,14 @@ class TrajetServiceTest {
     private static final class NoopNotificationService extends NotificationService {
         @Override
         public void notifierEmail(String destinataire, String sujet, String corps) {
-            // no-op
+
         }
     }
 
     private static final class NoopInAppNotificationService extends InAppNotificationService {
         @Override
         public void notifierUtilisateur(int utilisateurId, String type, String titre, String message) {
-            // no-op
+
         }
     }
 }

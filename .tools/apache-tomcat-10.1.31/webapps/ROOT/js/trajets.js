@@ -1,12 +1,9 @@
-/**
- * trajets.js — Logique de la page Trajets
- * Vanilla JS pur, aucun framework.
- */
 
-// ── État de l'application ──────────────────────────────────────────────────
+
+
 const etat = {
     trajets:       [],
-    utilisateur:   null,    // null = non connecté
+    utilisateur:   null,
     chargement:    false,
     reservationSelection: null
 };
@@ -20,7 +17,7 @@ function estAdminConnecte() {
     return etat.utilisateur && etat.utilisateur.role === 'ADMIN';
 }
 
-// ── Initialisation au chargement de la page ────────────────────────────────
+
 document.addEventListener('DOMContentLoaded', async () => {
     await chargerSession();
     configurerNavbar();
@@ -31,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await chargerTrajets();
 });
 
-// ── Chargement de la session utilisateur ─────────────────────────────────
+
 async function chargerSession() {
     try {
         const reponse = await fetch('/session/me', {
@@ -52,15 +49,15 @@ async function chargerSession() {
     }
 }
 
-// ── Configuration de la navbar ─────────────────────────────────────────────
+
 function configurerNavbar() {
-    // Ajuste la date minimale dans la recherche à aujourd'hui
+
     const inputDate = document.getElementById('rech-date');
     if (inputDate) {
         inputDate.min = new Date().toISOString().split('T')[0];
     }
 
-    // Affiche les actions selon le statut de connexion
+
     const zoneActions = document.getElementById('navbar-actions');
     if (zoneActions && etat.utilisateur) {
         zoneActions.innerHTML = `
@@ -84,19 +81,19 @@ function configurerNavbar() {
         }
     }
 
-    // Active le bouton chauffeur si role CHAUFFEUR/ADMIN
+
     const zoneChauffeur = document.getElementById('zone-chauffeur');
     if (zoneChauffeur) {
         zoneChauffeur.style.display = estChauffeurConnecte() ? 'block' : 'none';
     }
 }
 
-// ── Chargement des trajets via l'API ──────────────────────────────────────
+
 async function chargerTrajets(params = '') {
     afficherChargement(true);
     try {
         const query = new URLSearchParams(params);
-        // Force le navigateur a ignorer un eventuel cache stale de /trajets.
+
         query.set('_', Date.now().toString());
         const url = `/trajets?${query.toString()}`;
         const reponse = await fetch(url, {
@@ -120,7 +117,7 @@ async function chargerTrajets(params = '') {
     }
 }
 
-// ── Rendu HTML des trajets ─────────────────────────────────────────────────
+
 function afficherTrajets(trajets) {
     const liste  = document.getElementById('liste-trajets');
     const aucun  = document.getElementById('aucun-trajet');
@@ -215,7 +212,7 @@ function creerCarteTrajet(t) {
         </div>
     `;
 
-    // Événement clic sur "Réserver"
+
     const btnReserver = el.querySelector('.btn-reserver');
     if (btnReserver) {
         btnReserver.addEventListener('click', () => ouvrirReservation(t));
@@ -229,14 +226,14 @@ function creerCarteTrajet(t) {
     return el;
 }
 
-// ── Génération des étoiles ─────────────────────────────────────────────────
+
 function genererEtoiles(note) {
     const plein  = Math.floor(note);
     const vide   = 5 - plein;
     return '★'.repeat(plein) + '☆'.repeat(vide);
 }
 
-// ── Badge de statut ────────────────────────────────────────────────────────
+
 function getBadgeStatut(statut) {
     const classes = {
         OUVERT:  'badge-ouvert',
@@ -253,7 +250,7 @@ function getBadgeStatut(statut) {
     return `<span class="badge ${classes[statut] || ''}">${libelles[statut] || statut}</span>`;
 }
 
-// ── Ouverture du formulaire de réservation ─────────────────────────────────
+
 function ouvrirReservation(trajet) {
     const modal = document.getElementById('modal-reservation');
     const selectPlaces = document.getElementById('reservation-places');
@@ -471,7 +468,7 @@ function configurerRecherche() {
     });
 }
 
-// ── Modal nouveau trajet ───────────────────────────────────────────────────
+
 function configurerModal() {
     const modal       = document.getElementById('modal-trajet');
     const btnProposer = document.getElementById('btn-proposer');
@@ -481,7 +478,7 @@ function configurerModal() {
     if (btnProposer) {
         btnProposer.addEventListener('click', () => {
             modal.style.display = 'flex';
-            // Date minimale = dans 30 minutes
+
             const min = new Date(Date.now() + 30 * 60 * 1000);
             document.getElementById('nv-date').min =
                 min.toISOString().slice(0, 16);
@@ -494,7 +491,7 @@ function configurerModal() {
         });
     }
 
-    // Fermeture en cliquant en dehors
+
     modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.style.display = 'none';
     });
@@ -522,7 +519,7 @@ async function soumettreNouveauTrajet() {
     const prixParPlace = document.getElementById('nv-prix').value;
     const descriptionVehicule = document.getElementById('nv-vehicule').value.trim();
 
-    // Accepte les navigateurs qui peuvent renvoyer un séparateur espace
+
     const dateHeureDepart = dateRaw.replace(' ', 'T');
 
     if (!villeDepart || !villeArrivee || !dateHeureDepart || !placesTotal || !prixParPlace) {
@@ -575,7 +572,7 @@ async function soumettreNouveauTrajet() {
     }
 }
 
-// ── Notification flottante ─────────────────────────────────────────────────
+
 function afficherNotification(message, type = 'info') {
     const notif = document.createElement('div');
     notif.className = `alerte alerte-${type}`;
@@ -602,7 +599,7 @@ function afficherChargement(visible) {
 function parserDateTrajet(valeur) {
     if (!valeur) return null;
 
-    // Normalise les fractions de seconde a 3 chiffres max pour JS Date.
+
     let iso = String(valeur).trim().replace(' ', 'T');
     iso = iso.replace(/\.(\d{3})\d+/, '.$1');
 
@@ -610,7 +607,7 @@ function parserDateTrajet(valeur) {
     return Number.isNaN(d.getTime()) ? null : d;
 }
 
-// ── Utilitaire : échappement HTML ──────────────────────────────────────────
+
 function echapper(s) {
     if (!s) return '';
     return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');

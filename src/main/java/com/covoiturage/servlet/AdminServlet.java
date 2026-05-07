@@ -16,17 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/**
- * Servlet d'administration (réservée aux utilisateurs avec le rôle ADMIN).
- *
- * <ul>
- *   <li>GET  /admin/users         → liste de tous les utilisateurs (JSON)</li>
- *   <li>GET  /admin/bloques       → liste des comptes bloqués (JSON)</li>
- *   <li>POST /admin/suspendre     → suspension d'un compte</li>
- *   <li>POST /admin/bloquer       → blocage définitif d'un compte</li>
- *   <li>POST /admin/reactiver     → réactivation d'un compte suspendu/bloqué</li>
- * </ul>
- */
+
 @WebServlet(urlPatterns = {"/admin/users", "/admin/bloques", "/admin/suspendre", "/admin/bloquer", "/admin/reactiver"})
 public class AdminServlet extends HttpServlet {
 
@@ -39,9 +29,9 @@ public class AdminServlet extends HttpServlet {
         this.authService = new AuthService();
     }
 
-    // ── GET /admin/users ──────────────────────────────────────────────────────
 
-    /** Retourne la liste de tous les utilisateurs en JSON */
+
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -50,7 +40,7 @@ public class AdminServlet extends HttpServlet {
         boolean requeteJson = (accept != null && accept.contains("application/json")) ||
                               "json".equalsIgnoreCase(request.getParameter("format"));
 
-        // Vérification des droits admin
+
         Utilisateur admin = getAdmin(request);
         if (admin == null) {
             if (requeteJson) {
@@ -82,7 +72,7 @@ public class AdminServlet extends HttpServlet {
         out.flush();
     }
 
-    // ── POST /admin/suspendre & /admin/bloquer ────────────────────────────────
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -141,7 +131,7 @@ public class AdminServlet extends HttpServlet {
         }
     }
 
-    // ── Sérialisation JSON manuelle ───────────────────────────────────────────
+
 
     private String utilisateurListToJson(List<Utilisateur> utilisateurs) {
         StringBuilder sb = new StringBuilder("[");
@@ -163,7 +153,7 @@ public class AdminServlet extends HttpServlet {
         sb.append("\"telephone\":\"").append(echapper(u.getTelephone())).append("\",");
         sb.append("\"role\":\"").append(u.getRole()).append("\",");
         sb.append("\"statutCompte\":\"").append(u.getStatutCompte()).append("\",");
-        // noteMoyenne et nombreAvis : propres au chauffeur uniquement
+
         if (u instanceof Chauffeur c) {
             sb.append("\"noteMoyenne\":").append(String.format(Locale.US, "%.2f", c.getNoteMoyenne())).append(",");
             sb.append("\"nombreAvis\":").append(c.getNombreAvis()).append(",");
@@ -176,15 +166,12 @@ public class AdminServlet extends HttpServlet {
         return sb.toString();
     }
 
-    /**
-     * Vérifie si l'utilisateur connecté est un ADMIN.
-     * @return L'utilisateur ADMIN ou null si non autorisé
-     */
+    
     private Utilisateur getAdmin(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null) return null;
         Utilisateur u = (Utilisateur) session.getAttribute(LoginServlet.SESSION_UTILISATEUR);
-        // Vérification par type réel (instanceof) plutôt que par chaîne de rôle
+
         if (!(u instanceof com.covoiturage.model.Admin)) return null;
         return u;
     }

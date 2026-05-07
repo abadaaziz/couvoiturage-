@@ -97,7 +97,7 @@
         afficherMessage(msgSucces, 'succes');
     }
 
-    // Basculer visibilité du mot de passe
+
     document.getElementById('btn-voir-mdp').addEventListener('click', function() {
         const champ = document.getElementById('motDePasse');
         const visible = champ.type === 'text';
@@ -105,7 +105,7 @@
         this.textContent = visible ? '👁' : '🙈';
     });
 
-    // Validation côté client avant soumission
+
     document.getElementById('form-login').addEventListener('submit', function(e) {
         const email = document.getElementById('email').value.trim();
         const mdp   = document.getElementById('motDePasse').value;
@@ -117,7 +117,7 @@
             return;
         }
 
-        // Animation de chargement
+
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner" style="width:18px;height:18px;border-width:2px;"></span> Connexion...';
     });
